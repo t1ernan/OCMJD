@@ -1,64 +1,74 @@
 package suncertify.db;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class DBFileReader {
-
-	private static final int INTEGER_SIZE = 4;
-	private static final int MAGIC_COOKIE_SIZE = 4;
-	private static final int RECORD_ZERO_OFFSET_SIZE = 4;
-	private static final int NUMBER_OF_FIELDS_SIZE = 2;
-
-	private static final int FIELD_NAME_SIZE = 2;
-	private static final int FIELD_LENGTH_SIZE = 2;
-
-	private static int fieldNameLength;
-
-	private static final int RECORD_FLAG_SIZE = 2;
-	private static final int VALID_RECORD_FLAG = 00;
-	private static final int INVALID_RECORD_FLAG = 0x8000;
 
 	private static final String CHARACTER_ENCODING = "US-ASCII";
 	private static final String DATABASE_FILE_LOCATION = "db-2x2.db";
 
 	public static void main(final String[] args) {
 
-		try (final InputStream in = new BufferedInputStream(new FileInputStream(DATABASE_FILE_LOCATION))) {
-			final int magicCookie = getValue(in, MAGIC_COOKIE_SIZE);
-			final int recordZeroOffset = getValue(in, RECORD_ZERO_OFFSET_SIZE);
-			final int numberOfFields = getValue(in, NUMBER_OF_FIELDS_SIZE);
+		Path databasePath = Paths.get(DATABASE_FILE_LOCATION);
+
+		try {
+			ByteBuffer byteBuffer = ByteBuffer.wrap(Files.readAllBytes(databasePath));
+			final int magicCookie = byteBuffer.getInt();
+			final int recordZeroOffset = byteBuffer.getInt();
+			final int numberOfFields = byteBuffer.getShort();
+			final int[] fieldValueSizes = new int[numberOfFields];
+			final String[] fieldValues = new String[numberOfFields];
+			final String[] fieldNames = new String[numberOfFields];
+
+			int recordCount = 0;
 
 			for (int index = 0; index < numberOfFields; index++) {
-
+				final int fieldNameSize = byteBuffer.getShort();
+				final String fieldName = readString(byteBuffer, fieldNameSize);
+				final int fieldValueSize = byteBuffer.getShort();
+				fieldNames[index] = fieldName;
+				fieldValueSizes[index] = fieldValueSize;
 			}
+
+			while (byteBuffer.hasRemaining()) {
+				final int flagvalue = byteBuffer.getShort();
+				System.out.println("##################### START RECORD #####################");
+				for (int index = 0; index < numberOfFields; index++) {
+					final String fieldValue = readString(byteBuffer, fieldValueSizes[index]);
+					fieldValues[index] = fieldValue;
+				}
+				for (int index = 0; index < numberOfFields; index++) {
+					System.out.println(fieldNames[index] + ": " + fieldValues[index]);
+				}
+				System.out.println("Record is " + isRecordValid(flagvalue));
+				System.out.println("###################### END RECORD ######################");
+				System.out.println();
+				recordCount++;
+			}
+			System.out.println("Total record count: " + recordCount);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static int getValue(InputStream in, int size) throws IOException {
-		if (size == INTEGER_SIZE) {
-			return getInt(in, size);
+	private static String isRecordValid(int flagvalue) {
+		if (flagvalue == 00) {
+			return "VALID";
 		} else {
-			return getShort(in, size);
+			return "INVALID";
 		}
 	}
 
-	private static int getShort(InputStream in, int size) throws IOException {
-		return getByteBuffer(in, size).getShort();
+	private static String readString(ByteBuffer byteBuffer, int size) {
+		final byte[] bytes = new byte[size];
+		byteBuffer.get(bytes);
+		return new String(bytes, Charset.forName(CHARACTER_ENCODING));
 	}
 
-	private static int getInt(InputStream in, int size) throws IOException {
-		return getByteBuffer(in, size).getInt();
-	}
-
-	private static ByteBuffer getByteBuffer(InputStream in, int size) throws IOException {
-		final byte[] byteArray = new byte[size];
-		in.read(byteArray);
-		return ByteBuffer.wrap(byteArray);
-	}
 }

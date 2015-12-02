@@ -5,7 +5,7 @@ import java.util.Map;
 
 import suncertify.domain.Contractor;
 
-public class Data implements ExtendedDBMain {
+public class Data implements DBMainExtended {
 
 	private final Map<Long, Contractor> cache = new HashMap<>();
 

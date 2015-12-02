@@ -4,7 +4,7 @@ package suncertify.db;
 /**
  * The Interface ExtendedDBMain.
  */
-public interface ExtendedDBMain extends DBMain {
+public interface DBMainExtended extends DBMain {
 
 	/**
 	 * Reads a record from the file. Returns an array where each element is a

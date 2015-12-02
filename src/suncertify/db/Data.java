@@ -13,12 +13,7 @@ public class Data implements ExtendedDBMain {
 
 	public Data(String databasePath) {
 		super();
-		loadCache();
 		this.databasePath = databasePath;
-	}
-
-	private void loadCache() {
-
 	}
 
 	/**

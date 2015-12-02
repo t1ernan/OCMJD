@@ -1,10 +1,12 @@
 package suncertify.domain;
 
-public class Contractor {
+import java.io.Serializable;
 
-	private String name;
+public class Contractor implements Serializable {
 
-	private String location;
+	private static final long serialVersionUID = 5785335406521960333L;
+
+	private ContractorPK primaryKey;
 
 	private String specialities;
 
@@ -12,20 +14,12 @@ public class Contractor {
 
 	private int size;
 
-	public String getName() {
-		return name;
+	public ContractorPK getPrimaryKey() {
+		return primaryKey;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
+	public void setPrimaryKey(ContractorPK primaryKey) {
+		this.primaryKey = primaryKey;
 	}
 
 	public String getSpecialities() {

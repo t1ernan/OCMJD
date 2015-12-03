@@ -12,6 +12,8 @@ public class Contractor implements Serializable {
 
 	private String rate;
 
+	private String owner;
+
 	private int size;
 
 	public ContractorPK getPrimaryKey() {
@@ -44,6 +46,14 @@ public class Contractor implements Serializable {
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 }

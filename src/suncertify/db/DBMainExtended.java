@@ -120,4 +120,12 @@ public interface DBMainExtended extends DBMain {
 	@Override
 	public boolean isLocked(int recNo) throws RecordNotFoundException;
 
+	/**
+	 * Persists data to the database.
+	 *
+	 * @throws DatabaseException
+	 *             If unable to find or access specified database
+	 */
+	public void saveData() throws DatabaseException;
+
 }

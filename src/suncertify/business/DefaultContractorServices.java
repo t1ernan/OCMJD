@@ -1,4 +1,4 @@
-package suncertify.services;
+package suncertify.business;
 
 import java.util.Map;
 
@@ -10,20 +10,13 @@ public class DefaultContractorServices implements ContractorServices {
 	@Override
 	public void createBooking(Contractor contractor) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public Map<Long, Contractor> listAllContractors() throws Exception {
+	public Map<Long, Contractor> find(ContractorPK primaryKey) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Contractor findContractor(ContractorPK primaryKey) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }

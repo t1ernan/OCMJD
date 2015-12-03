@@ -33,7 +33,10 @@ public class DBFileReader {
 				final int fieldValueSize = byteBuffer.getShort();
 				fieldNames[index] = fieldName;
 				fieldValueSizes[index] = fieldValueSize;
+				System.out.println("fieldValueSize " + index + ": " + fieldValueSize);
 			}
+			System.out.println("magicCookie: " + magicCookie);
+			System.out.println("recordZeroOffset: " + recordZeroOffset);
 
 			while (byteBuffer.hasRemaining()) {
 				final int flagvalue = byteBuffer.getShort();

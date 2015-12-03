@@ -1,4 +1,4 @@
-package suncertify.services;
+package suncertify.business;
 
 import java.util.Map;
 
@@ -8,8 +8,6 @@ import suncertify.domain.ContractorPK;
 public interface ContractorServices {
 
 	public void createBooking(Contractor contractor) throws Exception;
-	
-	public Map<Long,Contractor> listAllContractors() throws Exception;
-	
-	public Contractor findContractor(ContractorPK primaryKey) throws Exception;
+
+	public Map<Long, Contractor> find(ContractorPK primaryKey) throws Exception;
 }

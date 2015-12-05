@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Map;
 
-public class DBManager {
+public class DBAccessManager {
 
 	private final int VALID_FLAG = 00;
 	private final int DELETED_FLAG = 0x8000;
@@ -15,20 +15,17 @@ public class DBManager {
 	private final String databasePath;
 	private int[] fieldValueSizes;
 
-	public DBManager(String databasePath) {
+	public DBAccessManager(String databasePath) {
 		this.databasePath = databasePath;
 	}
 
 	public void populateCache(final Map<Integer, String[]> map) throws DatabaseException {
-
 		try (RandomAccessFile dbFile = new RandomAccessFile(databasePath, "rwd")) {
-
 			checkMagicCookie(dbFile);
 			final int recordOffset = dbFile.readInt();
 			final int numberOfFields = dbFile.readShort();
 			final String[] fieldNames = new String[numberOfFields];
 			fieldValueSizes = new int[numberOfFields];
-
 			for (int index = 0; index < numberOfFields; index++) {
 				final int fieldNameSize = dbFile.readShort();
 				final String fieldName = readString(dbFile, fieldNameSize);
@@ -36,9 +33,7 @@ public class DBManager {
 				fieldNames[index] = fieldName;
 				fieldValueSizes[index] = fieldValueSize;
 			}
-
 			checkRecordOffset(dbFile, recordOffset);
-
 			int recordNumber = 0;
 			while (dbFile.getFilePointer() < dbFile.length()) {
 				final String[] fieldValues = new String[numberOfFields];
@@ -50,11 +45,27 @@ public class DBManager {
 				addRecordToCache(map, recordNumber, fieldValues, flagvalue);
 				recordNumber++;
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+	}
+	
+	public void saveData(final Map<Integer, String[]> map) throws DatabaseException {
+		try (RandomAccessFile dbFile = new RandomAccessFile(databasePath, "rwd")) {
+			checkMagicCookie(dbFile);
+			final int recordOffset = dbFile.readInt();
+			final int numberOfFields = dbFile.readShort();
+			dbFile.seek(recordOffset);
+			dbFile.setLength(recordOffset);
+			for (String[] fieldValues : map.values()) {
+				dbFile.writeShort(getFlag(fieldValues));
+				for (int index = 0; index < numberOfFields; index++) {
+					writeString(dbFile, fieldValues[index], fieldValueSizes[index]);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void addRecordToCache(final Map<Integer, String[]> map, int recordNumber, final String[] fieldValues,
@@ -74,6 +85,12 @@ public class DBManager {
 		final String trimmedFieldValue = removePadding(paddedFieldValue);
 		return trimmedFieldValue;
 	}
+	
+	private void writeString(RandomAccessFile dbFile, String fieldValue, int numberOfBytes) throws IOException {
+		final byte[] unpaddedBytes = convertStringToBytes(fieldValue);
+		final byte[] paddedBytes = addPadding(unpaddedBytes, numberOfBytes);
+		dbFile.write(paddedBytes);
+	}
 
 	private byte[] readBytes(RandomAccessFile dbFile, int numberOfBytes) throws IOException {
 		final byte[] valueBytes = new byte[numberOfBytes];
@@ -89,11 +106,11 @@ public class DBManager {
 	}
 
 	private boolean isFlagValid(final int flagvalue) {
-		return flagvalue == 00;
+		return flagvalue == VALID_FLAG;
 	}
 
 	private boolean isFlagInvalid(final int flagvalue) {
-		return flagvalue == 0x8000;
+		return flagvalue == DELETED_FLAG;
 	}
 
 	private String convertBytesToString(byte[] valueBytes) throws IOException {
@@ -122,34 +139,5 @@ public class DBManager {
 
 	private int getFlag(final String[] value) throws IOException {
 		return (value == null) ? DELETED_FLAG : VALID_FLAG;
-
-	}
-
-	public void saveData(final Map<Integer, String[]> map) throws DatabaseException {
-
-		try (RandomAccessFile dbFile = new RandomAccessFile(databasePath, "rwd")) {
-			checkMagicCookie(dbFile);
-			final int recordOffset = dbFile.readInt();
-			final int numberOfFields = dbFile.readShort();
-			dbFile.seek(recordOffset);
-			dbFile.setLength(recordOffset);
-
-			for (String[] fieldValues : map.values()) {
-				dbFile.writeShort(getFlag(fieldValues));
-				for (int index = 0; index < numberOfFields; index++) {
-					writeString(dbFile, fieldValues[index], fieldValueSizes[index]);
-				}
-
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void writeString(RandomAccessFile dbFile, String fieldValue, int numberOfBytes) throws IOException {
-		final byte[] unpaddedBytes = convertStringToBytes(fieldValue);
-		final byte[] paddedBytes = addPadding(unpaddedBytes, numberOfBytes);
-		dbFile.write(paddedBytes);
 	}
 }

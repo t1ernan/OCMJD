@@ -126,6 +126,6 @@ public interface DBMainExtended extends DBMain {
 	 * @throws DatabaseException
 	 *             If unable to find or access specified database
 	 */
-	public void saveData() throws DatabaseException;
+	public void save() throws DatabaseException;
 
 }

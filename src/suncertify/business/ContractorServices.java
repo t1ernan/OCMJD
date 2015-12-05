@@ -9,5 +9,5 @@ public interface ContractorServices {
 
 	public void createBooking(Contractor contractor) throws Exception;
 
-	public Map<Long, Contractor> find(ContractorPK primaryKey) throws Exception;
+	public Map<Integer, Contractor> find(ContractorPK primaryKey) throws Exception;
 }

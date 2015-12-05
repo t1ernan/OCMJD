@@ -55,5 +55,4 @@ public class Contractor implements Serializable {
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
-
 }

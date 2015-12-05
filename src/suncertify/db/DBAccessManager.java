@@ -19,7 +19,7 @@ public class DBAccessManager {
 		this.databasePath = databasePath;
 	}
 
-	public void populateCache(final Map<Integer, String[]> map) throws DatabaseException {
+	public void read(final Map<Integer, String[]> map) throws DatabaseException {
 		try (RandomAccessFile dbFile = new RandomAccessFile(databasePath, "rwd")) {
 			checkMagicCookie(dbFile);
 			final int recordOffset = dbFile.readInt();
@@ -50,7 +50,7 @@ public class DBAccessManager {
 		}
 	}
 	
-	public void saveData(final Map<Integer, String[]> map) throws DatabaseException {
+	public void persist(final Map<Integer, String[]> map) throws DatabaseException {
 		try (RandomAccessFile dbFile = new RandomAccessFile(databasePath, "rwd")) {
 			checkMagicCookie(dbFile);
 			final int recordOffset = dbFile.readInt();
@@ -123,7 +123,10 @@ public class DBAccessManager {
 	}
 
 	private byte[] addPadding(byte[] unpaddedBytes, int size) {
-		return Arrays.copyOf(unpaddedBytes, size);
+		final byte[] paddedBytes = new byte[size];
+		Arrays.fill(paddedBytes, (byte)0x20);
+		System.arraycopy(unpaddedBytes, 0, paddedBytes, 0, unpaddedBytes.length);
+		return paddedBytes;
 	}
 
 	private String removePadding(String message) {

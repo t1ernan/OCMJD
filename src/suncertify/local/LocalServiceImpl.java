@@ -1,8 +1,12 @@
-package suncertify.business;
+package suncertify.local;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import suncertify.business.ContractorNotFoundException;
+import suncertify.business.ContractorServices;
+import suncertify.business.DuplicateContractorException;
+import suncertify.business.ServicesException;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.domain.Contractor;
@@ -10,11 +14,11 @@ import suncertify.domain.ContractorPK;
 import suncertify.util.ContractorConverter;
 import suncertify.util.ContractorPKConverter;
 
-public class BasicContractorServices implements ContractorServices {
+public class LocalServiceImpl implements ContractorServices {
 
 	private Data databaseManager;
 
-	public BasicContractorServices(Data databaseManager) {
+	public LocalServiceImpl(Data databaseManager) {
 		this.databaseManager = databaseManager;
 	}
 

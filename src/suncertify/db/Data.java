@@ -140,8 +140,11 @@ public class Data implements DBMainExtended {
 	}
 
 	public void load() throws DatabaseException {
-		cache.clear();
 		dbAccessManager.read(cache);
+	}
+
+	public void clear() {
+		cache.clear();
 	}
 
 	private synchronized Integer getRecordNumber() {

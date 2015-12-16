@@ -2,25 +2,28 @@ package test.business;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static suncertify.util.Constants.DB_FILE_PATH;
 
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import suncertify.business.ContractorServices;
 import suncertify.business.ContractorNotFoundException;
+import suncertify.business.ContractorServices;
 import suncertify.business.DuplicateContractorException;
-import suncertify.business.BasicContractorServices;
 import suncertify.business.ServicesException;
+import suncertify.db.DAOFactory;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.domain.Contractor;
+import suncertify.local.LocalServiceImpl;
 import suncertify.util.ContractorConverter;
 import suncertify.util.ContractorPKConverter;
 
-public class BasicContractorServicesTest {
+public class LocalServiceTest {
 
 	private Data data;
 	private ContractorServices services;
@@ -41,8 +44,14 @@ public class BasicContractorServicesTest {
 
 	@Before
 	public void setup() throws DatabaseException {
-		data = new Data("db-2x2.db");
-		services = new BasicContractorServices(data);
+		data = DAOFactory.getDbManager(DB_FILE_PATH);
+		services = new LocalServiceImpl(data);
+	}
+
+	@After
+	public void teardown() throws DatabaseException {
+		data.clear();
+		data.load();
 	}
 
 	@Test

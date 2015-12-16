@@ -1,6 +1,8 @@
 package suncertify.domain;
 
-public class ContractorPK {
+import java.io.Serializable;
+
+public class ContractorPK implements Serializable {
 
 	private String name;
 

@@ -2,10 +2,13 @@ package test.db;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static suncertify.util.Constants.DB_FILE_PATH;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import suncertify.db.DAOFactory;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.db.DuplicateKeyException;
@@ -34,7 +37,13 @@ public class DataTest {
 
 	@Before
 	public void setup() throws DatabaseException {
-		data = new Data("db-2x2.db");
+		data = DAOFactory.getDbManager(DB_FILE_PATH);
+	}
+
+	@After
+	public void teardown() throws DatabaseException {
+		data.clear();
+		data.load();
 	}
 
 	@Test

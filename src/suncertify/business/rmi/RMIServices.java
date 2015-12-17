@@ -1,4 +1,4 @@
-package suncertify.rmi;
+package suncertify.business.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

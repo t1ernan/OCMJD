@@ -1,4 +1,4 @@
-package suncertify.rmi;
+package suncertify.business.rmi;
 
 import static suncertify.util.Constants.RMI_HOSTNAME;
 import static suncertify.util.Constants.RMI_ID;
@@ -26,8 +26,8 @@ public class RMIClient implements ContractorServices {
 	}
 
 	@Override
-	public void createBooking(Contractor contractor) throws ServicesException, RemoteException {
-		service.createBooking(contractor);
+	public void book(Contractor contractor) throws ServicesException, RemoteException {
+		service.book(contractor);
 
 	}
 

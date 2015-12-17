@@ -6,9 +6,9 @@ import static suncertify.util.Constants.RMI_PORT;
 import java.rmi.RemoteException;
 
 import suncertify.business.ServicesException;
+import suncertify.business.rmi.RMIServer;
+import suncertify.business.rmi.RMIServices;
 import suncertify.db.DAOFactory;
-import suncertify.rmi.RMIServer;
-import suncertify.rmi.RMIServices;
 
 public class CliLauncher {
 

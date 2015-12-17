@@ -16,9 +16,19 @@ public class Data implements DBMainExtended {
 	private final DBAccessManager dbAccessManager;
 
 	public Data(String databasePath) throws DatabaseException {
-		super();
 		this.dbAccessManager = new DBAccessManager(databasePath);
 		load();
+
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				try {
+					save();
+				} catch (DatabaseException e) {
+					System.err.println("Could not save data: " + e.getMessage());
+				}
+			}
+		});
 	}
 
 	/**

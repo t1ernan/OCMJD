@@ -8,7 +8,7 @@ import suncertify.domain.ContractorPK;
 
 public interface ContractorServices {
 
-	public void createBooking(Contractor contractor) throws ServicesException, RemoteException;
+	public void book(Contractor contractor) throws ServicesException, RemoteException;
 
 	public Map<Integer, Contractor> find(ContractorPK primaryKey) throws ServicesException, RemoteException;
 }

@@ -16,7 +16,7 @@ public class ContractorPKConverter {
 
 	public static ContractorPK toContractorPK(String[] fieldValues) {
 		if (fieldValues.length < NUMBER_OF_FIELDS) {
-			throw new IllegalArgumentException("Must have at least " + NUMBER_OF_FIELDS
+			throw new IllegalArgumentException("Must have at least" + NUMBER_OF_FIELDS
 					+ " elements in the string array argument to create a ContractorPK object");
 		}
 		final ContractorPK contractorPK = new ContractorPK();

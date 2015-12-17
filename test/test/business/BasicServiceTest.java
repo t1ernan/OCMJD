@@ -11,29 +11,32 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import suncertify.business.AlreadyBookedException;
+import suncertify.business.BasicServiceImpl;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorServices;
-import suncertify.business.DuplicateContractorException;
 import suncertify.business.ServicesException;
 import suncertify.db.DAOFactory;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.domain.Contractor;
-import suncertify.local.LocalServiceImpl;
 import suncertify.util.ContractorConverter;
 import suncertify.util.ContractorPKConverter;
 
-public class LocalServiceTest {
+public class BasicServiceTest {
 
 	private Data data;
 	private ContractorServices services;
 
 	private final String[] firstContractorValues = new String[] { "Dogs With Tools", "Smallville", "Roofing", "7",
 			"$35.00", "" };
+	private final String[] firstContractorValues_Booked = new String[] { "Dogs With Tools", "Smallville", "Roofing",
+			"7", "$35.00", "12345678" };
 	private final String[] newContractorValues = new String[] { "Smack my Itch up", "Gotham",
 			"Getting It Done,Horsing It", "12", "$79.00", "87654321" };
 
 	private final Contractor firstContractor = ContractorConverter.toContractor(firstContractorValues);
+	private final Contractor firstContractor_Booked = ContractorConverter.toContractor(firstContractorValues_Booked);
 	private final Contractor newContractor = ContractorConverter.toContractor(newContractorValues);
 
 	private final String[] NO_SEARCH_CRITERIA = new String[] { "", "" };
@@ -45,7 +48,7 @@ public class LocalServiceTest {
 	@Before
 	public void setup() throws DatabaseException {
 		data = DAOFactory.getDbManager(DB_FILE_PATH);
-		services = new LocalServiceImpl(data);
+		services = new BasicServiceImpl(data);
 	}
 
 	@After
@@ -55,35 +58,26 @@ public class LocalServiceTest {
 	}
 
 	@Test
-	public void testCreateBooking_newContractor() throws ServicesException, DatabaseException, RemoteException {
-		services.createBooking(newContractor);
-		assertEquals(29, data.getTotalNumberOfRecords());
-		assertEquals(29, data.getAllValidRecords().size());
-		assertEquals(28, data.find(newContractorValues)[0]);
-		assertArrayEquals(newContractorValues, data.read(28));
+	public void testBook_availableContractor() throws ServicesException, DatabaseException, RemoteException {
+		services.book(firstContractor_Booked);
+		assertEquals(28, data.getTotalNumberOfRecords());
+		assertEquals(28, data.getAllValidRecords().size());
+		assertEquals(0, data.find(firstContractorValues_Booked)[0]);
+		assertArrayEquals(firstContractorValues_Booked, data.read(0));
 	}
 
-	@Test(expected = DuplicateContractorException.class)
-	public void testCreateBooking_newContractor_duplicate()
-			throws ServicesException, DatabaseException, RemoteException {
-		services.createBooking(newContractor);
-		services.createBooking(newContractor);
+	@Test(expected = AlreadyBookedException.class)
+	public void testBook_bookedContractor() throws ServicesException, DatabaseException, RemoteException {
+		services.book(firstContractor_Booked);
+		services.book(firstContractor_Booked);
 	}
 
-	@Test(expected = DuplicateContractorException.class)
-	public void testCreateBooking_existingContractor() throws ServicesException, RemoteException {
-		services.createBooking(firstContractor);
-	}
-
-	@Test
-	public void testCreateBooking_existingDeletedContractor()
-			throws ServicesException, DatabaseException, RemoteException {
+	@Test(expected = ContractorNotFoundException.class)
+	public void testBook_DeletedContractor() throws ServicesException, DatabaseException, RemoteException {
 		data.delete(0);
 		assertEquals(28, data.getTotalNumberOfRecords());
 		assertEquals(27, data.getAllValidRecords().size());
-		services.createBooking(firstContractor);
-		assertEquals(28, data.getTotalNumberOfRecords());
-		assertEquals(28, data.getAllValidRecords().size());
+		services.book(firstContractor_Booked);
 	}
 
 	@Test

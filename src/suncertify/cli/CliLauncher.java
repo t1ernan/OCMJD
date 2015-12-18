@@ -9,6 +9,8 @@ import suncertify.business.ServicesException;
 import suncertify.business.rmi.RMIServer;
 import suncertify.business.rmi.RMIServices;
 import suncertify.db.DAOFactory;
+import suncertify.ui.launch.StandaloneLaunchDialog;
+import suncertify.util.Configuration;
 
 public class CliLauncher {
 
@@ -18,7 +20,7 @@ public class CliLauncher {
 	private final static int ONE = 1;
 
 	public static void main(String[] args) throws RemoteException, ServicesException {
-
+		new Configuration();
 		final int NUM_OF_ARGS = args.length;
 
 		switch (NUM_OF_ARGS) {
@@ -55,8 +57,7 @@ public class CliLauncher {
 	}
 
 	private static void runStandalone() {
-		// TODO Auto-generated method stub
-
+		new StandaloneLaunchDialog();
 	}
 
 	private static boolean isNonNetworked(final String mode) {

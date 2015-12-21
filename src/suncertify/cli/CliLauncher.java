@@ -2,13 +2,10 @@ package suncertify.cli;
 
 import java.rmi.RemoteException;
 
-import javax.swing.JPanel;
-
 import suncertify.business.ServicesException;
-import suncertify.ui.panel.ClientConfigPanel;
-import suncertify.ui.panel.ServerConfigPanel;
-import suncertify.ui.panel.StandaloneConfigPanel;
-import suncertify.ui.window.ConfigWindow;
+import suncertify.ui.window.ClientConfigWindow;
+import suncertify.ui.window.ServerConfigWindow;
+import suncertify.ui.window.StandaloneConfigWindow;
 import suncertify.util.Config;
 
 public class CliLauncher {
@@ -46,18 +43,18 @@ public class CliLauncher {
 	}
 
 	private static void runClient() {
-		launchConfigWindow(new ClientConfigPanel());
+		new ClientConfigWindow();
 	}
 
 	private static void runServer() throws RemoteException, ServicesException {
-		launchConfigWindow(new ServerConfigPanel());
+		new ServerConfigWindow();
 		// RMIServices service = new
 		// RMIServer(DAOFactory.getDbManager(DB_FILE_PATH));
 		// service.startServer(RMI_PORT);
 	}
 
 	private static void runStandalone() {
-		launchConfigWindow(new StandaloneConfigPanel());
+		new StandaloneConfigWindow();
 	}
 
 	private static boolean isNonNetworked(final String mode) {
@@ -66,9 +63,5 @@ public class CliLauncher {
 
 	private static boolean isNetworked(final String mode) {
 		return mode.equals(NETWORKED);
-	}
-
-	private static void launchConfigWindow(JPanel configPanel) {
-		new ConfigWindow(configPanel);
 	}
 }

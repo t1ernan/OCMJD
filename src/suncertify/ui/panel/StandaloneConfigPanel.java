@@ -7,7 +7,7 @@ import javax.swing.JTextField;
 
 public class StandaloneConfigPanel extends ConfigurationPanel {
 
-	private final JLabel standaloneDbLocationLabel = new JLabel("Location of database in file system: ");
+	private final JLabel standaloneDbLocationLabel = new JLabel("Location of database: ");
 	private final JTextField standaloneDbLocationField = new JTextField(config.getStandaloneDBLocation());
 
 	public StandaloneConfigPanel() {
@@ -30,9 +30,10 @@ public class StandaloneConfigPanel extends ConfigurationPanel {
 		this.add(standaloneDbLocationField, constraints);
 	}
 
+	@Override
 	public void addConfirmButton() {
 		constraints.gridx = 1;
-		constraints.gridy = 2;
+		constraints.gridy = 1;
 		constraints.anchor = GridBagConstraints.FIRST_LINE_START;
 		confirmButton.addActionListener(action -> {
 			final String dbLocation = standaloneDbLocationField.getText();

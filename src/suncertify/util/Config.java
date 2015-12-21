@@ -51,7 +51,6 @@ public class Config {
 			setServerIPAddress(getConfigValue(configFileReader.readLine()));
 			setPortNumber(Integer.parseInt(getConfigValue(configFileReader.readLine())));
 		}
-
 	}
 
 	private String getConfigValue(String line) throws IOException {

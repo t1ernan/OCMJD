@@ -1,4 +1,4 @@
-package suncertify.ui;
+package suncertify.ui.window;
 
 import static suncertify.util.Constants.EMPTY_SPACE;
 import static suncertify.util.Constants.MAIN_WINDOW_TITLE;
@@ -16,6 +16,7 @@ import suncertify.business.ContractorServices;
 import suncertify.business.ServicesException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
+import suncertify.ui.controllers.DisplayContractorListener;
 
 public class MainWindow extends JFrame {
 

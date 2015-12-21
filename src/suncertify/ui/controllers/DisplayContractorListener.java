@@ -1,4 +1,4 @@
-package suncertify.ui;
+package suncertify.ui.controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +10,7 @@ import suncertify.business.ContractorServices;
 import suncertify.business.ServicesException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
+import suncertify.ui.window.MainWindow;
 
 public class DisplayContractorListener implements ActionListener {
 

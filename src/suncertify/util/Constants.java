@@ -7,6 +7,7 @@ public class Constants {
 	public static final String RMI_HOSTNAME = "localhost";
 	public static final int RMI_PORT = 222;
 	public static final String EMPTY_SPACE = "";
+	public static final String EQUALS = "=";
 	public static final String CONFIGURATION_WINDOW_TITLE = "System Configuration Options";
 	public static final String CONFIGURATION_PANEL_TITLE = "Configuration Details";
 	public static final String MAIN_WINDOW_TITLE = "Bodgitt and Scarper Booking System";
@@ -18,6 +19,11 @@ public class Constants {
 	public static final int BUTTON_LENGTH = 20;
 
 	public static final String CONFIGURATION_FILE_NAME = "suncertify.properties";
+
+	public static final String DB_LOCATION_SERVER = "Server_Database_Location";
+	public static final String DB_LOCATION_STANDALONE = "Standalone_Database_Location";
+	public static final String SERVER_IPADDRESS = "Server_IP_Address";
+	public static final String PORT_NUMBER = "Port_Number";
 
 	public static final String DEFAULT_DB_LOCATION_SERVER = System.getProperty("user.dir");
 	public static final String DEFAULT_DB_LOCATION_STANDALONE = System.getProperty("user.dir");

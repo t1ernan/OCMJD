@@ -1,16 +1,15 @@
 package suncertify.cli;
 
-import static suncertify.util.Constants.DB_FILE_PATH;
-import static suncertify.util.Constants.RMI_PORT;
-
 import java.rmi.RemoteException;
 
+import javax.swing.JPanel;
+
 import suncertify.business.ServicesException;
-import suncertify.business.rmi.RMIServer;
-import suncertify.business.rmi.RMIServices;
-import suncertify.db.DAOFactory;
-import suncertify.ui.launch.StandaloneLaunchDialog;
-import suncertify.util.Configuration;
+import suncertify.ui.panel.ClientConfigPanel;
+import suncertify.ui.panel.ServerConfigPanel;
+import suncertify.ui.panel.StandaloneConfigPanel;
+import suncertify.ui.window.ConfigWindow;
+import suncertify.util.Config;
 
 public class CliLauncher {
 
@@ -20,7 +19,7 @@ public class CliLauncher {
 	private final static int ONE = 1;
 
 	public static void main(String[] args) throws RemoteException, ServicesException {
-		new Configuration();
+		Config.getInstance();
 		final int NUM_OF_ARGS = args.length;
 
 		switch (NUM_OF_ARGS) {
@@ -47,17 +46,18 @@ public class CliLauncher {
 	}
 
 	private static void runClient() {
-		// TODO Auto-generated method stub
-
+		launchConfigWindow(new ClientConfigPanel());
 	}
 
 	private static void runServer() throws RemoteException, ServicesException {
-		RMIServices service = new RMIServer(DAOFactory.getDbManager(DB_FILE_PATH));
-		service.startServer(RMI_PORT);
+		launchConfigWindow(new ServerConfigPanel());
+		// RMIServices service = new
+		// RMIServer(DAOFactory.getDbManager(DB_FILE_PATH));
+		// service.startServer(RMI_PORT);
 	}
 
 	private static void runStandalone() {
-		new StandaloneLaunchDialog();
+		launchConfigWindow(new StandaloneConfigPanel());
 	}
 
 	private static boolean isNonNetworked(final String mode) {
@@ -66,5 +66,9 @@ public class CliLauncher {
 
 	private static boolean isNetworked(final String mode) {
 		return mode.equals(NETWORKED);
+	}
+
+	private static void launchConfigWindow(JPanel configPanel) {
+		new ConfigWindow(configPanel);
 	}
 }

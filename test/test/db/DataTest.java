@@ -97,7 +97,7 @@ public class DataTest {
 	public void testDelete_ValidRecord() throws DatabaseException {
 		data.delete(VALID_RECORD_NUMBER);
 		assertEquals(28, data.getTotalNumberOfRecords());
-		assertEquals(new Integer(VALID_RECORD_NUMBER), data.getReusableRecordNumber());
+		assertEquals(new Integer(VALID_RECORD_NUMBER), data.getRecordNumber());
 	}
 
 	@Test(expected = RecordNotFoundException.class)

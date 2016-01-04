@@ -25,8 +25,8 @@ public class Constants {
 	public static final String SERVER_IPADDRESS = "Server_IP_Address";
 	public static final String PORT_NUMBER = "Port_Number";
 
-	public static final String DEFAULT_DB_LOCATION_SERVER = System.getProperty("user.dir");
-	public static final String DEFAULT_DB_LOCATION_STANDALONE = System.getProperty("user.dir");
+	public static final String DEFAULT_DB_LOCATION_SERVER = System.getProperty("user.dir") + "\\db-2x2.db";
+	public static final String DEFAULT_DB_LOCATION_STANDALONE = System.getProperty("user.dir") + "\\db-2x2.db";
 	public static final String DEFAULT_SERVER_IPADDRESS = "localhost";
 	public static final int DEFAULT_PORT_NUMBER = 222;
 

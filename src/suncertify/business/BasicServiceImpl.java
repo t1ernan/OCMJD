@@ -21,30 +21,35 @@ public class BasicServiceImpl implements ContractorServices {
 	}
 
 	@Override
-	public void book(Contractor contractor) throws ServicesException, RemoteException {
+	public void book(Contractor contractor) throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
 		final String[] fieldValues = ContractorConverter.toFieldValues(contractor);
 		final String[] uniqueId = ContractorPKConverter.toSearchCriteria(contractor.getPrimaryKey());
+		final int recordNumber;
 		try {
-			final int recordNumber = databaseManager.find(uniqueId)[0];
+			recordNumber = databaseManager.find(uniqueId)[0];
 			databaseManager.lock(recordNumber);
-			if (isContractorAvailableForBooking(recordNumber)) {
-				databaseManager.update(recordNumber, fieldValues);
-				databaseManager.unlock(recordNumber);
-			} else {
-				databaseManager.unlock(recordNumber);
-				throw new AlreadyBookedException("Contractor has already been booked.");
-			}
+			validateContractor(recordNumber);
+			databaseManager.update(recordNumber, fieldValues);
+			databaseManager.unlock(recordNumber);
 		} catch (RecordNotFoundException e) {
 			throw new ContractorNotFoundException("Contractor could not be found. " + e.getMessage());
 		}
 
 	}
 
-	private boolean isContractorAvailableForBooking(int recordNumber) throws RecordNotFoundException, RemoteException {
-		final String[] fieldValues = databaseManager.read(recordNumber);
-		final Contractor contractor = ContractorConverter.toContractor(fieldValues);
-		final String bookingReference = contractor.getOwner();
-		return bookingReference.isEmpty();
+	private void validateContractor(int recordNumber)
+			throws ContractorNotFoundException, AlreadyBookedException, RemoteException, RecordNotFoundException {
+		try {
+			final String[] fieldValues = databaseManager.read(recordNumber);
+			final Contractor contractor = ContractorConverter.toContractor(fieldValues);
+			if (!contractor.getOwner().isEmpty()) {
+				databaseManager.unlock(recordNumber);
+				throw new AlreadyBookedException("Contractor has already been booked.");
+			}
+		} catch (RecordNotFoundException e) {
+			databaseManager.unlock(recordNumber);
+			throw new ContractorNotFoundException("Contractor could not be found. " + e.getMessage());
+		}
 	}
 
 	@Override

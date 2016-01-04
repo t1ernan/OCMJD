@@ -38,7 +38,7 @@ public class DataConcurrencyTest {
 			 * time, but if you want, you can increase the controller variable,
 			 * so it is executed as many times as you want
 			 */
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 100; i++) {
 				Thread updatingRandom = new UpdatingRandomRecordThread();
 				updatingRandom.start();
 				Thread updatingRecord1 = new UpdatingRecord1Thread();

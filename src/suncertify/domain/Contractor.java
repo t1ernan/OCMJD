@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 public class Contractor implements Serializable {
 
-	private static final long serialVersionUID = 5785335406521960333L;
-
 	private ContractorPK primaryKey;
 
 	private String specialities;

@@ -16,7 +16,6 @@ public class ContractorConverter {
 		fieldValues[3] = String.valueOf(contractor.getSize());
 		fieldValues[4] = contractor.getRate();
 		fieldValues[5] = contractor.getOwner();
-
 		return fieldValues;
 	}
 

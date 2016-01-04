@@ -2,33 +2,34 @@ package suncertify.db;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import suncertify.util.ListConverter;
 
 public class Data implements DBMainExtended {
 
-	private static final Map<Integer, String[]> cache = new HashMap<>();
-	private static final List<Integer> lockedRecords = new ArrayList<>();
-
+	private final Map<Integer, String[]> cache = new HashMap<>();
 	private final DBAccessManager dbAccessManager;
+	private final Set<Integer> lockedRecords = new HashSet<>();
 
 	public Data(String databasePath) throws DatabaseException {
 		this.dbAccessManager = new DBAccessManager(databasePath);
 		load();
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				try {
-					save();
-				} catch (DatabaseException e) {
-					System.err.println("Could not save data: " + e.getMessage());
-				}
-			}
-		});
+		// Runtime.getRuntime().addShutdownHook(new Thread() {
+		// @Override
+		// public void run() {
+		// try {
+		// save();
+		// } catch (DatabaseException e) {
+		// System.err.println("Could not save data: " + e.getMessage());
+		// }
+		// }
+		// });
 	}
 
 	/**
@@ -36,7 +37,7 @@ public class Data implements DBMainExtended {
 	 */
 	@Override
 	public synchronized String[] read(int recNo) throws RecordNotFoundException {
-		validateRecordExists(recNo);
+		validateRecord(recNo);
 		return cache.get(recNo);
 	}
 
@@ -45,7 +46,7 @@ public class Data implements DBMainExtended {
 	 */
 	@Override
 	public synchronized void update(int recNo, String[] data) throws RecordNotFoundException {
-		validateRecordExists(recNo);
+		validateRecord(recNo);
 		cache.put(recNo, data);
 	}
 
@@ -54,7 +55,7 @@ public class Data implements DBMainExtended {
 	 */
 	@Override
 	public synchronized void delete(int recNo) throws RecordNotFoundException {
-		validateRecordExists(recNo);
+		validateRecord(recNo);
 		cache.put(recNo, null);
 	}
 
@@ -111,34 +112,32 @@ public class Data implements DBMainExtended {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void lock(int recNo) throws RecordNotFoundException {
+	public void lock(int recNo) throws RecordNotFoundException {
 		while (isLocked(recNo)) {
 			try {
+				validateRecord(recNo);
 				wait();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 		}
-		lockedRecords.add(new Integer(recNo));
+		lockedRecords.add(recNo);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void unlock(int recNo) throws RecordNotFoundException {
-		lockedRecords.remove(new Integer(recNo));
-		notify();
+	public void unlock(int recNo) throws RecordNotFoundException {
+		lockedRecords.remove(recNo);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized boolean isLocked(int recNo) throws RecordNotFoundException {
-		validateRecordExists(recNo);
-		final boolean isLocked = lockedRecords.contains(recNo);
-		return isLocked;
+	public boolean isLocked(int recNo) throws RecordNotFoundException {
+		return lockedRecords.contains(recNo);
 	}
 
 	/**
@@ -157,26 +156,7 @@ public class Data implements DBMainExtended {
 		cache.clear();
 	}
 
-	private synchronized Integer getRecordNumber() {
-		final Integer recordNumber = getReusableRecordNumber();
-		return (recordNumber == null) ? cache.size() : recordNumber;
-
-	}
-
-	private synchronized String getUniqueKey(String[] data) {
-		final String name = data[0];
-		final String location = data[1];
-		final String uniqueKey = name + "_" + location;
-		return uniqueKey;
-	}
-
-	private synchronized void validateRecordExists(int recNo) throws RecordNotFoundException {
-		if (!getAllValidRecords().containsKey(recNo)) {
-			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
-		}
-	}
-
-	public synchronized Integer getReusableRecordNumber() {
+	public Integer getRecordNumber() {
 		Integer deletedRecordNumber = null;
 		for (Entry<Integer, String[]> record : cache.entrySet()) {
 			if (record.getValue() == null) {
@@ -184,11 +164,23 @@ public class Data implements DBMainExtended {
 				break;
 			}
 		}
-
-		return deletedRecordNumber;
+		return (deletedRecordNumber == null) ? cache.size() : deletedRecordNumber;
 	}
 
-	public synchronized Map<Integer, String[]> getAllValidRecords() {
+	private String getUniqueKey(String[] data) {
+		final String name = data[0];
+		final String location = data[1];
+		final String uniqueKey = name + "_" + location;
+		return uniqueKey;
+	}
+
+	private void validateRecord(int recNo) throws RecordNotFoundException {
+		if (!getAllValidRecords().containsKey(recNo)) {
+			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
+		}
+	}
+
+	public Map<Integer, String[]> getAllValidRecords() {
 		final Map<Integer, String[]> validRecords = new HashMap<>();
 		for (Entry<Integer, String[]> record : cache.entrySet()) {
 			final int recordNumber = record.getKey();
@@ -197,13 +189,7 @@ public class Data implements DBMainExtended {
 				validRecords.put(new Integer(recordNumber), fieldValues);
 			}
 		}
-
 		return validRecords;
-	}
-
-	public void printCache() {
-		cache.forEach((k, v) -> System.out.println("Key: " + k + " , Values: \t name:" + v[0] + ", location: " + v[1]
-				+ ", specialities:" + v[2] + ", size: " + v[3] + ", rate: " + v[4] + ", owner: " + v[5]));
 	}
 
 	public int getTotalNumberOfRecords() {

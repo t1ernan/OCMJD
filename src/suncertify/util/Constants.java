@@ -29,5 +29,6 @@ public class Constants {
 	public static final String DEFAULT_DB_LOCATION_STANDALONE = System.getProperty("user.dir") + "\\db-2x2.db";
 	public static final String DEFAULT_SERVER_IPADDRESS = "localhost";
 	public static final int DEFAULT_PORT_NUMBER = 222;
+	public static final String UNDERSCORE = "_";
 
 }

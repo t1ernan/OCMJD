@@ -1,24 +1,31 @@
 package suncertify.db;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DatabaseException.
+ * The class DatabaseException is a direct subclass of {@link Exception} and a
+ * common superclass of a number of database-related exceptions.
  */
-public class DatabaseException extends Exception{
+public class DatabaseException extends Exception {
 
 	/**
-	 * Instantiates a new database exception.
+	 * The serial version UID
 	 */
-	public DatabaseException(){
+	private static final long serialVersionUID = 17011991;
+
+	/**
+	 * Constructs a new DatabaseException with {@code null} as its detail
+	 * message
+	 */
+	public DatabaseException() {
 		super();
 	}
-	
+
 	/**
-	 * Instantiates a new database exception.
+	 * Constructs a new DatabaseException with the specified detail message
 	 *
-	 * @param message the message
+	 * @param message
+	 *            the detail message
 	 */
-	public DatabaseException(String message){
+	public DatabaseException(String message) {
 		super(message);
 	}
 }

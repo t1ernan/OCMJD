@@ -1,29 +1,36 @@
 package test.business;
 
+import static suncertify.util.Constants.DEFAULT_DB_LOCATION_STANDALONE;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import static suncertify.util.Constants.*;
 
 import suncertify.business.AlreadyBookedException;
 import suncertify.business.BasicServiceImpl;
 import suncertify.business.ContractorNotFoundException;
-import suncertify.business.ContractorServices;
-import suncertify.business.ServicesException;
-import suncertify.business.rmi.RMIServer;
-import suncertify.business.rmi.RMIServices;
-import suncertify.db.DAOFactory;
+import suncertify.db.DBMain;
+import suncertify.db.DBMainFactory;
+import suncertify.db.DatabaseException;
+import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.util.ContractorConverter;
 
 public class TestBusinessService {
 
-	public static void main(final String[] args) throws RemoteException, ServicesException {
+	private static DBMain data;
+
+	public TestBusinessService(DBMain data) throws DatabaseException {
+		this.data = DBMainFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
+	}
+
+	public static void main(final String[] args) throws RemoteException, DatabaseException {
 		// start your RMI-server
-//		RMIServices service = new RMIServer(DAOFactory.getDbManager(DB_FILE_PATH));
-//		service.startServer(RMI_PORT);
-		new TestBusinessService().startTests();
+		// RMIServices service = new
+		// RMIServer(DAOFactory.getDbManager(DB_FILE_PATH));
+		// service.startServer(RMI_PORT);
+		new TestBusinessService(data).startTests();
 	}
 
 	public void startTests() {
@@ -31,7 +38,7 @@ public class TestBusinessService {
 		try {
 			// create book-threads
 			for (int i = 0; i < 35; i++) {
-				threads.add(new Thread(new BookThread(i * 100), String.valueOf(i * 100)));
+				threads.add(new Thread(new BookThread(i), String.valueOf(i)));
 			}
 			// random order
 			Collections.shuffle(threads);
@@ -53,13 +60,13 @@ public class TestBusinessService {
 		private int id;
 		private String customer;
 		private boolean endRun;
-		private boolean noRoom;
+		private boolean noContractor;
 
 		public BookThread(final int id) {
 			this.id = id;
 			this.customer = String.format("%1$08d", id);
 			this.endRun = false;
-			this.noRoom = false;
+			this.noContractor = false;
 		}
 
 		@Override
@@ -67,24 +74,20 @@ public class TestBusinessService {
 			int recNo = 0;
 			while (!endRun) {
 				try {
-					final ContractorPK primaryKey = new ContractorPK();
-					primaryKey.setName("Palace");
-					primaryKey.setLocation("Smallville");
-					final Contractor contractor = new Contractor();
-					contractor.setPrimaryKey(primaryKey);
-					contractor.setSize(2);
-					contractor.setSpecialities("Getting stuff done, horsing it");
-					contractor.setRate("$150.00");
-					contractor.setOwner("54120584");
-					BasicServiceImpl service = new BasicServiceImpl(
-							DAOFactory.getDbManager(DEFAULT_DB_LOCATION_STANDALONE));
-					service.book(contractor);
-					endRun = true;
+					try {
+						Contractor contractor = ContractorConverter.toContractor(data.read(recNo));
+						contractor.setOwner("54120584");
+						BasicServiceImpl service = new BasicServiceImpl(data);
+						service.book(contractor);
+						endRun = true;
+					} catch (RecordNotFoundException e) {
+						throw new ContractorNotFoundException();
+					}
 				} catch (RemoteException e) {
 					System.out.println(e);
 				} catch (ContractorNotFoundException e) {
 					endRun = true;
-					noRoom = true;
+					noContractor = true;
 				} catch (AlreadyBookedException e) {
 					// expected to occur
 				}
@@ -92,10 +95,14 @@ public class TestBusinessService {
 					recNo++;
 				}
 			}
-			if (noRoom) {
-				System.out.println(id + " booked no room");
-			} else {
-				System.out.println(id + " booked room " + recNo);
+			if (noContractor)
+
+			{
+				System.out.println(id + " booked no contractor");
+			} else
+
+			{
+				System.out.println(id + " booked contractor " + recNo);
 			}
 		}
 	}

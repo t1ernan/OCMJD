@@ -2,7 +2,7 @@ package suncertify.cli;
 
 import java.rmi.RemoteException;
 
-import suncertify.business.ServicesException;
+import suncertify.business.ServiceException;
 import suncertify.ui.window.ClientConfigWindow;
 import suncertify.ui.window.ServerConfigWindow;
 import suncertify.ui.window.StandaloneConfigWindow;
@@ -15,7 +15,7 @@ public class CliLauncher {
 	private final static int ZERO = 0;
 	private final static int ONE = 1;
 
-	public static void main(String[] args) throws RemoteException, ServicesException {
+	public static void main(String[] args) throws RemoteException, ServiceException {
 		Config.getInstance();
 		final int NUM_OF_ARGS = args.length;
 
@@ -46,7 +46,7 @@ public class CliLauncher {
 		new ClientConfigWindow();
 	}
 
-	private static void runServer() throws RemoteException, ServicesException {
+	private static void runServer() throws RemoteException, ServiceException {
 		new ServerConfigWindow();
 		// RMIServices service = new
 		// RMIServer(DAOFactory.getDbManager(DB_FILE_PATH));

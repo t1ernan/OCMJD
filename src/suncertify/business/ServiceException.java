@@ -1,11 +1,11 @@
 package suncertify.business;
 
-public class ServicesException extends Exception {
+public class ServiceException extends Exception {
 
 	/**
 	 * Instantiates a new services exception.
 	 */
-	public ServicesException() {
+	public ServiceException() {
 		super();
 	}
 
@@ -15,7 +15,7 @@ public class ServicesException extends Exception {
 	 * @param message
 	 *            the message
 	 */
-	public ServicesException(String message) {
+	public ServiceException(String message) {
 		super(message);
 	}
 

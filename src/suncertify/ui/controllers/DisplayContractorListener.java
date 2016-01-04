@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
 
 import suncertify.business.ContractorServices;
-import suncertify.business.ServicesException;
+import suncertify.business.ServiceException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 import suncertify.ui.window.MainWindow;
@@ -34,7 +34,7 @@ public class DisplayContractorListener implements ActionListener {
 		try {
 			Contractor contractor = service.find(primaryKey).get(0);
 			displayContractor(contractor);
-		} catch (ServicesException e) {
+		} catch (ServiceException e) {
 			final String message = "No contractor with the given parameters could be found";
 			JOptionPane.showMessageDialog(null, message, "Contractor Booking System", JOptionPane.INFORMATION_MESSAGE);
 		} catch (RemoteException e) {

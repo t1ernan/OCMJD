@@ -8,7 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import suncertify.db.DAOFactory;
+import suncertify.db.DBMain;
+import suncertify.db.DBMainFactory;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.db.DuplicateKeyException;
@@ -16,7 +17,7 @@ import suncertify.db.RecordNotFoundException;
 
 public class DataTest {
 
-	private Data data;
+	private DBMain data;
 
 	private final String[] oldValues = new String[] { "Dogs With Tools", "Smallville", "Roofing", "7", "$35.00", "" };
 	private final String[] newValues = new String[] { "Smack my Itch up", "Gotham", "Getting It Done,Horsing It", "12",
@@ -37,24 +38,24 @@ public class DataTest {
 
 	@Before
 	public void setup() throws DatabaseException {
-		data = DAOFactory.getDbManager(DB_FILE_PATH);
+		data = DBMainFactory.getDatabase(DB_FILE_PATH);
 	}
 
 	@After
 	public void teardown() throws DatabaseException {
-		data.clear();
-		data.load();
+		((Data) data).clear();
+		((Data) data).load();
 	}
 
 	@Test
 	public void testLoadCache() {
-		assertEquals(28, data.getTotalNumberOfRecords());
+		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 	}
 
 	@Test
 	public void testSaveData() throws DatabaseException {
-		data.save();
-		assertEquals(28, data.getTotalNumberOfRecords());
+		((Data) data).save();
+		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 	}
 
 	@Test
@@ -79,7 +80,7 @@ public class DataTest {
 		data.update(VALID_RECORD_NUMBER, newValues);
 		final String[] fieldValues = data.read(VALID_RECORD_NUMBER);
 		assertArrayEquals(newValues, fieldValues);
-		assertEquals(28, data.getTotalNumberOfRecords());
+		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 	}
 
 	@Test(expected = RecordNotFoundException.class)
@@ -96,8 +97,9 @@ public class DataTest {
 	@Test
 	public void testDelete_ValidRecord() throws DatabaseException {
 		data.delete(VALID_RECORD_NUMBER);
-		assertEquals(28, data.getTotalNumberOfRecords());
-		assertEquals(new Integer(VALID_RECORD_NUMBER), data.getRecordNumber());
+		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
+		// assertEquals(new Integer(VALID_RECORD_NUMBER),
+		// data.getRecordNumber());
 	}
 
 	@Test(expected = RecordNotFoundException.class)
@@ -113,10 +115,10 @@ public class DataTest {
 
 	@Test
 	public void testCreate_NewKey_NoDeletedRecordsInCache() throws DatabaseException {
-		final int newRecordNumber = data.getTotalNumberOfRecords();
+		final int newRecordNumber = ((Data) data).getTotalNumberOfRecords();
 		assertEquals(28, newRecordNumber);
 		assertEquals(28, data.create(newValues));
-		assertEquals(29, data.getTotalNumberOfRecords());
+		assertEquals(29, ((Data) data).getTotalNumberOfRecords());
 		assertArrayEquals(newValues, data.read(newRecordNumber));
 	}
 
@@ -128,9 +130,9 @@ public class DataTest {
 	@Test
 	public void testCreate_NewKey_DeletedRecordsInCache() throws DatabaseException {
 		data.delete(4);
-		assertEquals(28, data.getTotalNumberOfRecords());
+		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		assertEquals(4, data.create(newValues));
-		assertEquals(28, data.getTotalNumberOfRecords());
+		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		assertArrayEquals(newValues, data.read(4));
 	}
 
@@ -143,9 +145,9 @@ public class DataTest {
 	@Test
 	public void testCreate_DeletedKey_DeletedRecordsInCache() throws DatabaseException {
 		data.delete(VALID_RECORD_NUMBER);
-		assertEquals(28, data.getTotalNumberOfRecords());
+		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		assertEquals(VALID_RECORD_NUMBER, data.create(oldValues));
-		assertEquals(28, data.getTotalNumberOfRecords());
+		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		assertArrayEquals(oldValues, data.read(VALID_RECORD_NUMBER));
 	}
 

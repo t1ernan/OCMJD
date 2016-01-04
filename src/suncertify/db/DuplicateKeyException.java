@@ -1,24 +1,33 @@
 package suncertify.db;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DuplicateKeyException.
+ * The class DuplicateKeyException is a direct subclass of
+ * {@link DatabaseException}. It's thrown when attempting to add a new entry to
+ * the database when the database already contains an existing entry with the
+ * same primary key.
  */
 public class DuplicateKeyException extends DatabaseException {
 
 	/**
-	 * Instantiates a new duplicate key exception.
+	 * The serial version UID
 	 */
-	public DuplicateKeyException(){
+	private static final long serialVersionUID = 17011991;
+
+	/**
+	 * Constructs a new DuplicateKeyException with {@code null} as its detail
+	 * message
+	 */
+	public DuplicateKeyException() {
 		super();
 	}
-	
+
 	/**
-	 * Instantiates a new duplicate key exception.
+	 * Constructs a new DuplicateKeyException with the specified detail message
 	 *
-	 * @param message the message
+	 * @param message
+	 *            the detail message
 	 */
-	public DuplicateKeyException(String message){
+	public DuplicateKeyException(String message) {
 		super(message);
 	}
 }

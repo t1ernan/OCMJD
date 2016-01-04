@@ -11,7 +11,7 @@ import java.rmi.registry.Registry;
 import java.util.Map;
 
 import suncertify.business.ContractorServices;
-import suncertify.business.ServicesException;
+import suncertify.business.ServiceException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 
@@ -26,13 +26,13 @@ public class RMIClient implements ContractorServices {
 	}
 
 	@Override
-	public void book(Contractor contractor) throws ServicesException, RemoteException {
+	public void book(Contractor contractor) throws ServiceException, RemoteException {
 		service.book(contractor);
 
 	}
 
 	@Override
-	public Map<Integer, Contractor> find(ContractorPK primaryKey) throws ServicesException, RemoteException {
+	public Map<Integer, Contractor> find(ContractorPK primaryKey) throws ServiceException, RemoteException {
 		return service.find(primaryKey);
 	}
 

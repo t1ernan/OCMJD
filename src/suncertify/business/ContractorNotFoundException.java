@@ -1,6 +1,6 @@
 package suncertify.business;
 
-public class ContractorNotFoundException extends ServicesException {
+public class ContractorNotFoundException extends ServiceException {
 
 	/**
 	 * Instantiates a new ContractorNotFound exception.

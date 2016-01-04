@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import suncertify.business.ContractorServices;
-import suncertify.business.ServicesException;
+import suncertify.business.ServiceException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 import suncertify.ui.controllers.DisplayContractorListener;
@@ -40,7 +40,7 @@ public class MainWindow extends JFrame {
 		try {
 			Map<Integer, Contractor> records = service.find(primaryKey);
 			String[] columnNames = new String[] { "Name", "Location", "Specialities", "Size", "Rate", "Owner" };
-		} catch (ServicesException e) {
+		} catch (ServiceException e) {
 			final String message = "No contractor with the given parameters could be found";
 			JOptionPane.showMessageDialog(null, message, "Contractor Booking System", JOptionPane.INFORMATION_MESSAGE);
 		} catch (RemoteException e) {

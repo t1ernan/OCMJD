@@ -46,10 +46,10 @@ public class DBAccessManager {
 				recordNumber++;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new DatabaseException("Could not read data: " + e);
 		}
 	}
-	
+
 	public void persist(final Map<Integer, String[]> map) throws DatabaseException {
 		try (RandomAccessFile dbFile = new RandomAccessFile(databasePath, "rwd")) {
 			checkMagicCookie(dbFile);
@@ -64,7 +64,7 @@ public class DBAccessManager {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new DatabaseException("Could not save data: " + e);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class DBAccessManager {
 		final String trimmedFieldValue = removePadding(paddedFieldValue);
 		return trimmedFieldValue;
 	}
-	
+
 	private void writeString(RandomAccessFile dbFile, String fieldValue, int numberOfBytes) throws IOException {
 		final byte[] unpaddedBytes = convertStringToBytes(fieldValue);
 		final byte[] paddedBytes = addPadding(unpaddedBytes, numberOfBytes);
@@ -124,7 +124,7 @@ public class DBAccessManager {
 
 	private byte[] addPadding(byte[] unpaddedBytes, int size) {
 		final byte[] paddedBytes = new byte[size];
-		Arrays.fill(paddedBytes, (byte)0x20);
+		Arrays.fill(paddedBytes, (byte) 0x20);
 		System.arraycopy(unpaddedBytes, 0, paddedBytes, 0, unpaddedBytes.length);
 		return paddedBytes;
 	}

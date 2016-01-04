@@ -9,12 +9,12 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import suncertify.business.BasicServiceImpl;
-import suncertify.db.Data;
+import suncertify.db.DBMain;
 
 public class RMIServer extends BasicServiceImpl implements RMIServices {
 
-	public RMIServer(Data databaseManager) throws RemoteException {
-		super(databaseManager);
+	public RMIServer(DBMain data) throws RemoteException {
+		super(data);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package suncertify.business;
 
-public class AlreadyBookedException extends ServicesException {
+public class AlreadyBookedException extends ServiceException {
 
 	/**
 	 * Instantiates a new ContractorNotFound exception.

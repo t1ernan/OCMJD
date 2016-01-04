@@ -1,16 +1,18 @@
 package suncertify.db;
 
+import static suncertify.util.Constants.UNDERSCORE;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import suncertify.util.ListConverter;
 
-public class Data implements DBMainExtended {
+public class Data implements DBMain {
 
 	private final Map<Integer, String[]> cache = new HashMap<>();
 	private final DBAccessManager dbAccessManager;
@@ -18,13 +20,13 @@ public class Data implements DBMainExtended {
 
 	public Data(String databasePath) throws DatabaseException {
 		this.dbAccessManager = new DBAccessManager(databasePath);
-		load();
+		dbAccessManager.read(cache);
 
 		// Runtime.getRuntime().addShutdownHook(new Thread() {
 		// @Override
 		// public void run() {
 		// try {
-		// save();
+		// dbAccessManager.persist(cache);
 		// } catch (DatabaseException e) {
 		// System.err.println("Could not save data: " + e.getMessage());
 		// }
@@ -33,34 +35,75 @@ public class Data implements DBMainExtended {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Reads a record from the file. Returns an array where each element is a
+	 * record value
+	 *
+	 * @param recNo
+	 *            the record number
+	 * @return a string array where each element is a record value
+	 * @throws RecordNotFoundException
+	 *             If the specified record does not exist or is marked as
+	 *             deleted in the database
 	 */
 	@Override
 	public synchronized String[] read(int recNo) throws RecordNotFoundException {
-		validateRecord(recNo);
+		if (isInvalidRecord(recNo)) {
+			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
+		}
 		return cache.get(recNo);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Modifies the fields of a record. The new value for field n appears in
+	 * data[n].
+	 *
+	 * @param recNo
+	 *            the record number
+	 * @param data
+	 *            a string array where each element is a record value
+	 * @throws RecordNotFoundException
+	 *             If the specified record does not exist or is marked as
+	 *             deleted in the database
 	 */
 	@Override
 	public synchronized void update(int recNo, String[] data) throws RecordNotFoundException {
-		validateRecord(recNo);
+		if (isInvalidRecord(recNo)) {
+			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
+		}
 		cache.put(recNo, data);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Deletes a record, making the record number and associated disk storage
+	 * available for reuse.
+	 *
+	 * @param recNo
+	 *            the record number
+	 * @throws RecordNotFoundException
+	 *             If the specified record does not exist or is marked as
+	 *             deleted in the database
 	 */
 	@Override
 	public synchronized void delete(int recNo) throws RecordNotFoundException {
-		validateRecord(recNo);
+		if (isInvalidRecord(recNo)) {
+			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
+		}
 		cache.put(recNo, null);
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns an array of record numbers that match the specified criteria.
+	 * Field n in the database file is described by criteria[n]. A null value in
+	 * criteria[n] matches any field value. A non-null value in criteria[n]
+	 * matches any field value that begins with criteria[n]. (For example,
+	 * "Fred" matches "Fred" or "Freddy".)
+	 *
+	 * @param criteria
+	 *            the criteria
+	 * @return an array of record numbers that match the specified criteria
+	 * @throws RecordNotFoundException
+	 *             If the specified record does not exist or is marked as
+	 *             deleted in the database
 	 */
 	@Override
 	public synchronized int[] find(String[] criteria) throws RecordNotFoundException {
@@ -90,7 +133,16 @@ public class Data implements DBMainExtended {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Creates a new record in the database (possibly reusing a deleted entry).
+	 * Inserts the given data, and returns the record number of the new record.
+	 *
+	 * @param data
+	 *            a string array where each element is a record value
+	 * @return the record number of the new record
+	 * @throws DuplicateKeyException
+	 *             If an existing record in the database, which has not been
+	 *             marked as deleted, contains the same key specified in the
+	 *             given data
 	 */
 	@Override
 	public synchronized int create(String[] data) throws DuplicateKeyException {
@@ -109,13 +161,20 @@ public class Data implements DBMainExtended {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Locks a record so that it can only be updated or deleted by this client.
+	 * If the specified record is already locked, the current thread gives up
+	 * the CPU and consumes no CPU cycles until the record is unlocked.
+	 *
+	 * @param recNo
+	 *            the record number
+	 * @throws RecordNotFoundException
+	 *             If the specified record does not exist or is marked as
+	 *             deleted in the database
 	 */
 	@Override
-	public void lock(int recNo) throws RecordNotFoundException {
+	public synchronized void lock(int recNo) throws RecordNotFoundException {
 		while (isLocked(recNo)) {
 			try {
-				validateRecord(recNo);
 				wait();
 			} catch (InterruptedException e) {
 				System.out.println(e.getMessage());
@@ -125,38 +184,48 @@ public class Data implements DBMainExtended {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Releases the lock on a record.
+	 *
+	 * @param recNo
+	 *            the record number
+	 * @throws RecordNotFoundException
+	 *             If the specified record does not exist or is marked as
+	 *             deleted in the database
 	 */
 	@Override
-	public void unlock(int recNo) throws RecordNotFoundException {
-		lockedRecords.remove(recNo);
+	public synchronized void unlock(int recNo) throws RecordNotFoundException {
+		if (isLockedRecord(recNo)) {
+			lockedRecords.remove(recNo);
+			notifyAll();
+		} else {
+			throw new RecordNotFoundException("Record " + recNo + " is not a valid locked record");
+		}
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Determines if a record is currently locked. Returns true if the record is
+	 * locked, false otherwise.
+	 *
+	 * @param recNo
+	 *            the record number
+	 * @return true, if is locked
+	 * @throws RecordNotFoundException
+	 *             If the specified record does not exist or is marked as
+	 *             deleted in the database
 	 */
 	@Override
-	public boolean isLocked(int recNo) throws RecordNotFoundException {
+	public synchronized boolean isLocked(int recNo) throws RecordNotFoundException {
+		if (isInvalidRecord(recNo)) {
+			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
+		}
+		return isLockedRecord(recNo);
+	}
+
+	private boolean isLockedRecord(int recNo) {
 		return lockedRecords.contains(recNo);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void save() throws DatabaseException {
-		dbAccessManager.persist(cache);
-	}
-
-	public void load() throws DatabaseException {
-		dbAccessManager.read(cache);
-	}
-
-	public void clear() {
-		cache.clear();
-	}
-
-	public Integer getRecordNumber() {
+	private Integer getRecordNumber() {
 		Integer deletedRecordNumber = null;
 		for (Entry<Integer, String[]> record : cache.entrySet()) {
 			if (record.getValue() == null) {
@@ -170,17 +239,15 @@ public class Data implements DBMainExtended {
 	private String getUniqueKey(String[] data) {
 		final String name = data[0];
 		final String location = data[1];
-		final String uniqueKey = name + "_" + location;
+		final String uniqueKey = name + UNDERSCORE + location;
 		return uniqueKey;
 	}
 
-	private void validateRecord(int recNo) throws RecordNotFoundException {
-		if (!getAllValidRecords().containsKey(recNo)) {
-			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
-		}
+	private boolean isInvalidRecord(int recNo) {
+		return !getAllValidRecords().containsKey(recNo);
 	}
 
-	public Map<Integer, String[]> getAllValidRecords() {
+	private Map<Integer, String[]> getAllValidRecords() {
 		final Map<Integer, String[]> validRecords = new HashMap<>();
 		for (Entry<Integer, String[]> record : cache.entrySet()) {
 			final int recordNumber = record.getKey();
@@ -192,7 +259,21 @@ public class Data implements DBMainExtended {
 		return validRecords;
 	}
 
+	// TODO: TEST METHODS BELOW, DELETE BEFORE SUBMISSION
+
 	public int getTotalNumberOfRecords() {
 		return cache.size();
+	}
+
+	public synchronized void clear() {
+		cache.clear();
+	}
+
+	public synchronized void save() throws DatabaseException {
+		dbAccessManager.persist(cache);
+	}
+
+	public synchronized void load() throws DatabaseException {
+		dbAccessManager.read(cache);
 	}
 }

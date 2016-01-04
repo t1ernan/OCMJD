@@ -1,16 +1,25 @@
 package test.db;
 
-import static suncertify.util.Constants.DB_FILE_PATH;
+import static suncertify.util.Constants.DEFAULT_DB_LOCATION_STANDALONE;
 
-import suncertify.db.DAOFactory;
-import suncertify.db.Data;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import suncertify.db.DBMain;
+import suncertify.db.DBMainFactory;
+import suncertify.db.DatabaseException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 import suncertify.util.ContractorConverter;
 
 public class DataConcurrencyTest {
 
-	private static final Data data = DAOFactory.getDbManager(DB_FILE_PATH);
+	private static DBMain data;
+
+	public DataConcurrencyTest(DBMain data) throws DatabaseException {
+		this.data = DBMainFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
+	}
 
 	/*
 	 * If any preparation has to be done before using the Data class, it can be
@@ -26,8 +35,8 @@ public class DataConcurrencyTest {
 
 	}
 
-	public static void main(String[] args) {
-		new DataConcurrencyTest().startTests();
+	public static void main(String[] args) throws DatabaseException {
+		new DataConcurrencyTest(data).startTests();
 	}
 
 	public void startTests() {
@@ -38,18 +47,32 @@ public class DataConcurrencyTest {
 			 * time, but if you want, you can increase the controller variable,
 			 * so it is executed as many times as you want
 			 */
-			for (int i = 0; i < 100; i++) {
-				Thread updatingRandom = new UpdatingRandomRecordThread();
-				updatingRandom.start();
-				Thread updatingRecord1 = new UpdatingRecord1Thread();
-				updatingRecord1.start();
-				Thread creatingRecord = new CreatingRecordThread();
-				creatingRecord.start();
-				Thread deletingRecord = new DeletingRecord1Thread();
-				deletingRecord.start();
-				Thread findingRecords = new FindingRecordsThread();
-				findingRecords.start();
+			List<Thread> threads = new ArrayList<Thread>();
+			for (int i = 0; i < 10000; i++) {
+				threads.add(new UpdatingRandomRecordThread());
+				threads.add(new UpdatingRecord1Thread());
+				threads.add(new CreatingRecordThread());
+				threads.add(new DeletingRecord1Thread());
+				threads.add(new DeletingRecord28Thread());
+				threads.add(new FindingRecordsThread());
 			}
+
+			Collections.shuffle(threads);
+			// start threads
+			for (Thread thread : threads) {
+				thread.start();
+			}
+			// sleep until all threads are finished
+			for (Thread thread : threads) {
+				thread.join();
+			}
+			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
+			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
+			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
+			System.out.println("FINISHED");
+			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
+			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
+			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -187,6 +210,26 @@ public class DataConcurrencyTest {
 				data.unlock(1);
 			} catch (Exception e) {
 				System.out.println(Thread.currentThread().getId() + " couldn't delete record#1: " + e);
+			}
+		}
+	}
+
+	private class DeletingRecord28Thread extends Thread {
+
+		@Override
+		public void run() {
+			try {
+				System.out.println(
+						Thread.currentThread().getId() + " trying to lock record #28 on " + "DeletingRecord1Thread");
+				data.lock(28);
+				System.out.println(
+						Thread.currentThread().getId() + " trying to delete record #28 on " + "DeletingRecord1Thread");
+				data.delete(28);
+				System.out.println(
+						Thread.currentThread().getId() + " trying to unlock record #28 on " + "DeletingRecord1Thread");
+				data.unlock(28);
+			} catch (Exception e) {
+				System.out.println(Thread.currentThread().getId() + " couldn't delete record#28: " + e);
 			}
 		}
 	}

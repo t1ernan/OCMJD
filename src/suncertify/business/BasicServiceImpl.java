@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-import suncertify.db.Data;
+import suncertify.db.DBMain;
 import suncertify.db.DatabaseException;
 import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
@@ -14,14 +14,15 @@ import suncertify.util.ContractorPKConverter;
 
 public class BasicServiceImpl implements ContractorServices {
 
-	private Data databaseManager;
+	private DBMain databaseManager;
 
-	public BasicServiceImpl(Data databaseManager) {
-		this.databaseManager = databaseManager;
+	public BasicServiceImpl(DBMain data) {
+		this.databaseManager = data;
 	}
 
 	@Override
-	public void book(Contractor contractor) throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
+	public void book(Contractor contractor)
+			throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
 		final String[] fieldValues = ContractorConverter.toFieldValues(contractor);
 		final String[] uniqueId = ContractorPKConverter.toSearchCriteria(contractor.getPrimaryKey());
 		final int recordNumber;
@@ -34,7 +35,6 @@ public class BasicServiceImpl implements ContractorServices {
 		} catch (RecordNotFoundException e) {
 			throw new ContractorNotFoundException("Contractor could not be found. " + e.getMessage());
 		}
-
 	}
 
 	private void validateContractor(int recordNumber)
@@ -53,7 +53,7 @@ public class BasicServiceImpl implements ContractorServices {
 	}
 
 	@Override
-	public Map<Integer, Contractor> find(ContractorPK contractorPK) throws ServicesException, RemoteException {
+	public Map<Integer, Contractor> find(ContractorPK contractorPK) throws ServiceException, RemoteException {
 		final Map<Integer, Contractor> matchingRecords = new HashMap<>();
 		final String[] searchCriteria = ContractorPKConverter.toSearchCriteria(contractorPK);
 		try {

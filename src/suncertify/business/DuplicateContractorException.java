@@ -1,6 +1,6 @@
 package suncertify.business;
 
-public class DuplicateContractorException extends ServicesException {
+public class DuplicateContractorException extends ServiceException {
 
 	/**
 	 * Instantiates a new DuplicateContractor exception.

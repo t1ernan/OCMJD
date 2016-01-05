@@ -1,7 +1,7 @@
 package suncertify.util;
 
-import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.dto.Contractor;
+import suncertify.dto.ContractorPK;
 
 public class ContractorConverter {
 
@@ -12,10 +12,10 @@ public class ContractorConverter {
 		ContractorPK contractorPK = contractor.getPrimaryKey();
 		fieldValues[0] = contractorPK.getName();
 		fieldValues[1] = contractorPK.getLocation();
-		fieldValues[2] = contractor.getSpecialities();
+		fieldValues[2] = contractor.getSpecialties();
 		fieldValues[3] = String.valueOf(contractor.getSize());
 		fieldValues[4] = contractor.getRate();
-		fieldValues[5] = contractor.getOwner();
+		fieldValues[5] = contractor.getCustomerId();
 		return fieldValues;
 	}
 
@@ -32,7 +32,7 @@ public class ContractorConverter {
 		contractor.setSpecialities(fieldValues[2]);
 		contractor.setSize(Integer.parseInt(fieldValues[3]));
 		contractor.setRate(fieldValues[4]);
-		contractor.setOwner(fieldValues[5]);
+		contractor.setCustomerId(fieldValues[5]);
 
 		return contractor;
 	}

@@ -1,6 +1,6 @@
 package suncertify.util;
 
-import suncertify.domain.ContractorPK;
+import suncertify.dto.ContractorPK;
 
 public class ContractorPKConverter {
 

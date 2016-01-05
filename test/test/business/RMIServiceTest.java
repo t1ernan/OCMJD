@@ -23,7 +23,7 @@ import suncertify.db.DBMain;
 import suncertify.db.DBMainFactory;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
-import suncertify.domain.Contractor;
+import suncertify.dto.Contractor;
 import suncertify.util.ContractorConverter;
 import suncertify.util.ContractorPKConverter;
 

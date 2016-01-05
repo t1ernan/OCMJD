@@ -1,5 +1,11 @@
 package suncertify.db;
 
+import static suncertify.util.Constants.DELETED_FLAG;
+import static suncertify.util.Constants.EXPECTED_MAGIC_COOKIE;
+import static suncertify.util.Constants.VALID_FLAG;
+import static suncertify.util.DataConverter.convertBytesToString;
+import static suncertify.util.DataConverter.convertStringToBytes;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -7,25 +13,25 @@ import java.util.Map;
 
 import suncertify.util.Constants;
 
-import static suncertify.util.Constants.*;
-import static suncertify.util.DataConverter.*;
-
 /**
  * The class DBFileAccessManager is responsible for reading and writing to the
  * non-relational database file.
  */
 public class DBFileAccessManager {
 
-	/** The db file location. */
+	/** The location of the database on the file system. */
 	private final String dbFileLocation;
 
-	/** The number of fields. */
+	/** The number of fields in a record. */
 	private int numberOfFields;
 
-	/** The field value sizes. */
+	/**
+	 * An array containing the number of bytes each record field takes up in the
+	 * database.
+	 */
 	private int[] fieldValueSizes;
 
-	/** The field names. */
+	/** An array containing the names of fields in each record. */
 	private String[] fieldNames;
 
 	/**
@@ -79,7 +85,6 @@ public class DBFileAccessManager {
 		try (RandomAccessFile dbFile = new RandomAccessFile(dbFileLocation, "rwd")) {
 			checkMagicCookie(dbFile);
 			final int recordOffset = dbFile.readInt();
-			numberOfFields = dbFile.readShort();
 			dbFile.seek(recordOffset);
 			dbFile.setLength(recordOffset);
 			writeDataSection(map, dbFile);
@@ -111,14 +116,21 @@ public class DBFileAccessManager {
 			final String[] fieldValues = new String[numberOfFields];
 			final int flagvalue = dbFile.readUnsignedShort();
 			readRecord(dbFile, fieldValues);
-			map.put(recordNumber, getRecordValue(flagvalue, fieldValues));
+
+			if (flagvalue == VALID_FLAG) {
+				map.put(recordNumber, fieldValues);
+			} else if (flagvalue == DELETED_FLAG) {
+				map.put(recordNumber, null);
+			} else {
+				throw new DatabaseException("Corrupted flag value: " + flagvalue);
+			}
 			recordNumber++;
 		}
 	}
 
 	/**
 	 * Read a record from the {@code dbFile} and populates the
-	 * {@code fieldValues} parameter with its fields.
+	 * {@code fieldValues} parameter with the record's fields.
 	 *
 	 * @param dbFile
 	 *            a {@link RandomAccessFile} file for reading and writing to the
@@ -128,7 +140,7 @@ public class DBFileAccessManager {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private void readRecord(RandomAccessFile dbFile, final String[] fieldValues) throws IOException {
+	private void readRecord(final RandomAccessFile dbFile, final String[] fieldValues) throws IOException {
 		for (int index = 0; index < numberOfFields; index++) {
 			final String fieldValue = readString(dbFile, fieldValueSizes[index]);
 			fieldValues[index] = fieldValue;
@@ -146,7 +158,7 @@ public class DBFileAccessManager {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private void readSchemaDescription(RandomAccessFile dbFile) throws IOException {
+	private void readSchemaDescription(final RandomAccessFile dbFile) throws IOException {
 		for (int index = 0; index < numberOfFields; index++) {
 			final int fieldNameSize = dbFile.readShort();
 			final String fieldName = readString(dbFile, fieldNameSize);
@@ -170,9 +182,9 @@ public class DBFileAccessManager {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private void writeDataSection(final Map<Integer, String[]> map, RandomAccessFile dbFile) throws IOException {
+	private void writeDataSection(final Map<Integer, String[]> map, final RandomAccessFile dbFile) throws IOException {
 		for (String[] fieldValues : map.values()) {
-			dbFile.writeShort(getFlag(fieldValues));
+			writeFlag(dbFile, fieldValues);
 			for (int index = 0; index < numberOfFields; index++) {
 				writeString(dbFile, fieldValues[index], fieldValueSizes[index]);
 			}
@@ -180,103 +192,127 @@ public class DBFileAccessManager {
 	}
 
 	/**
-	 * Read string.
+	 * Reads the specified number of bytes from the specified {@code dbFile},
+	 * converts them into a String.
 	 *
 	 * @param dbFile
-	 *            the db file
+	 *            a {@link RandomAccessFile} file for reading and writing to the
+	 *            database file.
 	 * @param numberOfBytes
-	 *            the number of bytes
-	 * @return the string
+	 *            the number of bytes which will be read from the file and
+	 *            converted into a String
+	 * @return the string representation of the bytes read
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private String readString(RandomAccessFile dbFile, int numberOfBytes) throws IOException {
+	private String readString(final RandomAccessFile dbFile, final int numberOfBytes) throws IOException {
 		final byte[] valueBytes = readBytes(dbFile, numberOfBytes);
 		final String paddedFieldValue = convertBytesToString(valueBytes);
 		return paddedFieldValue.trim();
 	}
 
 	/**
-	 * Write string.
+	 * Converts the specified {@code fieldValue} String into a byte[] and writes
+	 * it to the specified {@code dbFile}. If the length of the byte[] is less
+	 * than maximum number of bytes the field should take up in the database,
+	 * the remaining bytes are filled with blank spaces.
 	 *
 	 * @param dbFile
-	 *            the db file
+	 *            a {@link RandomAccessFile} file for reading and writing to the
+	 *            database file.
 	 * @param fieldValue
 	 *            the field value
-	 * @param numberOfBytes
-	 *            the number of bytes
+	 * @param fieldSize
+	 *            the maximum number of bytes the field should take up in the
+	 *            database
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private void writeString(RandomAccessFile dbFile, String fieldValue, int numberOfBytes) throws IOException {
+	private void writeString(final RandomAccessFile dbFile, final String fieldValue, final int fieldSize)
+			throws IOException {
 		final byte[] unpaddedBytes = convertStringToBytes(fieldValue);
-		final byte[] paddedBytes = addPadding(unpaddedBytes, numberOfBytes);
+		final byte[] paddedBytes = addPadding(unpaddedBytes, fieldSize);
 		dbFile.write(paddedBytes);
 	}
 
 	/**
-	 * Read bytes.
+	 * Reads the specified number of bytes from the specified {@code dbFile} and
+	 * returns them as a byte[].
 	 *
 	 * @param dbFile
-	 *            the db file
+	 *            a {@link RandomAccessFile} file for reading and writing to the
+	 *            database file.
 	 * @param numberOfBytes
-	 *            the number of bytes
+	 *            the number of bytes which will be read from the file.
 	 * @return the byte[]
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private byte[] readBytes(RandomAccessFile dbFile, int numberOfBytes) throws IOException {
+	private byte[] readBytes(final RandomAccessFile dbFile, final int numberOfBytes) throws IOException {
 		final byte[] valueBytes = new byte[numberOfBytes];
 		dbFile.read(valueBytes);
 		return valueBytes;
 	}
 
 	/**
-	 * Check record offset.
+	 * Compares the value of the specified record offset to the current offset
+	 * of the specified {@code dbFile} and throws a {@link DatabaseException} if
+	 * they do not match.
 	 *
 	 * @param dbFile
-	 *            the db file
+	 *            a {@link RandomAccessFile} file for reading and writing to the
+	 *            database file.
 	 * @param recordOffset
-	 *            the record offset
+	 *            the expected record offset value retrieved from the file
+	 *            information
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 * @throws DatabaseException
-	 *             the database exception
+	 *             if the specified record offset value retrieved from the file
+	 *             information does not match the current offset of the file
 	 */
-	private void checkRecordOffset(RandomAccessFile dbFile, final int recordOffset)
+	private void checkRecordOffset(final RandomAccessFile dbFile, final int recordOffset)
 			throws IOException, DatabaseException {
 		if (recordOffset != dbFile.getFilePointer()) {
-			throw new DatabaseException("Invalid datafile: Invalid Record Offset");
+			throw new DatabaseException("Invalid Record Offset");
 		}
 	}
 
 	/**
-	 * Check magic cookie.
+	 * Check magic cookie value specified in the file information of the
+	 * specified {@code dbFile} matches the expected magic cookie value for the
+	 * file.
 	 *
 	 * @param dbFile
-	 *            the db file
+	 *            a {@link RandomAccessFile} file for reading and writing to the
+	 *            database file.
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 * @throws DatabaseException
-	 *             the database exception
+	 *             if the magicCookie value retrieved from the file information
+	 *             does not match the expected magicCookie value of the file
 	 */
-	private void checkMagicCookie(RandomAccessFile dbFile) throws IOException, DatabaseException {
+	private void checkMagicCookie(final RandomAccessFile dbFile) throws IOException, DatabaseException {
 		final int magicCookie = dbFile.readInt();
 		if (magicCookie != EXPECTED_MAGIC_COOKIE) {
-			throw new DatabaseException("Invalid datafile: Invalid Magic Cookie");
+			throw new DatabaseException("Invalid Magic Cookie: " + magicCookie);
 		}
 	}
 
 	/**
-	 * Adds the padding.
+	 * Copies the specified {@code unpaddedBytes} into a new byte[] of length
+	 * equal to the specified {@code size} filled with blank space ASCII
+	 * characters. Returns the new byte[].
 	 *
 	 * @param unpaddedBytes
-	 *            the unpadded bytes
+	 *            the bytes to copy into the byte[] filled with blank space
+	 *            ASCII characters.
 	 * @param size
-	 *            the size
-	 * @return the byte[]
+	 *            the size of the byte[] filled with blank space ASCII
+	 *            characters.
+	 * @return the new byte[]
 	 */
-	private byte[] addPadding(byte[] unpaddedBytes, int size) {
+	private byte[] addPadding(final byte[] unpaddedBytes, final int size) {
 		final byte[] paddedBytes = new byte[size];
 		Arrays.fill(paddedBytes, (byte) Constants.BLANK_SPACE_HEX);
 		System.arraycopy(unpaddedBytes, 0, paddedBytes, 0, unpaddedBytes.length);
@@ -284,25 +320,25 @@ public class DBFileAccessManager {
 	}
 
 	/**
-	 * Gets the flag.
+	 * Writes the appropriate flag value to the specified {@code dbFile}. If the
+	 * specified {@code value} is null it will write two bytes of value
+	 * {@literal 0x8000} to the file. Otherwise, it will write two bytes of
+	 * value {@literal 00} to the file.
 	 *
+	 * @param dbFile
+	 *            a {@link RandomAccessFile} file for reading and writing to the
+	 *            database file.
 	 * @param value
-	 *            the value
-	 * @return the flag
+	 *            the String[] value used to determine the appropriate flag
+	 *            value.
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private int getFlag(final String[] value) throws IOException {
-		return (value == null) ? DELETED_FLAG : VALID_FLAG;
-	}
-
-	private String[] getRecordValue(int flagvalue, String[] value) throws DatabaseException {
-		if (flagvalue == VALID_FLAG) {
-			return value;
-		} else if (flagvalue == DELETED_FLAG) {
-			return null;
+	private void writeFlag(final RandomAccessFile dbFile, final String[] value) throws IOException {
+		if (value == null) {
+			dbFile.writeShort(DELETED_FLAG);
 		} else {
-			throw new DatabaseException("Corrupted flag value: " + flagvalue);
+			dbFile.writeShort(VALID_FLAG);
 		}
 	}
 

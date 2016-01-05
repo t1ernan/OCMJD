@@ -1,0 +1,23 @@
+ Patterns Used: DTO pattern,
+ 
+ Assumptions: The provided data file contains valid data, therefore no validation of the existing data file records is required. Only new updates to the record must be validated before writing it to the file. Restriction of user input to valid data fields only should be performed at the UI level.
+ 
+ Application
+ Decision: Limit the use of the new API's introduced in Java 8 to areas which will siginificantly enhance readability
+ Reason: Purely for code readability reasons. Junior developers who are only familiar with the java API prior to Java 8 may struggle to understand functional programming features such as Streams, Lambdas and Method Referencing
+ 
+ Data.java
+ Decision:
+ Reason:
+ 
+ DBFileAccessManager.java
+ Decision: Don't validate the data when writing it to the file. 
+ Reason: Since the writing to the file is done on shutdown, if the data is corrupt then there will be no chance to notify the user or fix the issue. These checks should be done before updating records in the cache, preferably at the UI level. This way we can notify the user to amend the record before retrying.
+ 
+ Contractor.java
+ Decision: Don't validate the data for each field.
+ Reason: Assuming the datafile has valid data, it will be sufficient to perform validation of the data in the UI layer. 
+ 
+ ContractorPK.java
+ Decision: Used a ContractorPK object
+ Reason: Assuming the datafile has valid data, it will be sufficient to perform validation of the data in the UI layer. 

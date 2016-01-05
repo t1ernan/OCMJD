@@ -3,8 +3,8 @@ package suncertify.business;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.dto.Contractor;
+import suncertify.dto.ContractorPK;
 
 public interface ContractorServices {
 

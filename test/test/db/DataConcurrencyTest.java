@@ -9,8 +9,8 @@ import java.util.List;
 import suncertify.db.DBMain;
 import suncertify.db.DBMainFactory;
 import suncertify.db.DatabaseException;
-import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.dto.Contractor;
+import suncertify.dto.ContractorPK;
 import suncertify.util.ContractorConverter;
 
 public class DataConcurrencyTest {
@@ -92,7 +92,7 @@ public class DataConcurrencyTest {
 			contractor.setSize(2);
 			contractor.setSpecialities("Getting stuff done, horsing it");
 			contractor.setRate("$150.00");
-			contractor.setOwner("54120584");
+			contractor.setCustomerId("54120584");
 
 			final int recNo = (int) (Math.random() * 50);
 			try {
@@ -147,7 +147,7 @@ public class DataConcurrencyTest {
 			contractor.setSize(2);
 			contractor.setSpecialities("Living life, loving music");
 			contractor.setRate("$90.00");
-			contractor.setOwner("88006644");
+			contractor.setCustomerId("88006644");
 
 			try {
 				System.out.println(

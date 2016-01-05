@@ -7,9 +7,7 @@ package suncertify.db;
  */
 public class RecordNotFoundException extends DatabaseException {
 
-	/**
-	 * The serial version UID.
-	 */
+	/** The serial version UID. */
 	private static final long serialVersionUID = 17011991;
 
 	/**

@@ -3,9 +3,6 @@ package suncertify.cli;
 import java.rmi.RemoteException;
 
 import suncertify.business.ServiceException;
-import suncertify.ui.window.ClientConfigWindow;
-import suncertify.ui.window.ServerConfigWindow;
-import suncertify.ui.window.StandaloneConfigWindow;
 import suncertify.util.Config;
 
 public class CliLauncher {
@@ -43,18 +40,15 @@ public class CliLauncher {
 	}
 
 	private static void runClient() {
-		new ClientConfigWindow();
+		// new ClientConfigWindow();
 	}
 
 	private static void runServer() throws RemoteException, ServiceException {
-		new ServerConfigWindow();
-		// RMIServices service = new
-		// RMIServer(DAOFactory.getDbManager(DB_FILE_PATH));
-		// service.startServer(RMI_PORT);
+		// new ServerConfigWindow();
 	}
 
 	private static void runStandalone() {
-		new StandaloneConfigWindow();
+		// new StandaloneConfigWindow();
 	}
 
 	private static boolean isNonNetworked(final String mode) {

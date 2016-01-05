@@ -10,8 +10,8 @@ import java.util.Map;
 
 import suncertify.business.ContractorServices;
 import suncertify.business.ServiceException;
-import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.dto.Contractor;
+import suncertify.dto.ContractorPK;
 import suncertify.util.Config;
 
 public class RMIClient implements ContractorServices {

@@ -7,8 +7,8 @@ import java.util.Map;
 import suncertify.db.DBMain;
 import suncertify.db.DatabaseException;
 import suncertify.db.RecordNotFoundException;
-import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.dto.Contractor;
+import suncertify.dto.ContractorPK;
 import suncertify.util.ContractorConverter;
 import suncertify.util.ContractorPKConverter;
 
@@ -42,7 +42,7 @@ public class BasicServiceImpl implements ContractorServices {
 		try {
 			final String[] fieldValues = databaseManager.read(recordNumber);
 			final Contractor contractor = ContractorConverter.toContractor(fieldValues);
-			if (!contractor.getOwner().isEmpty()) {
+			if (!contractor.getCustomerId().isEmpty()) {
 				databaseManager.unlock(recordNumber);
 				throw new AlreadyBookedException("Contractor has already been booked.");
 			}

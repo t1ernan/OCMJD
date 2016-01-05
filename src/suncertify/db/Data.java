@@ -50,16 +50,13 @@ public class Data implements DBMain {
 		this.dbFileAccessManager = new DBFileAccessManager(dbFileLocation);
 		dbFileAccessManager.readDatabaseIntoCache(dbCache);
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				try {
-					dbFileAccessManager.persist(dbCache);
-				} catch (DatabaseException e) {
-					System.err.println("Could not save data: " + e.getMessage());
-				}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				dbFileAccessManager.persist(dbCache);
+			} catch (DatabaseException e) {
+				System.err.println("Could not save data: " + e.getMessage());
 			}
-		});
+		}));
 	}
 
 	/**
@@ -136,10 +133,8 @@ public class Data implements DBMain {
 	@Override
 	public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
 		final List<Integer> recordNumberList = new ArrayList<>();
-		for (Entry<Integer, String[]> record : findAllValidRecords().entrySet()) {
+		findAllValidRecords().forEach((recordNumber, fieldValues) -> {
 			boolean isMatch = true;
-			final Integer recordNumber = record.getKey();
-			final String[] fieldValues = record.getValue();
 			for (int index = 0; index < criteria.length; index++) {
 				final String recordValue = fieldValues[index].toUpperCase();
 				final String searchValue = criteria[index].toUpperCase();
@@ -151,7 +146,8 @@ public class Data implements DBMain {
 			if (isMatch) {
 				recordNumberList.add(recordNumber);
 			}
-		}
+		});
+
 		if (recordNumberList.isEmpty()) {
 			throw new RecordNotFoundException(
 					"No matching records for selected criteria: Name=" + criteria[0] + " , Location=" + criteria[1]);
@@ -307,13 +303,11 @@ public class Data implements DBMain {
 	 */
 	private Map<Integer, String[]> findAllValidRecords() {
 		final Map<Integer, String[]> validRecords = new HashMap<>();
-		for (Entry<Integer, String[]> record : dbCache.entrySet()) {
-			final int recordNumber = record.getKey();
-			final String[] fieldValues = record.getValue();
+		dbCache.forEach((recordNumber, fieldValues) -> {
 			if (fieldValues != null) {
 				validRecords.put(new Integer(recordNumber), fieldValues);
 			}
-		}
+		});
 		return validRecords;
 	}
 

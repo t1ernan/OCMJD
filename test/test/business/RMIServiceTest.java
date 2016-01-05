@@ -2,8 +2,7 @@ package test.business;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static suncertify.util.Constants.DB_FILE_PATH;
-import static suncertify.util.Constants.RMI_PORT;
+import static suncertify.util.Constants.*;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -53,9 +52,9 @@ public class RMIServiceTest {
 
 	@BeforeClass
 	public static void setup() throws DatabaseException, RemoteException, NotBoundException, ServiceException {
-		data = DBMainFactory.getDatabase(DB_FILE_PATH);
+		data = DBMainFactory.getDatabase(DB_FILE_NAME);
 		server = new RMIServer(data);
-		server.startServer(RMI_PORT);
+		server.startServer(DEFAULT_PORT_NUMBER);
 		services = new RMIClient();
 	}
 

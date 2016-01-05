@@ -1,8 +1,6 @@
 package suncertify.business.rmi;
 
-import static suncertify.util.Constants.RMI_HOSTNAME;
 import static suncertify.util.Constants.RMI_ID;
-import static suncertify.util.Constants.RMI_PORT;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -14,13 +12,15 @@ import suncertify.business.ContractorServices;
 import suncertify.business.ServiceException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
+import suncertify.util.Config;
 
 public class RMIClient implements ContractorServices {
 
-	private ContractorServices service;
+	private final ContractorServices service;
+	private final Config config = Config.getInstance();
 
 	public RMIClient() throws RemoteException, NotBoundException {
-		final Registry registry = LocateRegistry.getRegistry(RMI_HOSTNAME, RMI_PORT);
+		final Registry registry = LocateRegistry.getRegistry(config.getServerIPAddress(), config.getPortNumber());
 		service = (ContractorServices) registry.lookup(RMI_ID);
 
 	}

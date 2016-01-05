@@ -1,24 +1,33 @@
 package suncertify.db;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class RecordNotFoundException.
+ * The class RecordNotFoundException is a direct subclass of
+ * {@link DatabaseException}. It's thrown when querying the database for a
+ * record which does not exist or has been marked as deleted in the database.
  */
 public class RecordNotFoundException extends DatabaseException {
 
 	/**
-	 * Instantiates a new record not found exception.
+	 * The serial version UID.
 	 */
-	public RecordNotFoundException(){
+	private static final long serialVersionUID = 17011991;
+
+	/**
+	 * Constructs a new RecordNotFoundException with {@code null} as its detail
+	 * message.
+	 */
+	public RecordNotFoundException() {
 		super();
 	}
-	
+
 	/**
-	 * Instantiates a new record not found exception.
+	 * Constructs a new RecordNotFoundException with the specified detail
+	 * message.
 	 *
-	 * @param message the message
+	 * @param message
+	 *            the detail message
 	 */
-	public RecordNotFoundException(String message){
+	public RecordNotFoundException(final String message) {
 		super(message);
 	}
 }

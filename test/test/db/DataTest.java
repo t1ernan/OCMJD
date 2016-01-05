@@ -2,7 +2,7 @@ package test.db;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static suncertify.util.Constants.DB_FILE_PATH;
+import static suncertify.util.Constants.DB_FILE_NAME;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +38,7 @@ public class DataTest {
 
 	@Before
 	public void setup() throws DatabaseException {
-		data = DBMainFactory.getDatabase(DB_FILE_PATH);
+		data = DBMainFactory.getDatabase(DB_FILE_NAME);
 	}
 
 	@After

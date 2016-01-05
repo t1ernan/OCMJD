@@ -2,10 +2,8 @@ package suncertify.util;
 
 public class Constants {
 
-	public static final String DB_FILE_PATH = "db-2x2.db";
+	public static final String DB_FILE_NAME = "db-2x2.db";
 	public static final String RMI_ID = "Remote Server";
-	public static final String RMI_HOSTNAME = "localhost";
-	public static final int RMI_PORT = 222;
 	public static final String EMPTY_SPACE = "";
 	public static final String EQUALS = "=";
 	public static final String CONFIGURATION_WINDOW_TITLE = "System Configuration Options";
@@ -30,5 +28,9 @@ public class Constants {
 	public static final String DEFAULT_SERVER_IPADDRESS = "localhost";
 	public static final int DEFAULT_PORT_NUMBER = 222;
 	public static final String UNDERSCORE = "_";
-
+	public static final int VALID_FLAG = 00;
+	public static final int DELETED_FLAG = 0x8000;
+	public static final int EXPECTED_MAGIC_COOKIE = 514;
+	public static final String CHARACTER_ENCODING = "US-ASCII";
+	public static final int BLANK_SPACE_HEX = 0x20;
 }

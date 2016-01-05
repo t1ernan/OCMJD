@@ -10,28 +10,56 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import suncertify.util.ListConverter;
+import suncertify.util.DataConverter;
 
+/**
+ * The class Data is an implementation of {@link DBMain}. It reads the contents
+ * of the non-relational database file into an in-memory cache when an instance
+ * is created. All queries and updates to the database are then done to the
+ * in-memory cache instead using the public methods declared in the
+ * {@link DBMain} interface. It writes the contents of the cache back to the
+ * database file when the application terminates
+ */
 public class Data implements DBMain {
 
-	private final Map<Integer, String[]> cache = new HashMap<>();
-	private final DBAccessManager dbAccessManager;
+	/** The in-memory cache containing the contents of the database file. */
+	private final Map<Integer, String[]> dbCache = new HashMap<>();
+
+	/** The in-memory cache of records which have been locked by a thread. */
 	private final Set<Integer> lockedRecords = new HashSet<>();
 
-	public Data(String databasePath) throws DatabaseException {
-		this.dbAccessManager = new DBAccessManager(databasePath);
-		dbAccessManager.read(cache);
+	/**
+	 * Used to perform read/write operations on the database file.
+	 */
+	private final DBFileAccessManager dbFileAccessManager;
 
-		// Runtime.getRuntime().addShutdownHook(new Thread() {
-		// @Override
-		// public void run() {
-		// try {
-		// dbAccessManager.persist(cache);
-		// } catch (DatabaseException e) {
-		// System.err.println("Could not save data: " + e.getMessage());
-		// }
-		// }
-		// });
+	/**
+	 * Constructs a new Data instance with a specified location of the database
+	 * file in the file system. The constructor is responsible for instantiating
+	 * the {@code dBFileAccessManager}, loading the contents of the database
+	 * file into the {@code dbCache} and ensuring that the contents of the
+	 * {@code dbCache} is written back to the database file when the application
+	 * is shut down.
+	 *
+	 * @param dbFileLocation
+	 *            the location of the database on the file system
+	 * @throws DatabaseException
+	 *             the database exception
+	 */
+	public Data(final String dbFileLocation) throws DatabaseException {
+		this.dbFileAccessManager = new DBFileAccessManager(dbFileLocation);
+		dbFileAccessManager.readDatabaseIntoCache(dbCache);
+
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				try {
+					dbFileAccessManager.persist(dbCache);
+				} catch (DatabaseException e) {
+					System.err.println("Could not save data: " + e.getMessage());
+				}
+			}
+		});
 	}
 
 	/**
@@ -46,11 +74,11 @@ public class Data implements DBMain {
 	 *             deleted in the database
 	 */
 	@Override
-	public synchronized String[] read(int recNo) throws RecordNotFoundException {
+	public synchronized String[] read(final int recNo) throws RecordNotFoundException {
 		if (isInvalidRecord(recNo)) {
 			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
 		}
-		return cache.get(recNo);
+		return dbCache.get(recNo);
 	}
 
 	/**
@@ -66,11 +94,11 @@ public class Data implements DBMain {
 	 *             deleted in the database
 	 */
 	@Override
-	public synchronized void update(int recNo, String[] data) throws RecordNotFoundException {
+	public synchronized void update(final int recNo, final String[] data) throws RecordNotFoundException {
 		if (isInvalidRecord(recNo)) {
 			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
 		}
-		cache.put(recNo, data);
+		dbCache.put(recNo, data);
 	}
 
 	/**
@@ -84,11 +112,11 @@ public class Data implements DBMain {
 	 *             deleted in the database
 	 */
 	@Override
-	public synchronized void delete(int recNo) throws RecordNotFoundException {
+	public synchronized void delete(final int recNo) throws RecordNotFoundException {
 		if (isInvalidRecord(recNo)) {
 			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
 		}
-		cache.put(recNo, null);
+		dbCache.put(recNo, null);
 	}
 
 	/**
@@ -106,9 +134,9 @@ public class Data implements DBMain {
 	 *             deleted in the database
 	 */
 	@Override
-	public synchronized int[] find(String[] criteria) throws RecordNotFoundException {
+	public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
 		final List<Integer> recordNumberList = new ArrayList<>();
-		for (Entry<Integer, String[]> record : getAllValidRecords().entrySet()) {
+		for (Entry<Integer, String[]> record : findAllValidRecords().entrySet()) {
 			boolean isMatch = true;
 			final Integer recordNumber = record.getKey();
 			final String[] fieldValues = record.getValue();
@@ -128,7 +156,7 @@ public class Data implements DBMain {
 			throw new RecordNotFoundException(
 					"No matching records for selected criteria: Name=" + criteria[0] + " , Location=" + criteria[1]);
 		}
-		final int[] matchingRecordNumbers = ListConverter.convertIntegerListToIntArray(recordNumberList);
+		final int[] matchingRecordNumbers = DataConverter.convertIntegerListToIntArray(recordNumberList);
 		return matchingRecordNumbers;
 	}
 
@@ -145,18 +173,18 @@ public class Data implements DBMain {
 	 *             given data
 	 */
 	@Override
-	public synchronized int create(String[] data) throws DuplicateKeyException {
-		final String newUniqueKey = getUniqueKey(data);
-		for (Entry<Integer, String[]> record : getAllValidRecords().entrySet()) {
+	public synchronized int create(final String[] data) throws DuplicateKeyException {
+		final String newPrimaryKey = generatePrimaryKey(data);
+		for (Entry<Integer, String[]> record : findAllValidRecords().entrySet()) {
 			final Integer recordNumber = record.getKey();
 			final String[] fieldValues = record.getValue();
-			final String existingUniqueKey = getUniqueKey(fieldValues);
-			if (newUniqueKey.equalsIgnoreCase(existingUniqueKey)) {
+			final String existingPrimaryKey = generatePrimaryKey(fieldValues);
+			if (newPrimaryKey.equalsIgnoreCase(existingPrimaryKey)) {
 				throw new DuplicateKeyException("Record already exists! See record " + recordNumber);
 			}
 		}
-		final Integer recordNumber = getRecordNumber();
-		cache.put(recordNumber, data);
+		final int recordNumber = generateRecordNumber();
+		dbCache.put(new Integer(recordNumber), data);
 		return recordNumber;
 	}
 
@@ -172,7 +200,7 @@ public class Data implements DBMain {
 	 *             deleted in the database
 	 */
 	@Override
-	public synchronized void lock(int recNo) throws RecordNotFoundException {
+	public synchronized void lock(final int recNo) throws RecordNotFoundException {
 		while (isLocked(recNo)) {
 			try {
 				wait();
@@ -193,8 +221,8 @@ public class Data implements DBMain {
 	 *             deleted in the database
 	 */
 	@Override
-	public synchronized void unlock(int recNo) throws RecordNotFoundException {
-		if (isLockedRecord(recNo)) {
+	public synchronized void unlock(final int recNo) throws RecordNotFoundException {
+		if (lockedRecords.contains(recNo)) {
 			lockedRecords.remove(recNo);
 			notifyAll();
 		} else {
@@ -214,42 +242,72 @@ public class Data implements DBMain {
 	 *             deleted in the database
 	 */
 	@Override
-	public synchronized boolean isLocked(int recNo) throws RecordNotFoundException {
+	public synchronized boolean isLocked(final int recNo) throws RecordNotFoundException {
 		if (isInvalidRecord(recNo)) {
 			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
 		}
-		return isLockedRecord(recNo);
-	}
-
-	private boolean isLockedRecord(int recNo) {
 		return lockedRecords.contains(recNo);
 	}
 
-	private Integer getRecordNumber() {
-		Integer deletedRecordNumber = null;
-		for (Entry<Integer, String[]> record : cache.entrySet()) {
+	/**
+	 * Generates the record number. If the database contains any deleted
+	 * records, this method will return the lowest record number of the deleted
+	 * records, thereby reusing any existing record numbers of deleted records.
+	 * Otherwise, it will return {@code dbCache.size()}
+	 *
+	 * @return the record number
+	 */
+	private int generateRecordNumber() {
+		int deletedRecordNumber = dbCache.size();
+		for (Entry<Integer, String[]> record : dbCache.entrySet()) {
 			if (record.getValue() == null) {
-				deletedRecordNumber = new Integer(record.getKey());
+				deletedRecordNumber = record.getKey();
 				break;
 			}
 		}
-		return (deletedRecordNumber == null) ? cache.size() : deletedRecordNumber;
+		return deletedRecordNumber;
 	}
 
-	private String getUniqueKey(String[] data) {
+	/**
+	 * Generates a primary key from the String[] argument using the first two
+	 * elements in the String array, i.e. the name of the contractor and their
+	 * location.
+	 *
+	 * @param data
+	 *            the data
+	 * @return the primary key in String form
+	 */
+	private String generatePrimaryKey(final String[] data) {
 		final String name = data[0];
 		final String location = data[1];
 		final String uniqueKey = name + UNDERSCORE + location;
 		return uniqueKey;
 	}
 
-	private boolean isInvalidRecord(int recNo) {
-		return !getAllValidRecords().containsKey(recNo);
+	/**
+	 * Checks if a specified record is invalid. Returns true if the specified
+	 * record does not exist or is marked as deleted in the database. Otherwise,
+	 * returns false;
+	 *
+	 * @param recNo
+	 *            the record number
+	 * @return true, if the specified record does not exist or is marked as
+	 *         deleted in the database
+	 */
+	private boolean isInvalidRecord(final int recNo) {
+		return !findAllValidRecords().containsKey(recNo);
 	}
 
-	private Map<Integer, String[]> getAllValidRecords() {
+	/**
+	 * Returns a map containing all records in the database which are not marked
+	 * as deleted.
+	 *
+	 * @return a map containing all the valid record numbers as the map keys and
+	 *         their corresponding records as the map values
+	 */
+	private Map<Integer, String[]> findAllValidRecords() {
 		final Map<Integer, String[]> validRecords = new HashMap<>();
-		for (Entry<Integer, String[]> record : cache.entrySet()) {
+		for (Entry<Integer, String[]> record : dbCache.entrySet()) {
 			final int recordNumber = record.getKey();
 			final String[] fieldValues = record.getValue();
 			if (fieldValues != null) {
@@ -259,21 +317,41 @@ public class Data implements DBMain {
 		return validRecords;
 	}
 
-	// TODO: TEST METHODS BELOW, DELETE BEFORE SUBMISSION
+	// TODO: DELETE TEST METHODS BELOW BEFORE SUBMISSION
 
+	/**
+	 * Gets the total number of records.
+	 *
+	 * @return the total number of records
+	 */
 	public int getTotalNumberOfRecords() {
-		return cache.size();
+		return dbCache.size();
 	}
 
+	/**
+	 * Clear.
+	 */
 	public synchronized void clear() {
-		cache.clear();
+		dbCache.clear();
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @throws DatabaseException
+	 *             the database exception
+	 */
 	public synchronized void save() throws DatabaseException {
-		dbAccessManager.persist(cache);
+		dbFileAccessManager.persist(dbCache);
 	}
 
+	/**
+	 * Load.
+	 *
+	 * @throws DatabaseException
+	 *             the database exception
+	 */
 	public synchronized void load() throws DatabaseException {
-		dbAccessManager.read(cache);
+		dbFileAccessManager.readDatabaseIntoCache(dbCache);
 	}
 }

@@ -7,25 +7,25 @@ package suncertify.db;
 public class DatabaseException extends Exception {
 
 	/**
-	 * The serial version UID
+	 * The serial version UID.
 	 */
 	private static final long serialVersionUID = 17011991;
 
 	/**
 	 * Constructs a new DatabaseException with {@code null} as its detail
-	 * message
+	 * message.
 	 */
 	public DatabaseException() {
 		super();
 	}
 
 	/**
-	 * Constructs a new DatabaseException with the specified detail message
+	 * Constructs a new DatabaseException with the specified detail message.
 	 *
 	 * @param message
 	 *            the detail message
 	 */
-	public DatabaseException(String message) {
+	public DatabaseException(final String message) {
 		super(message);
 	}
 }

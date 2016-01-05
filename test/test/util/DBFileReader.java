@@ -1,4 +1,7 @@
-package suncertify.db;
+/*
+ * 
+ */
+package test.util;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -7,11 +10,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DBFileReader.
+ */
 public class DBFileReader {
 
+	/** The Constant CHARACTER_ENCODING. */
 	private static final String CHARACTER_ENCODING = "US-ASCII";
+	
+	/** The Constant DATABASE_FILE_LOCATION. */
 	private static final String DATABASE_FILE_LOCATION = "db-2x2.db";
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(final String[] args) {
 
 		Path databasePath = Paths.get(DATABASE_FILE_LOCATION);
@@ -60,6 +75,12 @@ public class DBFileReader {
 		}
 	}
 
+	/**
+	 * Checks if is record valid.
+	 *
+	 * @param flagvalue the flagvalue
+	 * @return the string
+	 */
 	private static String isRecordValid(int flagvalue) {
 		if (flagvalue == 00) {
 			return "VALID";
@@ -68,6 +89,13 @@ public class DBFileReader {
 		}
 	}
 
+	/**
+	 * Read string.
+	 *
+	 * @param byteBuffer the byte buffer
+	 * @param size the size
+	 * @return the string
+	 */
 	private static String readString(ByteBuffer byteBuffer, int size) {
 		final byte[] bytes = new byte[size];
 		byteBuffer.get(bytes);

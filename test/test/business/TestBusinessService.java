@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import suncertify.business.AlreadyBookedException;
-import suncertify.business.BasicServiceImpl;
+import suncertify.business.BasicService;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.db.DBMain;
 import suncertify.db.DBMainFactory;
@@ -77,7 +77,7 @@ public class TestBusinessService {
 					try {
 						Contractor contractor = ContractorConverter.toContractor(data.read(recNo));
 						contractor.setCustomerId("54120584");
-						BasicServiceImpl service = new BasicServiceImpl(data);
+						BasicService service = new BasicService(data);
 						service.book(contractor);
 						endRun = true;
 					} catch (RecordNotFoundException e) {

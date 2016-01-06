@@ -14,11 +14,11 @@ import org.junit.Test;
 
 import suncertify.business.AlreadyBookedException;
 import suncertify.business.ContractorNotFoundException;
-import suncertify.business.ContractorServices;
+import suncertify.business.ContractorService;
 import suncertify.business.ServiceException;
 import suncertify.business.rmi.RMIClient;
 import suncertify.business.rmi.RMIServer;
-import suncertify.business.rmi.RMIServices;
+import suncertify.business.rmi.RMIService;
 import suncertify.db.DBMain;
 import suncertify.db.DBMainFactory;
 import suncertify.db.Data;
@@ -30,8 +30,8 @@ import suncertify.util.ContractorPKConverter;
 public class RMIServiceTest {
 
 	private static DBMain data;
-	private static RMIServices server;
-	private static ContractorServices services;
+	private static RMIService server;
+	private static ContractorService services;
 
 	private final String[] firstContractorValues = new String[] { "Dogs With Tools", "Smallville", "Roofing", "7",
 			"$35.00", "" };

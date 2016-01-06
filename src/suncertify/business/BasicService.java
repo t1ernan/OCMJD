@@ -5,31 +5,44 @@ import java.util.HashMap;
 import java.util.Map;
 
 import suncertify.db.DBMain;
-import suncertify.db.DatabaseException;
 import suncertify.db.RecordNotFoundException;
 import suncertify.dto.Contractor;
 import suncertify.dto.ContractorPK;
 import suncertify.util.ContractorConverter;
 import suncertify.util.ContractorPKConverter;
 
-public class BasicServiceImpl implements ContractorServices {
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BasicServiceImpl.
+ */
+public class BasicService implements ContractorService {
 
+	/** The database manager. */
 	private DBMain databaseManager;
 
-	public BasicServiceImpl(DBMain data) {
+	/**
+	 * Instantiates a new basic service impl.
+	 *
+	 * @param data
+	 *            the data
+	 */
+	public BasicService(DBMain data) {
 		this.databaseManager = data;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void book(Contractor contractor)
+	public void book(final Contractor contractor)
 			throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
-		final String[] fieldValues = ContractorConverter.toFieldValues(contractor);
-		final String[] uniqueId = ContractorPKConverter.toSearchCriteria(contractor.getPrimaryKey());
+		final String[] fieldValues = ContractorConverter.toStringArray(contractor);
+		final String[] uniqueId = ContractorPKConverter.toStringArray(contractor.getPrimaryKey());
 		final int recordNumber;
 		try {
 			recordNumber = databaseManager.find(uniqueId)[0];
 			databaseManager.lock(recordNumber);
-			validateContractor(recordNumber);
+			checkContractorIsAvailable(recordNumber);
 			databaseManager.update(recordNumber, fieldValues);
 			databaseManager.unlock(recordNumber);
 		} catch (RecordNotFoundException e) {
@@ -37,25 +50,14 @@ public class BasicServiceImpl implements ContractorServices {
 		}
 	}
 
-	private void validateContractor(int recordNumber)
-			throws ContractorNotFoundException, AlreadyBookedException, RemoteException, RecordNotFoundException {
-		try {
-			final String[] fieldValues = databaseManager.read(recordNumber);
-			final Contractor contractor = ContractorConverter.toContractor(fieldValues);
-			if (!contractor.getCustomerId().isEmpty()) {
-				databaseManager.unlock(recordNumber);
-				throw new AlreadyBookedException("Contractor has already been booked.");
-			}
-		} catch (RecordNotFoundException e) {
-			databaseManager.unlock(recordNumber);
-			throw new ContractorNotFoundException("Contractor could not be found. " + e.getMessage());
-		}
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public Map<Integer, Contractor> find(ContractorPK contractorPK) throws ServiceException, RemoteException {
+	public Map<Integer, Contractor> find(final ContractorPK contractorPK)
+			throws ContractorNotFoundException, RemoteException {
 		final Map<Integer, Contractor> matchingRecords = new HashMap<>();
-		final String[] searchCriteria = ContractorPKConverter.toSearchCriteria(contractorPK);
+		final String[] searchCriteria = ContractorPKConverter.toStringArray(contractorPK);
 		try {
 			final int[] recordNumbers = databaseManager.find(searchCriteria);
 			for (int index = 0; index < recordNumbers.length; index++) {
@@ -64,10 +66,44 @@ public class BasicServiceImpl implements ContractorServices {
 				final Contractor contractor = ContractorConverter.toContractor(fieldValues);
 				matchingRecords.put(recordNumber, contractor);
 			}
-		} catch (DatabaseException e) {
-			throw new ContractorNotFoundException("No such contractor exists. " + e.getMessage());
+		} catch (RecordNotFoundException e) {
+			throw new ContractorNotFoundException("Contractor could not be found. " + e.getMessage());
 		}
 		return matchingRecords;
 	}
 
+	/**
+	 * Check that the contractor with the specified record number is available
+	 * for booking.
+	 *
+	 * @param recordNumber
+	 *            the number of the contractor record.
+	 * @throws ContractorNotFoundException
+	 *             if the contractor with the specified record number could not
+	 *             be found.
+	 * @throws AlreadyBookedException
+	 *             if the contractor with the specified record number has
+	 *             already been booked.
+	 * @throws RemoteException
+	 *             if an RMI communication-related exception occurs.
+	 * @throws RecordNotFoundException
+	 *             the record not found exception
+	 */
+	private void checkContractorIsAvailable(final int recordNumber)
+			throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
+		try {
+			final String[] fieldValues = databaseManager.read(recordNumber);
+			final Contractor contractor = ContractorConverter.toContractor(fieldValues);
+			if (!contractor.getCustomerId().isEmpty()) {
+				databaseManager.unlock(recordNumber);
+				throw new AlreadyBookedException("Contractor has already been booked.");
+			}
+		} catch (RecordNotFoundException e) {
+			try {
+				databaseManager.unlock(recordNumber);
+			} catch (RecordNotFoundException e1) {
+				throw new ContractorNotFoundException("Contractor could not be found. " + e.getMessage());
+			}
+		}
+	}
 }

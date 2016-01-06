@@ -20,7 +20,7 @@ import suncertify.util.DataConverter;
  * {@link DBMain} interface. It writes the contents of the cache back to the
  * database file when the application terminates
  */
-public class Data implements DBMain {
+public class Data implements DBMainExtended {
 
 	/** The in-memory cache containing the contents of the database file. */
 	private final Map<Integer, String[]> dbCache = new HashMap<>();
@@ -44,15 +44,14 @@ public class Data implements DBMain {
 	 * @param dbFileLocation
 	 *            the location of the database on the file system
 	 * @throws DatabaseException
-	 *             the database exception
+	 *             if the records could not be read from the database file
 	 */
 	public Data(final String dbFileLocation) throws DatabaseException {
 		this.dbFileAccessManager = new DBFileAccessManager(dbFileLocation);
-		dbFileAccessManager.readDatabaseIntoCache(dbCache);
-
+		load();
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {
-				dbFileAccessManager.persist(dbCache);
+				save();
 			} catch (DatabaseException e) {
 				System.err.println("Could not save data: " + e.getMessage());
 			}
@@ -60,15 +59,7 @@ public class Data implements DBMain {
 	}
 
 	/**
-	 * Reads a record from the file. Returns an array where each element is a
-	 * record value
-	 *
-	 * @param recNo
-	 *            the record number
-	 * @return a string array where each element is a record value
-	 * @throws RecordNotFoundException
-	 *             If the specified record does not exist or is marked as
-	 *             deleted in the database
+	 * {@inheritDoc}
 	 */
 	@Override
 	public synchronized String[] read(final int recNo) throws RecordNotFoundException {
@@ -79,59 +70,28 @@ public class Data implements DBMain {
 	}
 
 	/**
-	 * Modifies the fields of a record. The new value for field n appears in
-	 * data[n].
-	 *
-	 * @param recNo
-	 *            the record number
-	 * @param data
-	 *            a string array where each element is a record value
-	 * @throws RecordNotFoundException
-	 *             If the specified record does not exist or is marked as
-	 *             deleted in the database
+	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void update(final int recNo, final String[] data) throws RecordNotFoundException {
-		if (isInvalidRecord(recNo)) {
-			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
-		}
+	public synchronized void update(final int recNo, final String[] data) {
+		validateFieldLengths(data);
 		dbCache.put(recNo, data);
 	}
 
 	/**
-	 * Deletes a record, making the record number and associated disk storage
-	 * available for reuse.
-	 *
-	 * @param recNo
-	 *            the record number
-	 * @throws RecordNotFoundException
-	 *             If the specified record does not exist or is marked as
-	 *             deleted in the database
+	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void delete(final int recNo) throws RecordNotFoundException {
-		if (isInvalidRecord(recNo)) {
-			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
-		}
+	public synchronized void delete(final int recNo) {
 		dbCache.put(recNo, null);
 	}
 
 	/**
-	 * Returns an array of record numbers that match the specified criteria.
-	 * Field n in the database file is described by criteria[n]. A null value in
-	 * criteria[n] matches any field value. A non-null value in criteria[n]
-	 * matches any field value that begins with criteria[n]. (For example,
-	 * "Fred" matches "Fred" or "Freddy".)
-	 *
-	 * @param criteria
-	 *            the criteria
-	 * @return an array of record numbers that match the specified criteria
-	 * @throws RecordNotFoundException
-	 *             If the specified record does not exist or is marked as
-	 *             deleted in the database
+	 * {@inheritDoc}
 	 */
 	@Override
 	public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
+		validateFieldLengths(criteria);
 		final List<Integer> recordNumberList = new ArrayList<>();
 		findAllValidRecords().forEach((recordNumber, fieldValues) -> {
 			boolean isMatch = true;
@@ -157,19 +117,11 @@ public class Data implements DBMain {
 	}
 
 	/**
-	 * Creates a new record in the database (possibly reusing a deleted entry).
-	 * Inserts the given data, and returns the record number of the new record.
-	 *
-	 * @param data
-	 *            a string array where each element is a record value
-	 * @return the record number of the new record
-	 * @throws DuplicateKeyException
-	 *             If an existing record in the database, which has not been
-	 *             marked as deleted, contains the same key specified in the
-	 *             given data
+	 * {@inheritDoc}
 	 */
 	@Override
 	public synchronized int create(final String[] data) throws DuplicateKeyException {
+		validateFieldLengths(data);
 		final String newPrimaryKey = generatePrimaryKey(data);
 		for (Entry<Integer, String[]> record : findAllValidRecords().entrySet()) {
 			final Integer recordNumber = record.getKey();
@@ -185,15 +137,7 @@ public class Data implements DBMain {
 	}
 
 	/**
-	 * Locks a record so that it can only be updated or deleted by this client.
-	 * If the specified record is already locked, the current thread gives up
-	 * the CPU and consumes no CPU cycles until the record is unlocked.
-	 *
-	 * @param recNo
-	 *            the record number
-	 * @throws RecordNotFoundException
-	 *             If the specified record does not exist or is marked as
-	 *             deleted in the database
+	 * {@inheritDoc}
 	 */
 	@Override
 	public synchronized void lock(final int recNo) throws RecordNotFoundException {
@@ -208,34 +152,18 @@ public class Data implements DBMain {
 	}
 
 	/**
-	 * Releases the lock on a record.
-	 *
-	 * @param recNo
-	 *            the record number
-	 * @throws RecordNotFoundException
-	 *             If the specified record does not exist or is marked as
-	 *             deleted in the database
+	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void unlock(final int recNo) throws RecordNotFoundException {
+	public synchronized void unlock(final int recNo) {
 		if (lockedRecords.contains(recNo)) {
 			lockedRecords.remove(recNo);
 			notifyAll();
-		} else {
-			throw new RecordNotFoundException("Record " + recNo + " is not a valid locked record");
 		}
 	}
 
 	/**
-	 * Determines if a record is currently locked. Returns true if the record is
-	 * locked, false otherwise.
-	 *
-	 * @param recNo
-	 *            the record number
-	 * @return true, if is locked
-	 * @throws RecordNotFoundException
-	 *             If the specified record does not exist or is marked as
-	 *             deleted in the database
+	 * {@inheritDoc}
 	 */
 	@Override
 	public synchronized boolean isLocked(final int recNo) throws RecordNotFoundException {
@@ -243,6 +171,38 @@ public class Data implements DBMain {
 			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
 		}
 		return lockedRecords.contains(recNo);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized void save() throws DatabaseException {
+		dbFileAccessManager.persist(dbCache);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public synchronized void load() throws DatabaseException {
+		dbFileAccessManager.readDatabaseIntoCache(dbCache);
+	}
+
+	/**
+	 * Compares the size of the each element in the specified
+	 * {@code fieldValues} against the max permitted field size described in the
+	 * schema description section of the database file for that field. If the
+	 * number of characters used in a field exceeds the max number of characters
+	 * permitted for that field, a {@link IllegalArgumentException} will be
+	 * thrown.
+	 *
+	 * @param fieldValues
+	 *            a string array where each element is a record value.
+	 * @throws IllegalArgumentException
+	 *             if the number of characters used in a field exceeds the max
+	 *             number of characters permitted for that field
+	 */
+	private void validateFieldLengths(final String[] fields) {
+		dbFileAccessManager.validateFieldsAgainstSchema(fields);
 	}
 
 	/**
@@ -327,25 +287,5 @@ public class Data implements DBMain {
 	 */
 	public synchronized void clear() {
 		dbCache.clear();
-	}
-
-	/**
-	 * Save.
-	 *
-	 * @throws DatabaseException
-	 *             the database exception
-	 */
-	public synchronized void save() throws DatabaseException {
-		dbFileAccessManager.persist(dbCache);
-	}
-
-	/**
-	 * Load.
-	 *
-	 * @throws DatabaseException
-	 *             the database exception
-	 */
-	public synchronized void load() throws DatabaseException {
-		dbFileAccessManager.readDatabaseIntoCache(dbCache);
 	}
 }

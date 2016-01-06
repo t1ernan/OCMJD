@@ -12,9 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import suncertify.business.AlreadyBookedException;
-import suncertify.business.BasicServiceImpl;
+import suncertify.business.BasicService;
 import suncertify.business.ContractorNotFoundException;
-import suncertify.business.ContractorServices;
+import suncertify.business.ContractorService;
 import suncertify.business.ServiceException;
 import suncertify.db.DBMain;
 import suncertify.db.DBMainFactory;
@@ -27,7 +27,7 @@ import suncertify.util.ContractorPKConverter;
 public class BasicServiceTest {
 
 	private DBMain data;
-	private ContractorServices services;
+	private ContractorService services;
 
 	private final String[] firstContractorValues = new String[] { "Dogs With Tools", "Smallville", "Roofing", "7",
 			"$35.00", "" };
@@ -49,7 +49,7 @@ public class BasicServiceTest {
 	@Before
 	public void setup() throws DatabaseException {
 		data = DBMainFactory.getDatabase(DB_FILE_NAME);
-		services = new BasicServiceImpl(data);
+		services = new BasicService(data);
 	}
 
 	@After

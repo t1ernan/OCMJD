@@ -66,13 +66,8 @@ public class DataConcurrencyTest {
 			for (Thread thread : threads) {
 				thread.join();
 			}
-			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
 			System.out.println("FINISHED");
-			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("//////////////////////////////////////////////////////////////////////////////////");
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -124,7 +119,7 @@ public class DataConcurrencyTest {
 				 * data.update(recNo, new String[] {"Palace", "Smallville", "2",
 				 * "Y", "$150.00", "2005/07/27", null});
 				 */
-				data.update(recNo, ContractorConverter.toFieldValues(contractor));
+				data.update(recNo, ContractorConverter.toStringArray(contractor));
 				System.out.println(Thread.currentThread().getId() + " trying to unlock record #" + recNo
 						+ " on UpdatingRandomRecordThread");
 				data.unlock(recNo);
@@ -155,7 +150,7 @@ public class DataConcurrencyTest {
 				data.lock(1);
 				System.out.println(
 						Thread.currentThread().getId() + " trying to update record #1 on" + " UpdatingRecord1Thread");
-				data.update(1, ContractorConverter.toFieldValues(contractor));
+				data.update(1, ContractorConverter.toStringArray(contractor));
 				System.out.println(
 						Thread.currentThread().getId() + " trying to unlock record #1 on" + "UpdatingRecord1Thread");
 
@@ -184,10 +179,11 @@ public class DataConcurrencyTest {
 			contractor.setSize(6);
 			contractor.setSpecialities("hating peanuts, shouting loud");
 			contractor.setRate("$120.00");
+			contractor.setCustomerId("");
 
 			try {
 				System.out.println(Thread.currentThread().getId() + " trying to create a record");
-				data.create(ContractorConverter.toFieldValues(contractor));
+				data.create(ContractorConverter.toStringArray(contractor));
 			} catch (Exception e) {
 				System.out.println(Thread.currentThread().getId() + " couldn't create record: " + e);
 			}

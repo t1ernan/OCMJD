@@ -1,14 +1,17 @@
  Patterns Used: DTO pattern,
  
- Assumptions: The provided data file contains valid data, therefore no validation of the existing data file records is required. Only new updates to the record must be validated before writing it to the file. Restriction of user input to valid data fields only should be performed at the UI level.
+ Assumptions: The provided data file contains valid data, therefore no validation of the existing data file records is required. Only new and modified data will be validated before being written to the database.
+ Assumptions: The string encoding format will not change and therefore will not need to be configurable. It will be hardcoded into the application as a constant value.
+ Assumptions: The application does not need to support localization, as their has been no mention of Bodgitt & Scarper being an international company. The only locale supported shall be en_US.
+ 
  
  Application
  Decision: Limit the use of the new API's introduced in Java 8 to areas which will siginificantly enhance readability
  Reason: Purely for code readability reasons. Junior developers who are only familiar with the java API prior to Java 8 may struggle to understand functional programming features such as Streams, Lambdas and Method Referencing
  
  Data.java
- Decision:
- Reason:
+ Decision: Synchronize every method
+ Reason: Simplicity of thread safety
  
  DBFileAccessManager.java
  Decision: Don't validate the data when writing it to the file. 
@@ -20,4 +23,14 @@
  
  ContractorPK.java
  Decision: Used a ContractorPK object
- Reason: Assuming the datafile has valid data, it will be sufficient to perform validation of the data in the UI layer. 
+ Reason: Assuming the datafile has valid data, it will be sufficient to perform validation of the data in the UI layer.
+ 
+ DBMainExtended.java
+ Decision: Extended existing interface
+ Reason: Stop throwing RecordNotFoundException for some methods. 
+ 
+ DB.java
+ Decision: Catch DatabaseException for save method
+ Reason: save method is only called during shutdown inside a shutdownHook, which does not allow you to throw checked exceptions, better to log it.
+ 
+ 

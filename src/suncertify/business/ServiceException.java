@@ -1,19 +1,27 @@
 package suncertify.business;
 
+/**
+ * The class ServiceException is a direct subclass of {@link Exception} and a
+ * common superclass of a number of business logic related exceptions.
+ */
 public class ServiceException extends Exception {
 
+	/** The serial version UID. */
+	private static final long serialVersionUID = 17011991;
+
 	/**
-	 * Instantiates a new services exception.
+	 * Constructs a new ServiceException with {@code null} as its detail
+	 * message.
 	 */
 	public ServiceException() {
 		super();
 	}
 
 	/**
-	 * Instantiates a new services exception.
+	 * Constructs a new ServiceException with the specified detail message.
 	 *
 	 * @param message
-	 *            the message
+	 *            the detail message
 	 */
 	public ServiceException(String message) {
 		super(message);

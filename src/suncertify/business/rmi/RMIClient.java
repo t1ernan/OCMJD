@@ -8,31 +8,30 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Map;
 
-import suncertify.business.ContractorServices;
-import suncertify.business.ServiceException;
+import suncertify.business.AlreadyBookedException;
+import suncertify.business.ContractorNotFoundException;
+import suncertify.business.ContractorService;
 import suncertify.dto.Contractor;
 import suncertify.dto.ContractorPK;
 import suncertify.util.Config;
 
-public class RMIClient implements ContractorServices {
+public class RMIClient implements ContractorService {
 
-	private final ContractorServices service;
+	private final ContractorService service;
 	private final Config config = Config.getInstance();
 
 	public RMIClient() throws RemoteException, NotBoundException {
 		final Registry registry = LocateRegistry.getRegistry(config.getServerIPAddress(), config.getPortNumber());
-		service = (ContractorServices) registry.lookup(RMI_ID);
-
+		service = (ContractorService) registry.lookup(RMI_ID);
 	}
 
 	@Override
-	public void book(Contractor contractor) throws ServiceException, RemoteException {
+	public void book(Contractor contractor) throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
 		service.book(contractor);
-
 	}
 
 	@Override
-	public Map<Integer, Contractor> find(ContractorPK primaryKey) throws ServiceException, RemoteException {
+	public Map<Integer, Contractor> find(ContractorPK primaryKey) throws ContractorNotFoundException, RemoteException {
 		return service.find(primaryKey);
 	}
 

@@ -83,34 +83,12 @@ public class DataTest {
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 	}
 
-	@Test(expected = RecordNotFoundException.class)
-	public void testUpdate_InvalidRecord() throws DatabaseException {
-		data.update(INVALID_RECORD_NUMBER, newValues);
-	}
-
-	@Test(expected = RecordNotFoundException.class)
-	public void testUpdate_DeletedRecord() throws DatabaseException {
-		data.delete(VALID_RECORD_NUMBER);
-		data.update(VALID_RECORD_NUMBER, newValues);
-	}
-
 	@Test
 	public void testDelete_ValidRecord() throws DatabaseException {
 		data.delete(VALID_RECORD_NUMBER);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		// assertEquals(new Integer(VALID_RECORD_NUMBER),
 		// data.getRecordNumber());
-	}
-
-	@Test(expected = RecordNotFoundException.class)
-	public void testDelete_InvalidRecord() throws DatabaseException {
-		data.delete(INVALID_RECORD_NUMBER);
-	}
-
-	@Test(expected = RecordNotFoundException.class)
-	public void testDelete_DeletedRecord() throws DatabaseException {
-		data.delete(VALID_RECORD_NUMBER);
-		data.delete(VALID_RECORD_NUMBER);
 	}
 
 	@Test

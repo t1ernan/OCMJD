@@ -18,7 +18,7 @@ public class ContractorConverter {
 	 * @param contractor the contractor
 	 * @return the string[]
 	 */
-	public static String[] toFieldValues(Contractor contractor) {
+	public static String[] toStringArray(Contractor contractor) {
 		final String[] fieldValues = new String[NUMBER_OF_FIELDS];
 		ContractorPK contractorPK = contractor.getPrimaryKey();
 		fieldValues[0] = contractorPK.getName();

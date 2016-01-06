@@ -3,10 +3,21 @@ package suncertify.util;
 import suncertify.dto.Contractor;
 import suncertify.dto.ContractorPK;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ContractorConverter.
+ */
 public class ContractorConverter {
 
+	/** The Constant NUMBER_OF_FIELDS. */
 	private static final int NUMBER_OF_FIELDS = 6;
 
+	/**
+	 * To field values.
+	 *
+	 * @param contractor the contractor
+	 * @return the string[]
+	 */
 	public static String[] toFieldValues(Contractor contractor) {
 		final String[] fieldValues = new String[NUMBER_OF_FIELDS];
 		ContractorPK contractorPK = contractor.getPrimaryKey();
@@ -19,6 +30,12 @@ public class ContractorConverter {
 		return fieldValues;
 	}
 
+	/**
+	 * To contractor.
+	 *
+	 * @param fieldValues the field values
+	 * @return the contractor
+	 */
 	public static Contractor toContractor(String[] fieldValues) {
 		if (fieldValues.length < NUMBER_OF_FIELDS) {
 			throw new IllegalArgumentException("Must have at least " + NUMBER_OF_FIELDS

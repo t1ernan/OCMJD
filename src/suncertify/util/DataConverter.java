@@ -6,8 +6,18 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DataConverter.
+ */
 public class DataConverter {
 
+	/**
+	 * Convert integer list to int array.
+	 *
+	 * @param list the list
+	 * @return the int[]
+	 */
 	public static int[] convertIntegerListToIntArray(List<Integer> list) {
 		final int[] intArray = new int[list.size()];
 		for (int index = 0; index < list.size(); index++) {

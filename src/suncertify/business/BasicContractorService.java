@@ -10,8 +10,7 @@ import suncertify.db.DBMainExtended;
 import suncertify.db.RecordNotFoundException;
 import suncertify.dto.Contractor;
 import suncertify.dto.ContractorPK;
-import suncertify.util.ContractorConverter;
-import suncertify.util.ContractorPKConverter;
+import suncertify.util.Converter;
 
 /**
  * BasicContractorService is a default implementation of
@@ -43,8 +42,8 @@ public class BasicContractorService implements ContractorService {
 		if (isCustomerIdInvalid(customerId)) {
 			throw new IllegalArgumentException("CustomerId is not an 8 digit number");
 		}
-		final String[] fieldValues = ContractorConverter.toStringArray(contractor);
-		final String[] uniqueId = ContractorPKConverter.toStringArray(contractor.getPrimaryKey());
+		final String[] fieldValues = Converter.contractorToStringArray(contractor);
+		final String[] uniqueId = Converter.contractorPKToStringArray(contractor.getPrimaryKey());
 		int recordNumber = -1;
 		try {
 			recordNumber = databaseManager.find(uniqueId)[0];
@@ -65,13 +64,13 @@ public class BasicContractorService implements ContractorService {
 	public Map<Integer, Contractor> find(final ContractorPK contractorPK)
 			throws ContractorNotFoundException, RemoteException {
 		final Map<Integer, Contractor> matchingRecords = new HashMap<>();
-		final String[] searchCriteria = ContractorPKConverter.toStringArray(contractorPK);
+		final String[] searchCriteria = Converter.contractorPKToStringArray(contractorPK);
 		try {
 			final int[] recordNumbers = databaseManager.find(searchCriteria);
 			for (int index = 0; index < recordNumbers.length; index++) {
 				final Integer recordNumber = recordNumbers[index];
 				final String[] fieldValues = databaseManager.read(recordNumber);
-				final Contractor contractor = ContractorConverter.toContractor(fieldValues);
+				final Contractor contractor = Converter.stringArrayToContractor(fieldValues);
 				matchingRecords.put(recordNumber, contractor);
 			}
 		} catch (RecordNotFoundException e) {
@@ -99,7 +98,7 @@ public class BasicContractorService implements ContractorService {
 	private void checkContractorIsAvailable(final int recordNumber)
 			throws RecordNotFoundException, AlreadyBookedException, RemoteException {
 		final String[] fieldValues = databaseManager.read(recordNumber);
-		final Contractor contractor = ContractorConverter.toContractor(fieldValues);
+		final Contractor contractor = Converter.stringArrayToContractor(fieldValues);
 		final boolean isContractorAlreadyBooked = !contractor.getCustomerId().isEmpty();
 		if (isContractorAlreadyBooked) {
 			throw new AlreadyBookedException("Contractor has already been booked.");

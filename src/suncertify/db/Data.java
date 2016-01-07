@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import suncertify.util.DataConverter;
+import suncertify.util.Converter;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -126,7 +126,7 @@ public class Data implements DBMainExtended {
 			throw new RecordNotFoundException(
 					"No matching records for selected criteria: Name=" + criteria[0] + " , Location=" + criteria[1]);
 		}
-		final int[] matchingRecordNumbers = DataConverter.convertIntegerListToIntArray(recordNumberList);
+		final int[] matchingRecordNumbers = Converter.convertIntegerListToIntArray(recordNumberList);
 		return matchingRecordNumbers;
 	}
 

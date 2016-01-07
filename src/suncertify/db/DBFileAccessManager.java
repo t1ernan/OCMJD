@@ -4,8 +4,8 @@ import static suncertify.util.Constants.DELETED_FLAG;
 import static suncertify.util.Constants.EMPTY_SPACE;
 import static suncertify.util.Constants.EXPECTED_MAGIC_COOKIE;
 import static suncertify.util.Constants.VALID_FLAG;
-import static suncertify.util.DataConverter.convertBytesToString;
-import static suncertify.util.DataConverter.convertStringToBytes;
+import static suncertify.util.Converter.convertBytesToString;
+import static suncertify.util.Converter.convertStringToBytes;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

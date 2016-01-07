@@ -11,7 +11,7 @@ import suncertify.db.DatabaseException;
 import suncertify.db.DatabaseManagerFactory;
 import suncertify.dto.Contractor;
 import suncertify.dto.ContractorPK;
-import suncertify.util.ContractorConverter;
+import suncertify.util.Converter;
 
 public class DataConcurrencyTest {
 
@@ -119,7 +119,7 @@ public class DataConcurrencyTest {
 				 * data.update(recNo, new String[] {"Palace", "Smallville", "2",
 				 * "Y", "$150.00", "2005/07/27", null});
 				 */
-				data.update(recNo, ContractorConverter.toStringArray(contractor));
+				data.update(recNo, Converter.contractorToStringArray(contractor));
 				System.out.println(Thread.currentThread().getId() + " trying to unlock record #" + recNo
 						+ " on UpdatingRandomRecordThread");
 				data.unlock(recNo);
@@ -150,7 +150,7 @@ public class DataConcurrencyTest {
 				data.lock(1);
 				System.out.println(
 						Thread.currentThread().getId() + " trying to update record #1 on" + " UpdatingRecord1Thread");
-				data.update(1, ContractorConverter.toStringArray(contractor));
+				data.update(1, Converter.contractorToStringArray(contractor));
 				System.out.println(
 						Thread.currentThread().getId() + " trying to unlock record #1 on" + "UpdatingRecord1Thread");
 
@@ -183,7 +183,7 @@ public class DataConcurrencyTest {
 
 			try {
 				System.out.println(Thread.currentThread().getId() + " trying to create a record");
-				data.create(ContractorConverter.toStringArray(contractor));
+				data.create(Converter.contractorToStringArray(contractor));
 			} catch (Exception e) {
 				System.out.println(Thread.currentThread().getId() + " couldn't create record: " + e);
 			}

@@ -18,7 +18,7 @@ import suncertify.util.DataConverter;
  * is created. All queries and updates to the database are then done to the
  * in-memory cache instead using the public methods declared in the
  * {@link DBMain} interface. It writes the contents of the cache back to the
- * database file when the application terminates
+ * database file when the application terminates.
  */
 public class Data implements DBMainExtended {
 
@@ -176,6 +176,7 @@ public class Data implements DBMainExtended {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public synchronized void save() throws DatabaseException {
 		dbFileAccessManager.persist(dbCache);
 	}
@@ -183,6 +184,7 @@ public class Data implements DBMainExtended {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public synchronized void load() throws DatabaseException {
 		dbFileAccessManager.readDatabaseIntoCache(dbCache);
 	}

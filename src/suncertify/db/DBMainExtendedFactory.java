@@ -1,12 +1,12 @@
 package suncertify.db;
 
 /**
- * A factory for creating DBMain objects.
+ * A factory for creating DBMainExtended objects.
  */
-public class DBMainFactory {
+public class DBMainExtendedFactory {
 
 	/** The database object. */
-	private static DBMain database;
+	private static DBMainExtended database;
 
 	/**
 	 * Gets a database instance. This method should only be called once upon
@@ -18,7 +18,7 @@ public class DBMainFactory {
 	 * @throws DatabaseException
 	 *             if a database instance could not be created
 	 */
-	public static DBMain getDatabase(final String dbFileLocation) throws DatabaseException {
+	public static DBMainExtended getDatabase(final String dbFileLocation) throws DatabaseException {
 		if (database == null) {
 			database = new Data(dbFileLocation);
 		}

@@ -10,8 +10,8 @@ import suncertify.dto.ContractorPK;
  * ContractorService is the common interface for all classes that wish to query
  * the database in the Service Layer. The business methods defined in this
  * interface will be exposed to the Presentation layer, allowing the
- * Presentation layer to indirectly access the database by calling these
- * methods.
+ * Presentation layer to indirectly query the Database layer through calling
+ * these exposed methods.
  */
 public interface ContractorService {
 
@@ -38,20 +38,22 @@ public interface ContractorService {
 	 * number of the contractor as the key and the contractor record as the
 	 * value.<br>
 	 * <br>
-	 * <b>Example 1:</b> A {@code primaryKey} with name="Fred" and
-	 * location="Paris" will return all records of contractors with names
-	 * beginning with "Fred", and locations beginning with "Paris".<br>
-	 * <br>
-	 * <b>Example 2:</b> A {@code primaryKey} with name="Fred" and location=""
-	 * will return all records of contractors with names beginning with "Fred".
-	 * <br>
-	 * <br>
-	 * <b>Example 3:</b> A {@code primaryKey} with name="" and location="Paris"
-	 * will return all records of contractors with locations beginning with
+	 * <b>Example 1:</b> A {@code primaryKey} with {@code name}="Fred" and
+	 * {@code location}="Paris" will return all non-deleted records of
+	 * contractors who's name begins with "Fred", and location begins with
 	 * "Paris".<br>
 	 * <br>
-	 * <b>Example 4:</b> A {@code primaryKey} with name="" and location="" will
-	 * return all contractor records available.
+	 * <b>Example 2:</b> A {@code primaryKey} with {@code name}="Fred" and
+	 * {@code location}="" will return all non-deleted records of contractors
+	 * who's name begins with "Fred". <br>
+	 * <br>
+	 * <b>Example 3:</b> A {@code primaryKey} with {@code name}="" and
+	 * {@code location}="Paris" will return all non-deleted records of
+	 * contractors who's location begins with "Paris".<br>
+	 * <br>
+	 * <b>Example 4:</b> A {@code primaryKey} with {@code name}="" and
+	 * {@code location}="" will return all non-deleted contractor records
+	 * available.
 	 *
 	 * @param primaryKey
 	 *            the primary key

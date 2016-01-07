@@ -2,7 +2,9 @@ package test.business;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static suncertify.util.Constants.*;
+import static suncertify.util.Constants.DB_FILE_NAME;
+import static suncertify.util.Constants.DEFAULT_PORT_NUMBER;
+import static suncertify.util.Constants.DEFAULT_SERVER_IPADDRESS;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -19,8 +21,8 @@ import suncertify.business.ServiceException;
 import suncertify.business.rmi.RMIClient;
 import suncertify.business.rmi.RMIServer;
 import suncertify.business.rmi.RMIService;
-import suncertify.db.DBMain;
-import suncertify.db.DBMainFactory;
+import suncertify.db.DBMainExtended;
+import suncertify.db.DBMainExtendedFactory;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.dto.Contractor;
@@ -29,7 +31,7 @@ import suncertify.util.ContractorPKConverter;
 
 public class RMIServiceTest {
 
-	private static DBMain data;
+	private static DBMainExtended data;
 	private static RMIService server;
 	private static ContractorService services;
 
@@ -52,10 +54,10 @@ public class RMIServiceTest {
 
 	@BeforeClass
 	public static void setup() throws DatabaseException, RemoteException, NotBoundException, ServiceException {
-		data = DBMainFactory.getDatabase(DB_FILE_NAME);
+		data = DBMainExtendedFactory.getDatabase(DB_FILE_NAME);
 		server = new RMIServer(data);
 		server.startServer(DEFAULT_PORT_NUMBER);
-		services = new RMIClient();
+		services = new RMIClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
 	}
 
 	@After

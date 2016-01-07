@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import suncertify.db.DBMain;
-import suncertify.db.DBMainFactory;
+import suncertify.db.DBMainExtendedFactory;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.db.DuplicateKeyException;
@@ -38,7 +38,7 @@ public class DataTest {
 
 	@Before
 	public void setup() throws DatabaseException {
-		data = DBMainFactory.getDatabase(DB_FILE_NAME);
+		data = DBMainExtendedFactory.getDatabase(DB_FILE_NAME);
 	}
 
 	@After

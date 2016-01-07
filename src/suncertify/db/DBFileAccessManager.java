@@ -1,9 +1,12 @@
 package suncertify.db;
 
-import static suncertify.util.Constants.*;
-import static suncertify.util.DataConverter.*;
+import static suncertify.util.Constants.DELETED_FLAG;
+import static suncertify.util.Constants.EMPTY_SPACE;
+import static suncertify.util.Constants.EXPECTED_MAGIC_COOKIE;
+import static suncertify.util.Constants.VALID_FLAG;
+import static suncertify.util.DataConverter.convertBytesToString;
+import static suncertify.util.DataConverter.convertStringToBytes;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -43,8 +46,6 @@ public class DBFileAccessManager {
 	 *
 	 * @param dbFileLocation
 	 *            the location of the database on the file system
-	 * @throws IOException
-	 * @throws FileNotFoundException
 	 * @throws DatabaseException
 	 */
 	public DBFileAccessManager(final String dbFileLocation) throws DatabaseException {
@@ -70,7 +71,8 @@ public class DBFileAccessManager {
 	 *            a map containing record numbers as the keys and their
 	 *            corresponding records as the values
 	 * @throws DatabaseException
-	 *             if an unexpected IO exception occurs when trying to read file
+	 *             if an unexpected IO exception occurs when trying to read the
+	 *             file
 	 */
 	public void readDatabaseIntoCache(final Map<Integer, String[]> map) throws DatabaseException {
 		int recordNumber = 0;

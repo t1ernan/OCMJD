@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 import suncertify.business.AlreadyBookedException;
-import suncertify.business.BasicService;
+import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorNotFoundException;
-import suncertify.db.DBMain;
-import suncertify.db.DBMainFactory;
+import suncertify.db.DBMainExtended;
+import suncertify.db.DBMainExtendedFactory;
 import suncertify.db.DatabaseException;
 import suncertify.db.RecordNotFoundException;
 import suncertify.dto.Contractor;
@@ -19,10 +19,10 @@ import suncertify.util.ContractorConverter;
 
 public class TestBusinessService {
 
-	private static DBMain data;
+	private static DBMainExtended data;
 
-	public TestBusinessService(DBMain data) throws DatabaseException {
-		this.data = DBMainFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
+	public TestBusinessService(DBMainExtended data) throws DatabaseException {
+		this.data = DBMainExtendedFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 
 	public static void main(final String[] args) throws RemoteException, DatabaseException {
@@ -77,7 +77,7 @@ public class TestBusinessService {
 					try {
 						Contractor contractor = ContractorConverter.toContractor(data.read(recNo));
 						contractor.setCustomerId("54120584");
-						BasicService service = new BasicService(data);
+						BasicContractorService service = new BasicContractorService(data);
 						service.book(contractor);
 						endRun = true;
 					} catch (RecordNotFoundException e) {

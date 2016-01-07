@@ -7,22 +7,36 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-import suncertify.business.BasicService;
-import suncertify.db.DBMain;
-import suncertify.util.Config;
+import suncertify.business.BasicContractorService;
+import suncertify.db.DBMainExtended;
 
-public class RMIServer extends BasicService implements RMIService {
+/**
+ * Subclass of {@link BasicContractorService} and implements of
+ * {@link RMIService}. Contains the business logic necessary to start an RMI
+ * server instance on a specified port number and implement the business methods
+ * defined the ContractorService interface
+ */
+public class RMIServer extends BasicContractorService implements RMIService {
 
-	private final Config config = Config.getInstance();
-	
-	public RMIServer(DBMain data) throws RemoteException {
+	/**
+	 * Constructs a new RMI server instance with the specified database manager.
+	 *
+	 * @param databaseManager
+	 *            the database manager used to interact with the database.
+	 * @throws RemoteException
+	 *             if an RMI communication-related exception occurs.
+	 */
+	public RMIServer(final DBMainExtended data) throws RemoteException {
 		super(data);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void startServer(int port) throws RemoteException {
+	public void startServer(final int port) throws RemoteException {
 		final RMIService impl = (RMIService) UnicastRemoteObject.exportObject(this, 0);
-		final Registry registry = LocateRegistry.createRegistry(config.getPortNumber());
+		final Registry registry = LocateRegistry.createRegistry(port);
 		registry.rebind(RMI_ID, impl);
 		System.out.println("Server is running on port " + port);
 	}

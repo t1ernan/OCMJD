@@ -31,7 +31,7 @@ public class Data implements DBMainExtended {
 	/**
 	 * Used to perform read/write operations on the database file.
 	 */
-	private final DBFileAccessManager dbFileAccessManager;
+	private final DBAccessManager dbAccessManager;
 
 	/**
 	 * Constructs a new Data instance with a specified location of the database
@@ -47,7 +47,7 @@ public class Data implements DBMainExtended {
 	 *             if the records could not be read from the database file
 	 */
 	public Data(final String dbFileLocation) throws DatabaseException {
-		this.dbFileAccessManager = new DBFileAccessManager(dbFileLocation);
+		this.dbAccessManager = new DBFileAccessManager(dbFileLocation);
 		load();
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {
@@ -178,7 +178,7 @@ public class Data implements DBMainExtended {
 	 */
 	@Override
 	public synchronized void save() throws DatabaseException {
-		dbFileAccessManager.persist(dbCache);
+		dbAccessManager.persist(dbCache);
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class Data implements DBMainExtended {
 	 */
 	@Override
 	public synchronized void load() throws DatabaseException {
-		dbFileAccessManager.readDatabaseIntoCache(dbCache);
+		dbAccessManager.readDatabaseIntoCache(dbCache);
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class Data implements DBMainExtended {
 	 *             number of characters permitted for that field
 	 */
 	private void validateFieldLengths(final String[] fields) {
-		dbFileAccessManager.validateFieldsAgainstSchema(fields);
+		dbAccessManager.validateFieldsAgainstSchema(fields);
 	}
 
 	/**

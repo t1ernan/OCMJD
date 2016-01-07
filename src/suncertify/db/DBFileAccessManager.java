@@ -16,9 +16,9 @@ import suncertify.util.Constants;
 
 /**
  * The class DBFileAccessManager is responsible for reading and writing to the
- * non-relational database file.
+ * non-relational database file and implements {@link DBAccessManager}.
  */
-public class DBFileAccessManager {
+public class DBFileAccessManager implements DBAccessManager {
 
 	/** The location of the database on the file system. */
 	private final String dbFileLocation;
@@ -39,10 +39,11 @@ public class DBFileAccessManager {
 
 	/**
 	 * Constructs a new DBFileAccessManager using the specified
-	 * {@code dbFileLocation} and sets the appropriate field variables. Checks
-	 * the magic cookie value and the record offset value specified in the file
-	 * to ensure the correct database file with the correct schema information
-	 * is being used.
+	 * {@code dbFileLocation} and sets the appropriate field variables using the
+	 * schema information specified in the database file. Checks the magic
+	 * cookie value and the record offset value specified in the file to ensure
+	 * the correct database file with the correct schema information is being
+	 * used.
 	 *
 	 * @param dbFileLocation
 	 *            the location of the database on the file system
@@ -74,6 +75,7 @@ public class DBFileAccessManager {
 	 *             if an unexpected IO exception occurs when trying to read the
 	 *             file
 	 */
+	@Override
 	public void readDatabaseIntoCache(final Map<Integer, String[]> map) throws DatabaseException {
 		int recordNumber = 0;
 		try (RandomAccessFile dbFile = new RandomAccessFile(dbFileLocation, "rwd")) {
@@ -107,6 +109,7 @@ public class DBFileAccessManager {
 	 *             if an unexpected IO exception occurs when trying to write the
 	 *             data to the database file
 	 */
+	@Override
 	public void persist(final Map<Integer, String[]> map) throws DatabaseException {
 		try (RandomAccessFile dbFile = new RandomAccessFile(dbFileLocation, "rwd")) {
 			dbFile.seek(recordOffset);
@@ -139,6 +142,7 @@ public class DBFileAccessManager {
 	 *             if the number of characters used in a field exceeds the max
 	 *             number of characters permitted for that field
 	 */
+	@Override
 	public void validateFieldsAgainstSchema(final String[] fieldValues) {
 		for (int index = 0; index < fieldValues.length; index++) {
 			final int fieldSize = fieldValues[index].length();

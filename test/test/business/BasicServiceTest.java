@@ -18,7 +18,7 @@ import suncertify.business.ContractorService;
 import suncertify.business.ServiceException;
 import suncertify.db.DBMainExtended;
 import suncertify.db.Data;
-import suncertify.db.DBMainExtendedFactory;
+import suncertify.db.DatabaseManagerFactory;
 import suncertify.db.DatabaseException;
 import suncertify.dto.Contractor;
 import suncertify.util.ContractorConverter;
@@ -48,7 +48,7 @@ public class BasicServiceTest {
 
 	@Before
 	public void setup() throws DatabaseException {
-		data = DBMainExtendedFactory.getDatabase(DB_FILE_NAME);
+		data = DatabaseManagerFactory.getDatabaseManager(DB_FILE_NAME);
 		services = new BasicContractorService(data);
 	}
 

@@ -13,6 +13,10 @@
  Decision: Synchronize every method
  Reason: Simplicity of thread safety
  
+ Data.java
+ Decision: Delegates responsibility or writing/reading to the database file out to the new class DBFileAccessManager.java
+ Reason: Removes the tight coupling of the Data class and the type of database being used. This way if the database is changed to a relational database in the future only the
+ 
  DBFileAccessManager.java
  Decision: Don't validate the data when writing it to the file. 
  Reason: Since the writing to the file is done on shutdown, if the data is corrupt then there will be no chance to notify the user or fix the issue. These checks should be done before updating records in the cache, preferably at the UI level. This way we can notify the user to amend the record before retrying.

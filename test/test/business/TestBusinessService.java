@@ -11,7 +11,7 @@ import suncertify.business.AlreadyBookedException;
 import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.db.DBMainExtended;
-import suncertify.db.DBMainExtendedFactory;
+import suncertify.db.DatabaseManagerFactory;
 import suncertify.db.DatabaseException;
 import suncertify.db.RecordNotFoundException;
 import suncertify.dto.Contractor;
@@ -22,7 +22,7 @@ public class TestBusinessService {
 	private static DBMainExtended data;
 
 	public TestBusinessService(DBMainExtended data) throws DatabaseException {
-		this.data = DBMainExtendedFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
+		this.data = DatabaseManagerFactory.getDatabaseManager(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 
 	public static void main(final String[] args) throws RemoteException, DatabaseException {

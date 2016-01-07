@@ -1,7 +1,7 @@
 package suncertify.db;
 
 import static suncertify.util.Constants.DELETED_FLAG;
-import static suncertify.util.Constants.EMPTY_SPACE;
+import static suncertify.util.Constants.EMPTY_STRING;
 import static suncertify.util.Constants.EXPECTED_MAGIC_COOKIE;
 import static suncertify.util.Constants.VALID_FLAG;
 import static suncertify.util.Converter.convertBytesToString;
@@ -212,7 +212,7 @@ public class DBFileAccessManager implements DBAccessManager {
 	 */
 	private void writeNullRecord(final RandomAccessFile dbFile) throws IOException {
 		for (int index = 0; index < numberOfFields; index++) {
-			writeString(dbFile, EMPTY_SPACE, fieldValueMaxSizes[index]);
+			writeString(dbFile, EMPTY_STRING, fieldValueMaxSizes[index]);
 		}
 	}
 

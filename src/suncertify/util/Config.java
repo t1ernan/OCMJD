@@ -1,211 +1,99 @@
 package suncertify.util;
 
-import static suncertify.util.Constants.CONFIGURATION_FILE_NAME;
-import static suncertify.util.Constants.DB_LOCATION_SERVER;
-import static suncertify.util.Constants.DB_LOCATION_STANDALONE;
-import static suncertify.util.Constants.DEFAULT_DB_LOCATION_SERVER;
-import static suncertify.util.Constants.DEFAULT_DB_LOCATION_STANDALONE;
-import static suncertify.util.Constants.DEFAULT_PORT_NUMBER;
-import static suncertify.util.Constants.DEFAULT_SERVER_IPADDRESS;
-import static suncertify.util.Constants.EQUALS;
-import static suncertify.util.Constants.PORT_NUMBER;
-import static suncertify.util.Constants.SERVER_IPADDRESS;
+import static suncertify.util.Constants.*;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Config.
  */
-public class Config {
+public abstract class Config {
 
-	/** The Constant configFile. */
-	private static final File configFile = new File(CONFIGURATION_FILE_NAME);
+	private static final Properties prop = new Properties();
 
-	/** The Constant INSTANCE. */
-	private static final Config INSTANCE = new Config();
+	static {
+		final File configFile = new File(CONFIGURATION_FILE_NAME);
+		if (!configFile.exists()) {
+			createNewPropertiesFile();
+		}else{
+			loadPropertiesFile();
+		}
+	}
 
-	/** The server db location. */
-	private String serverDBLocation;
+	private static void createNewPropertiesFile() {
+		prop.setProperty(SERVER_DB_LOCATION, EMPTY_STRING);
+		prop.setProperty(SERVER_IP_ADDRESS, EMPTY_STRING);
+		prop.setProperty(SERVER_PORT_NUMBER, DEFAULT_PORT_NUMBER);
+		prop.setProperty(CLIENT_PORT_NUMBER, DEFAULT_PORT_NUMBER);
+		prop.setProperty(ALONE_DB_LOCATION, EMPTY_STRING);
+		saveProperties();
+	}
 
-	/** The standalone db location. */
-	private String standaloneDBLocation;
-
-	/** The server ip address. */
-	private String serverIPAddress;
-
-	/** The port number. */
-	private int portNumber;
-
-	/**
-	 * Instantiates a new config.
-	 */
-	private Config() {
-		try {
-			createFileIfNecessary();
-			readConfigValues();
+	private static void loadPropertiesFile() {
+		try (InputStream input = new FileInputStream(CONFIGURATION_FILE_NAME);) {
+			prop.load(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * Creates the file if necessary.
-	 *
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	private void createFileIfNecessary() throws IOException {
-		if (!configFile.exists()) {
-			configFile.createNewFile();
-			writeDefaultConfigValues();
-		}
-	}
-
-	/**
-	 * Read config values.
-	 *
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	private void readConfigValues() throws IOException {
-		try (BufferedReader configFileReader = new BufferedReader(new FileReader(configFile));) {
-			setServerDBLocation(getConfigValue(configFileReader.readLine()));
-			setStandaloneDBLocation(getConfigValue(configFileReader.readLine()));
-			setServerIPAddress(getConfigValue(configFileReader.readLine()));
-			setPortNumber(Integer.parseInt(getConfigValue(configFileReader.readLine())));
-		}
-	}
-
-	/**
-	 * Gets the config value.
-	 *
-	 * @param line
-	 *            the line
-	 * @return the config value
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	private String getConfigValue(String line) throws IOException {
-		return line.split(EQUALS)[1];
-	}
-
-	/**
-	 * Write default config values.
-	 *
-	 * @throws FileNotFoundException
-	 *             the file not found exception
-	 */
-	private void writeDefaultConfigValues() throws FileNotFoundException {
-		try (PrintWriter configFileWriter = new PrintWriter(configFile);) {
-			configFileWriter.println(DB_LOCATION_SERVER + EQUALS + DEFAULT_DB_LOCATION_SERVER);
-			configFileWriter.println(DB_LOCATION_STANDALONE + EQUALS + DEFAULT_DB_LOCATION_STANDALONE);
-			configFileWriter.println(SERVER_IPADDRESS + EQUALS + DEFAULT_SERVER_IPADDRESS);
-			configFileWriter.println(PORT_NUMBER + EQUALS + DEFAULT_PORT_NUMBER);
-		}
-	}
-
-	/**
-	 * Save config values.
-	 */
-	public void saveConfigValues() {
-		try (PrintWriter configFileWriter = new PrintWriter(configFile);) {
-			configFileWriter.println(DB_LOCATION_SERVER + EQUALS + serverDBLocation);
-			configFileWriter.println(DB_LOCATION_STANDALONE + EQUALS + standaloneDBLocation);
-			configFileWriter.println(SERVER_IPADDRESS + EQUALS + serverIPAddress);
-			configFileWriter.println(PORT_NUMBER + EQUALS + portNumber);
-		} catch (FileNotFoundException e) {
+	private static void saveProperties() {
+		try (OutputStream output = new FileOutputStream(CONFIGURATION_FILE_NAME);) {
+			prop.store(output, null);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * Gets the server db location.
-	 *
-	 * @return the server db location
-	 */
-	public String getServerDBLocation() {
-		return serverDBLocation;
+	public static String getServerDBLocation() {
+		return prop.getProperty(SERVER_DB_LOCATION);
 	}
 
-	/**
-	 * Sets the server db location.
-	 *
-	 * @param serverDBLocation
-	 *            the new server db location
-	 */
-	public void setServerDBLocation(String serverDBLocation) {
-		this.serverDBLocation = serverDBLocation;
+	public static String getServerIPAddress() {
+		return prop.getProperty(SERVER_IP_ADDRESS);
 	}
 
-	/**
-	 * Gets the standalone db location.
-	 *
-	 * @return the standalone db location
-	 */
-	public String getStandaloneDBLocation() {
-		return standaloneDBLocation;
+	public static String getServerPortNumber() {
+		return prop.getProperty(SERVER_PORT_NUMBER);
 	}
 
-	/**
-	 * Sets the standalone db location.
-	 *
-	 * @param standaloneDBLocation
-	 *            the new standalone db location
-	 */
-	public void setStandaloneDBLocation(String standaloneDBLocation) {
-		this.standaloneDBLocation = standaloneDBLocation;
+	public static String getClientPortNumber() {
+		return prop.getProperty(CLIENT_PORT_NUMBER);
 	}
 
-	/**
-	 * Gets the server ip address.
-	 *
-	 * @return the server ip address
-	 */
-	public String getServerIPAddress() {
-		return serverIPAddress;
+	public static String getAloneDBAddress() {
+		return prop.getProperty(ALONE_DB_LOCATION);
 	}
 
-	/**
-	 * Sets the server ip address.
-	 *
-	 * @param serverIPAddress
-	 *            the new server ip address
-	 */
-	public void setServerIPAddress(String serverIPAddress) {
-		this.serverIPAddress = serverIPAddress;
+	public static void saveServerDBLocation(final String serverDBLocation) {
+		prop.setProperty(SERVER_DB_LOCATION, serverDBLocation);
+		saveProperties();
 	}
 
-	/**
-	 * Gets the port number.
-	 *
-	 * @return the port number
-	 */
-	public int getPortNumber() {
-		return portNumber;
+	public static void saveServerIPAddress(final String serverIPAddress) {
+		prop.setProperty(SERVER_IP_ADDRESS, serverIPAddress);
+		saveProperties();
 	}
 
-	/**
-	 * Sets the port number.
-	 *
-	 * @param portNumber
-	 *            the new port number
-	 */
-	public void setPortNumber(int portNumber) {
-		this.portNumber = portNumber;
+	public static void saveServerPortNumber(final String serverPortNumber) {
+		prop.setProperty(SERVER_PORT_NUMBER, serverPortNumber);
+		saveProperties();
 	}
 
-	/**
-	 * Gets the single instance of Config.
-	 *
-	 * @return single instance of Config
-	 */
-	public static Config getInstance() {
-		return INSTANCE;
+	public static void saveClientPortNumber(final String clientPortNumber) {
+		prop.setProperty(CLIENT_PORT_NUMBER, clientPortNumber);
+		saveProperties();
 	}
+
+	public static void saveAloneDBLocation(final String aloneDBLocation) {
+		prop.setProperty(ALONE_DB_LOCATION, aloneDBLocation);
+		saveProperties();
+	}
+
 }

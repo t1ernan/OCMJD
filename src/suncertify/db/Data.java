@@ -46,6 +46,11 @@ public class Data implements DBMainExtended {
 
 	}
 
+	/**
+	 * Gets the single instance of DBMainExtended.
+	 *
+	 * @return single instance of DBMainExtended.
+	 */
 	public static DBMainExtended getInstance() {
 		return INSTANCE;
 	}
@@ -54,8 +59,9 @@ public class Data implements DBMainExtended {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void initialise(final String dbFileLocation) throws DatabaseException {
-		this.dbAccessManager = new DBFileAccessManager(dbFileLocation);
+	public synchronized void initialize(final String dbFileLocation) throws DatabaseException {
+		this.dbAccessManager = DBFileAccessManager.getInstance();
+		dbAccessManager.initialize(dbFileLocation);
 		load();
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {

@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import suncertify.db.DBMain;
-import suncertify.db.DatabaseManagerFactory;
 import suncertify.db.DatabaseException;
+import suncertify.db.DatabaseManagerFactory;
 import suncertify.dto.Contractor;
 import suncertify.dto.ContractorPK;
 import suncertify.util.ContractorConverter;
@@ -48,7 +48,7 @@ public class DataConcurrencyTest {
 			 * so it is executed as many times as you want
 			 */
 			List<Thread> threads = new ArrayList<Thread>();
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < 10000; i++) {
 				threads.add(new UpdatingRandomRecordThread());
 				threads.add(new UpdatingRecord1Thread());
 				threads.add(new CreatingRecordThread());

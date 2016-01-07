@@ -1,5 +1,7 @@
 package suncertify.business;
 
+import static suncertify.util.Utils.isCustomerIdInvalid;
+
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +39,10 @@ public class BasicContractorService implements ContractorService {
 	@Override
 	public void book(final Contractor contractor)
 			throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
+		final String customerId = contractor.getCustomerId();
+		if (isCustomerIdInvalid(customerId)) {
+			throw new IllegalArgumentException("CustomerId is not an 8 digit number");
+		}
 		final String[] fieldValues = ContractorConverter.toStringArray(contractor);
 		final String[] uniqueId = ContractorPKConverter.toStringArray(contractor.getPrimaryKey());
 		int recordNumber = -1;

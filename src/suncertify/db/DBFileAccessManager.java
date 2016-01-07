@@ -21,7 +21,7 @@ import suncertify.util.Constants;
 public class DBFileAccessManager implements DBAccessManager {
 
 	/** The location of the database on the file system. */
-	private final String dbFileLocation;
+	private String dbFileLocation = null;
 
 	/** The number of fields in a record. */
 	private int numberOfFields;
@@ -37,19 +37,24 @@ public class DBFileAccessManager implements DBAccessManager {
 	/** An array containing the names of fields in each record. */
 	private String[] fieldNames;
 
+	private final static DBFileAccessManager INSTANCE = new DBFileAccessManager();
+
 	/**
-	 * Constructs a new DBFileAccessManager using the specified
-	 * {@code dbFileLocation} and sets the appropriate field variables using the
-	 * schema information specified in the database file. Checks the magic
-	 * cookie value and the record offset value specified in the file to ensure
-	 * the correct database file with the correct schema information is being
-	 * used.
-	 *
-	 * @param dbFileLocation
-	 *            the location of the database on the file system
-	 * @throws DatabaseException
+	 * Constructs a new default DBFileAccessManager.
 	 */
-	public DBFileAccessManager(final String dbFileLocation) throws DatabaseException {
+	private DBFileAccessManager() {
+
+	}
+
+	public static DBFileAccessManager getInstance() {
+		return INSTANCE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void initialize(final String dbFileLocation) throws DatabaseException {
 		this.dbFileLocation = dbFileLocation;
 		try (RandomAccessFile dbFile = new RandomAccessFile(dbFileLocation, "rwd")) {
 			checkMagicCookie(dbFile);

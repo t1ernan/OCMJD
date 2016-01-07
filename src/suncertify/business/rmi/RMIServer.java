@@ -38,6 +38,5 @@ public class RMIServer extends BasicContractorService implements RMIService {
 		final RMIService impl = (RMIService) UnicastRemoteObject.exportObject(this, 0);
 		final Registry registry = LocateRegistry.createRegistry(port);
 		registry.rebind(RMI_ID, impl);
-		System.out.println("Server is running on port " + port);
 	}
 }

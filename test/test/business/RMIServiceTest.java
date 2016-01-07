@@ -33,7 +33,7 @@ public class RMIServiceTest {
 
 	private static DBMainExtended data;
 	private static RMIService server;
-	private static ContractorService services;
+	private static ContractorService service;
 
 	private final String[] firstContractorValues = new String[] { "Dogs With Tools", "Smallville", "Roofing", "7",
 			"$35.00", "" };
@@ -57,7 +57,7 @@ public class RMIServiceTest {
 		data = DatabaseManagerFactory.getDatabaseManager(DB_FILE_NAME);
 		server = new RMIServer(data);
 		server.startServer(DEFAULT_PORT_NUMBER);
-		services = new RMIClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
+		service = new RMIClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
 	}
 
 	@After
@@ -68,7 +68,7 @@ public class RMIServiceTest {
 
 	@Test
 	public void testBook_availableContractor() throws ServiceException, DatabaseException, RemoteException {
-		services.book(firstContractor_Booked);
+		service.book(firstContractor_Booked);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		// assertEquals(28, data.getAllValidRecords().size());
 		assertEquals(0, data.find(firstContractorValues_Booked)[0]);
@@ -77,8 +77,8 @@ public class RMIServiceTest {
 
 	@Test(expected = AlreadyBookedException.class)
 	public void testBook_bookedContractor() throws ServiceException, DatabaseException, RemoteException {
-		services.book(firstContractor_Booked);
-		services.book(firstContractor_Booked);
+		service.book(firstContractor_Booked);
+		service.book(firstContractor_Booked);
 	}
 
 	@Test(expected = ContractorNotFoundException.class)
@@ -86,18 +86,18 @@ public class RMIServiceTest {
 		data.delete(0);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		// assertEquals(27, data.getAllValidRecords().size());
-		services.book(firstContractor_Booked);
+		service.book(firstContractor_Booked);
 	}
 
 	@Test
 	public void testFind_AllContractors() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(ContractorPKConverter.toContractorPK(NO_SEARCH_CRITERIA));
+		Map<Integer, Contractor> results = service.find(ContractorPKConverter.toContractorPK(NO_SEARCH_CRITERIA));
 		assertEquals(28, results.size());
 	}
 
 	@Test
 	public void testFind_SingleContractor() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services
+		Map<Integer, Contractor> results = service
 				.find(ContractorPKConverter.toContractorPK(FIRST_CONTRACTOR_SEARCH_CRITERIA));
 		assertEquals(1, results.size());
 	}
@@ -108,7 +108,7 @@ public class RMIServiceTest {
 		data.delete(0);
 		data.delete(12);
 		data.delete(21);
-		Map<Integer, Contractor> results = services.find(ContractorPKConverter.toContractorPK(NO_SEARCH_CRITERIA));
+		Map<Integer, Contractor> results = service.find(ContractorPKConverter.toContractorPK(NO_SEARCH_CRITERIA));
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		assertEquals(25, results.size());
 	}
@@ -117,25 +117,25 @@ public class RMIServiceTest {
 	public void testFind_SingleContractor_WithDeletedRecords()
 			throws DatabaseException, ServiceException, RemoteException {
 		data.delete(0);
-		services.find(ContractorPKConverter.toContractorPK(FIRST_CONTRACTOR_SEARCH_CRITERIA));
+		service.find(ContractorPKConverter.toContractorPK(FIRST_CONTRACTOR_SEARCH_CRITERIA));
 	}
 
 	@Test
 	public void testFind_MultipleContractors_NameSearch() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(ContractorPKConverter.toContractorPK(NAME_SEARCH_CRITERIA));
+		Map<Integer, Contractor> results = service.find(ContractorPKConverter.toContractorPK(NAME_SEARCH_CRITERIA));
 		assertEquals(6, results.size());
 	}
 
 	@Test
 	public void testFind_MultipleContractors_LocationSearch() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services
+		Map<Integer, Contractor> results = service
 				.find(ContractorPKConverter.toContractorPK(LOCATION_SEARCH_CRITERIA));
 		assertEquals(2, results.size());
 	}
 
 	@Test(expected = ContractorNotFoundException.class)
 	public void testFind_UnknownContractor() throws ServiceException, RemoteException {
-		services.find(ContractorPKConverter.toContractorPK(NEW_CONTRACTOR_SEARCH_CRITERIA));
+		service.find(ContractorPKConverter.toContractorPK(NEW_CONTRACTOR_SEARCH_CRITERIA));
 	}
 
 }

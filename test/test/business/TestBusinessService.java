@@ -97,7 +97,6 @@ public class TestBusinessService {
 					endRun = true;
 					noContractor = true;
 				} catch (AlreadyBookedException e) {
-					// expected to occur
 				}
 				if (!endRun) {
 					recNo++;

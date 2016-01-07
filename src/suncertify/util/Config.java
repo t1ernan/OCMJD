@@ -14,7 +14,28 @@ import java.util.Properties;
  * The Class Config.
  */
 public abstract class Config {
+	
+	/** The Constant CONFIGURATION_FILE_NAME. */
+	public static final String CONFIGURATION_FILE_NAME = "suncertify.properties";
 
+	/** The Constant DB_LOCATION_SERVER. */
+	public static final String SERVER_DB_LOCATION = "server.databaseLocation";
+	
+	/** The Constant SERVER_IPADDRESS. */
+	public static final String SERVER_IP_ADDRESS = "server.ipaddress";
+	
+	/** The Constant PORT_NUMBER. */
+	public static final String SERVER_PORT_NUMBER = "server.port";
+	
+	/** The Constant DB_LOCATION_STANDALONE. */
+	public static final String ALONE_DB_LOCATION = "alone.databaseLocation";
+	
+	/** The Constant PORT_NUMBER. */
+	public static final String CLIENT_PORT_NUMBER = "client.serverPort";
+	
+	/** The Constant DEFAULT_PORT_NUMBER. */
+	public static final String DEFAULT_PORT_NUMBER = "1099";
+	
 	private static final Properties prop = new Properties();
 
 	static {

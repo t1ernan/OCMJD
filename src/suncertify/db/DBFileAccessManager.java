@@ -20,6 +20,18 @@ import suncertify.util.Constants;
  */
 public class DBFileAccessManager implements DBAccessManager {
 
+	/** The Constant VALID_FLAG. */
+	public static final int VALID_FLAG = 00;
+
+	/** The Constant DELETED_FLAG. */
+	public static final int DELETED_FLAG = 0x8000;
+	
+	/** The Constant BLANK_SPACE_HEX. */
+	public static final int BLANK_SPACE_HEX = 0x20;
+
+	/** The Constant EXPECTED_MAGIC_COOKIE. */
+	public static final int EXPECTED_MAGIC_COOKIE = 514;
+	
 	/** The location of the database on the file system. */
 	private String dbFileLocation = null;
 

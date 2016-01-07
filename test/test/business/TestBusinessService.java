@@ -1,9 +1,9 @@
 package test.business;
 
-import static suncertify.util.Constants.DEFAULT_DB_LOCATION_SERVER;
-import static suncertify.util.Constants.DEFAULT_DB_LOCATION_STANDALONE;
-import static suncertify.util.Constants.DEFAULT_PORT_NUMBER;
-import static suncertify.util.Constants.DEFAULT_SERVER_IPADDRESS;
+import static test.util.Constants.DEFAULT_DB_LOCATION_SERVER;
+import static test.util.Constants.DEFAULT_DB_LOCATION_STANDALONE;
+import static test.util.Constants.DEFAULT_SERVER_IPADDRESS;
+import static test.util.Constants.DEFAULT_PORT_NUMBER;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

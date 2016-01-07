@@ -2,9 +2,9 @@ package test.business;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static suncertify.util.Constants.DB_FILE_NAME;
-import static suncertify.util.Constants.DEFAULT_PORT_NUMBER;
-import static suncertify.util.Constants.DEFAULT_SERVER_IPADDRESS;
+import static test.util.Constants.DB_FILE_NAME;
+import static test.util.Constants.DEFAULT_SERVER_IPADDRESS;
+import static test.util.Constants.DEFAULT_PORT_NUMBER;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

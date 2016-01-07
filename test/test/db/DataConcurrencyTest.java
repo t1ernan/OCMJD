@@ -1,6 +1,6 @@
 package test.db;
 
-import static suncertify.util.Constants.DEFAULT_DB_LOCATION_STANDALONE;
+import static test.util.Constants.DEFAULT_DB_LOCATION_STANDALONE;
 
 import java.util.ArrayList;
 import java.util.Collections;

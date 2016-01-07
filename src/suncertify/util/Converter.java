@@ -1,7 +1,5 @@
 package suncertify.util;
 
-import static suncertify.util.Constants.CHARACTER_ENCODING;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -15,6 +13,10 @@ import suncertify.dto.ContractorPK;
  */
 public class Converter {
 
+
+	/** The Constant CHARACTER_ENCODING. */
+	public static final String CHARACTER_ENCODING = "US-ASCII";
+	
 	/** The Constant RECORD_FIELDS. */
 	private static final int RECORD_FIELDS = 6;
 

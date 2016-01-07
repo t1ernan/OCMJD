@@ -2,7 +2,7 @@ package test.db;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static suncertify.util.Constants.DB_FILE_NAME;
+import static test.util.Constants.DB_FILE_NAME;
 
 import org.junit.After;
 import org.junit.Before;

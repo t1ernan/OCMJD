@@ -12,41 +12,49 @@ import java.util.Set;
 
 import suncertify.util.DataConverter;
 
+// TODO: Auto-generated Javadoc
 /**
  * The class Data is an implementation of {@link DBMain}. It reads the contents
  * of the non-relational database file into an in-memory cache when an instance
  * is created. All queries and updates to the database are then done to the
  * in-memory cache instead using the public methods declared in the
  * {@link DBMain} interface. It writes the contents of the cache back to the
- * database file when the application terminates.
+ * database file when the application terminates. <br>
+ * Uses the singleton pattern to ensure there is at most one instance at any one
+ * time.
  */
 public class Data implements DBMainExtended {
 
+	/** The Constant INSTANCE. */
+	private static final DBMainExtended INSTANCE = new Data();
+
 	/** The in-memory cache containing the contents of the database file. */
-	private final Map<Integer, String[]> dbCache = new HashMap<>();
+	private Map<Integer, String[]> dbCache = new HashMap<>();
 
 	/** The in-memory cache of records which have been locked by a thread. */
-	private final Set<Integer> lockedRecords = new HashSet<>();
+	private Set<Integer> lockedRecords = new HashSet<>();
 
 	/**
 	 * Used to perform read/write operations on the database file.
 	 */
-	private final DBAccessManager dbAccessManager;
+	private DBAccessManager dbAccessManager;
 
 	/**
-	 * Constructs a new Data instance with a specified location of the database
-	 * file in the file system. The constructor is responsible for instantiating
-	 * the {@code dBFileAccessManager}, loading the contents of the database
-	 * file into the {@code dbCache} and ensuring that the contents of the
-	 * {@code dbCache} is written back to the database file when the application
-	 * is shut down.
-	 *
-	 * @param dbFileLocation
-	 *            the location of the database on the file system
-	 * @throws DatabaseException
-	 *             if the records could not be read from the database file
+	 * Constructs a new default Data instance.
 	 */
-	public Data(final String dbFileLocation) throws DatabaseException {
+	private Data() {
+
+	}
+
+	public static DBMainExtended getInstance() {
+		return INSTANCE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public synchronized void initialise(final String dbFileLocation) throws DatabaseException {
 		this.dbAccessManager = new DBFileAccessManager(dbFileLocation);
 		load();
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -182,14 +190,6 @@ public class Data implements DBMainExtended {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public synchronized void load() throws DatabaseException {
-		dbAccessManager.readDatabaseIntoCache(dbCache);
-	}
-
-	/**
 	 * Compares the size of the each element in the specified
 	 * {@code fieldValues} against the max permitted field size described in the
 	 * schema description section of the database file for that field. If the
@@ -197,8 +197,8 @@ public class Data implements DBMainExtended {
 	 * permitted for that field, a {@link IllegalArgumentException} will be
 	 * thrown.
 	 *
-	 * @param fieldValues
-	 *            a string array where each element is a record value.
+	 * @param fields
+	 *            the fields
 	 * @throws IllegalArgumentException
 	 *             if the number of characters used in a field exceeds the max
 	 *             number of characters permitted for that field
@@ -282,6 +282,13 @@ public class Data implements DBMainExtended {
 	 */
 	public int getTotalNumberOfRecords() {
 		return dbCache.size();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void load() throws DatabaseException {
+		dbAccessManager.readDatabaseIntoCache(dbCache);
 	}
 
 	/**

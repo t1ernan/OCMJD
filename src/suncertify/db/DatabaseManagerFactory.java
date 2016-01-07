@@ -21,7 +21,8 @@ public class DatabaseManagerFactory {
 	 */
 	public static DBMainExtended getDatabaseManager(final String dbFileLocation) throws DatabaseException {
 		if (databaseManager == null) {
-			databaseManager = new Data(dbFileLocation);
+			databaseManager = Data.getInstance();
+			databaseManager.initialise(dbFileLocation);
 		}
 		return databaseManager;
 	}

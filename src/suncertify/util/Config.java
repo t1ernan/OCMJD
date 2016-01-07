@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * The Class Config.
  */
-public abstract class Config {
+public final class Config {
 	
 	/** The Constant CONFIGURATION_FILE_NAME. */
 	public static final String CONFIGURATION_FILE_NAME = "suncertify.properties";
@@ -45,6 +45,10 @@ public abstract class Config {
 		}else{
 			loadPropertiesFile();
 		}
+	}
+	
+	private Config(){
+		
 	}
 
 	private static void createNewPropertiesFile() {

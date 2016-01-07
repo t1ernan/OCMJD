@@ -13,10 +13,9 @@ import suncertify.dto.ContractorPK;
  */
 public class Converter {
 
-
 	/** The Constant CHARACTER_ENCODING. */
 	public static final String CHARACTER_ENCODING = "US-ASCII";
-	
+
 	/** The Constant RECORD_FIELDS. */
 	private static final int RECORD_FIELDS = 6;
 
@@ -44,7 +43,15 @@ public class Converter {
 		final ContractorPK primaryKey = Converter.stringArrayToContractorPK(fieldValues);
 		contractor.setPrimaryKey(primaryKey);
 		contractor.setSpecialities(fieldValues[2]);
-		contractor.setSize(Integer.parseInt(fieldValues[3]));
+		try {
+			final int size = Integer.parseInt(fieldValues[3]);
+			if(size < 0){
+				throw new IllegalArgumentException("The size field must be a positive integer value");
+			}
+
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("The size field must be a positive integer value");
+		}
 		contractor.setRate(fieldValues[4]);
 		contractor.setCustomerId(fieldValues[5]);
 		return contractor;

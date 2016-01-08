@@ -1,4 +1,4 @@
- Patterns Used: DTO, Singleton, Factory, Delegation,
+ Patterns Used: DTO, Singleton, Factory, Delegation, Builder
  
  Assumptions: The provided data file contains valid data, therefore no validation of the existing data file records is required. Only new and modified data will be validated before being written to the database.
  Assumptions: The string encoding format will not change and therefore will not need to be configurable. It will be hardcoded into the application as a constant value.

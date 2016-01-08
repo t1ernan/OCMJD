@@ -9,9 +9,10 @@ import java.util.List;
 import suncertify.db.DBMain;
 import suncertify.db.DatabaseException;
 import suncertify.db.DatabaseManagerFactory;
-import suncertify.dto.Contractor;
-import suncertify.dto.ContractorPK;
-import suncertify.util.Converter;
+import suncertify.domain.Contractor;
+import suncertify.domain.ContractorPK;
+import suncertify.util.ContractorBuilder;
+import suncertify.util.Utils;
 
 public class DataConcurrencyTest {
 
@@ -79,9 +80,7 @@ public class DataConcurrencyTest {
 		@Override
 		@SuppressWarnings("deprecation")
 		public void run() {
-			final ContractorPK primaryKey = new ContractorPK();
-			primaryKey.setName("Palace");
-			primaryKey.setLocation("Smallville");
+			final ContractorPK primaryKey = new ContractorPK("Palace", "Smallville");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
 			contractor.setSize(2);
@@ -119,7 +118,7 @@ public class DataConcurrencyTest {
 				 * data.update(recNo, new String[] {"Palace", "Smallville", "2",
 				 * "Y", "$150.00", "2005/07/27", null});
 				 */
-				data.update(recNo, Converter.contractorToStringArray(contractor));
+				data.update(recNo, contractor.toStringArray());
 				System.out.println(Thread.currentThread().getId() + " trying to unlock record #" + recNo
 						+ " on UpdatingRandomRecordThread");
 				data.unlock(recNo);
@@ -134,9 +133,7 @@ public class DataConcurrencyTest {
 		@Override
 		@SuppressWarnings("deprecation")
 		public void run() {
-			final ContractorPK primaryKey = new ContractorPK();
-			primaryKey.setName("Castle");
-			primaryKey.setLocation("Digitopolis");
+			final ContractorPK primaryKey = new ContractorPK("Castle","Digitopolis");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
 			contractor.setSize(2);
@@ -150,7 +147,7 @@ public class DataConcurrencyTest {
 				data.lock(1);
 				System.out.println(
 						Thread.currentThread().getId() + " trying to update record #1 on" + " UpdatingRecord1Thread");
-				data.update(1, Converter.contractorToStringArray(contractor));
+				data.update(1, contractor.toStringArray());
 				System.out.println(
 						Thread.currentThread().getId() + " trying to unlock record #1 on" + "UpdatingRecord1Thread");
 
@@ -171,9 +168,7 @@ public class DataConcurrencyTest {
 		@Override
 		@SuppressWarnings("deprecation")
 		public void run() {
-			final ContractorPK primaryKey = new ContractorPK();
-			primaryKey.setName("Elephant Inn");
-			primaryKey.setLocation("EmeraldCity");
+			final ContractorPK primaryKey = new ContractorPK("Elephant Inn","EmeraldCity");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
 			contractor.setSize(6);
@@ -183,7 +178,7 @@ public class DataConcurrencyTest {
 
 			try {
 				System.out.println(Thread.currentThread().getId() + " trying to create a record");
-				data.create(Converter.contractorToStringArray(contractor));
+				data.create(contractor.toStringArray());
 			} catch (Exception e) {
 				System.out.println(Thread.currentThread().getId() + " couldn't create record: " + e);
 			}

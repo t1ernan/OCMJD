@@ -1,7 +1,8 @@
-package suncertify.dto;
+package suncertify.domain;
 
 import java.io.Serializable;
-
+import static suncertify.util.Constants.*;
+import static suncertify.util.Utils.*;
 /**
  * A Data Transfer Object (DTO) used to transfer record data between the
  * different layers of the application. Implements {@link Serializable}.
@@ -41,7 +42,7 @@ public class Contractor implements Serializable {
 	 * @param primaryKey
 	 *            the new primary key
 	 */
-	public void setPrimaryKey(ContractorPK primaryKey) {
+	public void setPrimaryKey(final ContractorPK primaryKey) {
 		this.primaryKey = primaryKey;
 	}
 
@@ -60,7 +61,7 @@ public class Contractor implements Serializable {
 	 * @param specialties
 	 *            the new specialties
 	 */
-	public void setSpecialities(String specialties) {
+	public void setSpecialities(final String specialties) {
 		this.specialties = specialties;
 	}
 
@@ -79,7 +80,7 @@ public class Contractor implements Serializable {
 	 * @param rate
 	 *            the new rate
 	 */
-	public void setRate(String rate) {
+	public void setRate(final String rate) {
 		this.rate = rate;
 	}
 
@@ -98,7 +99,7 @@ public class Contractor implements Serializable {
 	 * @param size
 	 *            the new size
 	 */
-	public void setSize(int size) {
+	public void setSize(final int size) {
 		this.size = size;
 	}
 
@@ -117,7 +118,22 @@ public class Contractor implements Serializable {
 	 * @param customerId
 	 *            the new customerId
 	 */
-	public void setCustomerId(String customerId) {
+	public void setCustomerId(final String customerId) {
 		this.customerId = customerId;
+	}
+	
+	public boolean isBooked(){
+		return isEightDigits(customerId);
+	}
+	
+	public String[] toStringArray(){
+		final String[] fieldValues = new String[RECORD_FIELDS];
+		fieldValues[0] = primaryKey.getName();
+		fieldValues[1] = primaryKey.getLocation();
+		fieldValues[2] = specialties;
+		fieldValues[3] = String.valueOf(size);
+		fieldValues[4] = rate;
+		fieldValues[5] = customerId;
+		return fieldValues;
 	}
 }

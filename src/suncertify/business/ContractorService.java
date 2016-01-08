@@ -3,8 +3,8 @@ package suncertify.business;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import suncertify.dto.Contractor;
-import suncertify.dto.ContractorPK;
+import suncertify.domain.Contractor;
+import suncertify.domain.ContractorPK;
 
 /**
  * ContractorService is the common interface for all classes that wish to query

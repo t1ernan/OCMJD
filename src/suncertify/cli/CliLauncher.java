@@ -3,7 +3,6 @@ package suncertify.cli;
 import java.rmi.RemoteException;
 
 import suncertify.business.ServiceException;
-import suncertify.util.Config;
 
 public class CliLauncher {
 
@@ -48,9 +47,6 @@ public class CliLauncher {
 
 	private static void runStandalone() {
 		// new StandaloneConfigWindow();
-		Config.saveClientPortNumber("12");
-		Config.saveServerPortNumber("99");
-		System.out.println(Config.getClientPortNumber());
 	}
 
 	private static boolean isNonNetworked(final String mode) {

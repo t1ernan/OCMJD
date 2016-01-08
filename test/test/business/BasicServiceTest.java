@@ -20,8 +20,10 @@ import suncertify.db.DBMainExtended;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.db.DatabaseManagerFactory;
-import suncertify.dto.Contractor;
-import suncertify.util.Converter;
+import suncertify.domain.Contractor;
+import suncertify.domain.ContractorPK;
+import suncertify.util.ContractorBuilder;
+import suncertify.util.Utils;
 
 public class BasicServiceTest {
 
@@ -37,15 +39,15 @@ public class BasicServiceTest {
 
 	private final String[] firstContractorSearchCriteria = new String[] { "Dogs With Tools", "Smallville" };
 
-	private final Contractor firstContractor = Converter.stringArrayToContractor(firstContractorValues);
-	private final Contractor firstContractor_Booked = Converter.stringArrayToContractor(firstContractorValues_Booked);
-	private final Contractor newContractor = Converter.stringArrayToContractor(newContractorValues);
+	private final Contractor firstContractor = ContractorBuilder.build(firstContractorValues);
+	private final Contractor firstContractor_Booked = ContractorBuilder.build(firstContractorValues_Booked);
+	private final Contractor newContractor = ContractorBuilder.build(newContractorValues);
 
-	private final String[] NO_SEARCH_CRITERIA = new String[] { "", "" };
-	private final String[] FIRST_CONTRACTOR_SEARCH_CRITERIA = new String[] { "Dogs With Tools", "Smallville" };
-	private final String[] NAME_SEARCH_CRITERIA = new String[] { "Dogs With Tools", "" };
-	private final String[] LOCATION_SEARCH_CRITERIA = new String[] { "", "Smallville" };
-	private final String[] NEW_CONTRACTOR_SEARCH_CRITERIA = new String[] { "Smack my Itch up", "Gotham" };
+	private final ContractorPK NO_SEARCH_CRITERIA = new ContractorPK("", "");
+	private final ContractorPK FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK( "Dogs With Tools", "Smallville" );
+	private final ContractorPK NAME_SEARCH_CRITERIA = new ContractorPK( "Dogs With Tools", "" );
+	private final ContractorPK LOCATION_SEARCH_CRITERIA = new ContractorPK( "", "Smallville" );
+	private final ContractorPK NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK( "Smack my Itch up", "Gotham" );
 
 	@Before
 	public void setup() throws DatabaseException {
@@ -85,14 +87,14 @@ public class BasicServiceTest {
 
 	@Test
 	public void testFind_AllContractors() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(Converter.stringArrayToContractorPK(NO_SEARCH_CRITERIA));
+		Map<Integer, Contractor> results = services.find(NO_SEARCH_CRITERIA);
 		assertEquals(28, results.size());
 	}
 
 	@Test
 	public void testFind_SingleContractor() throws ServiceException, RemoteException {
 		Map<Integer, Contractor> results = services
-				.find(Converter.stringArrayToContractorPK(FIRST_CONTRACTOR_SEARCH_CRITERIA));
+				.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
 		assertEquals(1, results.size());
 	}
 
@@ -102,7 +104,7 @@ public class BasicServiceTest {
 		data.delete(0);
 		data.delete(12);
 		data.delete(21);
-		Map<Integer, Contractor> results = services.find(Converter.stringArrayToContractorPK(NO_SEARCH_CRITERIA));
+		Map<Integer, Contractor> results = services.find(NO_SEARCH_CRITERIA);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		assertEquals(25, results.size());
 	}
@@ -111,24 +113,24 @@ public class BasicServiceTest {
 	public void testFind_SingleContractor_WithDeletedRecords()
 			throws DatabaseException, ServiceException, RemoteException {
 		data.delete(0);
-		services.find(Converter.stringArrayToContractorPK(FIRST_CONTRACTOR_SEARCH_CRITERIA));
+		services.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
 	}
 
 	@Test
 	public void testFind_MultipleContractors_NameSearch() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(Converter.stringArrayToContractorPK(NAME_SEARCH_CRITERIA));
+		Map<Integer, Contractor> results = services.find(NAME_SEARCH_CRITERIA);
 		assertEquals(6, results.size());
 	}
 
 	@Test
 	public void testFind_MultipleContractors_LocationSearch() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(Converter.stringArrayToContractorPK(LOCATION_SEARCH_CRITERIA));
+		Map<Integer, Contractor> results = services.find(LOCATION_SEARCH_CRITERIA);
 		assertEquals(2, results.size());
 	}
 
 	@Test(expected = ContractorNotFoundException.class)
 	public void testFind_UnknownContractor() throws ServiceException, RemoteException {
-		services.find(Converter.stringArrayToContractorPK(NEW_CONTRACTOR_SEARCH_CRITERIA));
+		services.find(NEW_CONTRACTOR_SEARCH_CRITERIA);
 	}
 
 }

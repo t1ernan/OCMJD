@@ -1,8 +1,8 @@
 package suncertify.db;
 
 import static suncertify.util.Constants.EMPTY_STRING;
-import static suncertify.util.Converter.convertBytesToString;
-import static suncertify.util.Converter.convertStringToBytes;
+import static suncertify.util.Utils.convertBytesToString;
+import static suncertify.util.Utils.convertStringToBytes;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

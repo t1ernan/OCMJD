@@ -11,8 +11,8 @@ import java.util.Map;
 import suncertify.business.AlreadyBookedException;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
-import suncertify.dto.Contractor;
-import suncertify.dto.ContractorPK;
+import suncertify.domain.Contractor;
+import suncertify.domain.ContractorPK;
 
 /**
  * An RMI client used to connect and request data from a remote RMI server

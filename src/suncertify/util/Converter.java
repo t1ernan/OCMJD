@@ -45,8 +45,10 @@ public class Converter {
 		contractor.setSpecialities(fieldValues[2]);
 		try {
 			final int size = Integer.parseInt(fieldValues[3]);
-			if(size < 0){
+			if (size < 0) {
 				throw new IllegalArgumentException("The size field must be a positive integer value");
+			} else {
+				contractor.setSize(size);
 			}
 
 		} catch (NumberFormatException e) {

@@ -1,9 +1,6 @@
 package suncertify.db;
 
-import static suncertify.util.Constants.DELETED_FLAG;
 import static suncertify.util.Constants.EMPTY_STRING;
-import static suncertify.util.Constants.EXPECTED_MAGIC_COOKIE;
-import static suncertify.util.Constants.VALID_FLAG;
 import static suncertify.util.Converter.convertBytesToString;
 import static suncertify.util.Converter.convertStringToBytes;
 
@@ -11,8 +8,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.Map;
-
-import suncertify.util.Constants;
 
 /**
  * The class DBFileAccessManager is responsible for reading and writing to the
@@ -25,13 +20,13 @@ public class DBFileAccessManager implements DBAccessManager {
 
 	/** The Constant DELETED_FLAG. */
 	public static final int DELETED_FLAG = 0x8000;
-	
+
 	/** The Constant BLANK_SPACE_HEX. */
 	public static final int BLANK_SPACE_HEX = 0x20;
 
 	/** The Constant EXPECTED_MAGIC_COOKIE. */
 	public static final int EXPECTED_MAGIC_COOKIE = 514;
-	
+
 	/** The location of the database on the file system. */
 	private String dbFileLocation = null;
 
@@ -370,7 +365,7 @@ public class DBFileAccessManager implements DBAccessManager {
 	 */
 	private byte[] addPadding(final byte[] unpaddedBytes, final int size) {
 		final byte[] paddedBytes = new byte[size];
-		Arrays.fill(paddedBytes, (byte) Constants.BLANK_SPACE_HEX);
+		Arrays.fill(paddedBytes, (byte) BLANK_SPACE_HEX);
 		System.arraycopy(unpaddedBytes, 0, paddedBytes, 0, unpaddedBytes.length);
 		return paddedBytes;
 	}

@@ -3,8 +3,8 @@ package test.business;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static test.util.Constants.DB_FILE_NAME;
-import static test.util.Constants.DEFAULT_SERVER_IPADDRESS;
 import static test.util.Constants.DEFAULT_PORT_NUMBER;
+import static test.util.Constants.DEFAULT_SERVER_IPADDRESS;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -41,6 +41,8 @@ public class RMIServiceTest {
 	private final String[] newContractorValues = new String[] { "Smack my Itch up", "Gotham",
 			"Getting It Done,Horsing It", "12", "$79.00", "87654321" };
 
+	private final String[] firstContractorSearchCriteria = new String[] { "Dogs With Tools", "Smallville" };
+
 	private final Contractor firstContractor = Converter.stringArrayToContractor(firstContractorValues);
 	private final Contractor firstContractor_Booked = Converter.stringArrayToContractor(firstContractorValues_Booked);
 	private final Contractor newContractor = Converter.stringArrayToContractor(newContractorValues);
@@ -70,7 +72,7 @@ public class RMIServiceTest {
 		service.book(firstContractor_Booked);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		// assertEquals(28, data.getAllValidRecords().size());
-		assertEquals(0, data.find(firstContractorValues_Booked)[0]);
+		assertEquals(0, data.find(firstContractorSearchCriteria)[0]);
 		assertArrayEquals(firstContractorValues_Booked, data.read(0));
 	}
 

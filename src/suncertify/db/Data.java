@@ -1,7 +1,5 @@
 package suncertify.db;
 
-import static suncertify.util.Constants.UNDERSCORE;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +25,8 @@ public class Data implements DBMainExtended {
 
 	/** The Constant INSTANCE. */
 	private static final DBMainExtended INSTANCE = new Data();
+
+	private static final String UNDERSCORE = "_";
 
 	/** The in-memory cache containing the contents of the database file. */
 	private Map<Integer, String[]> dbCache = new HashMap<>();
@@ -105,6 +105,9 @@ public class Data implements DBMainExtended {
 	 */
 	@Override
 	public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
+		if (criteria.length > 2) {
+			throw new IllegalArgumentException("Search criteria should contain Name and Location values only!");
+		}
 		validateFieldLengths(criteria);
 		final List<Integer> recordNumberList = new ArrayList<>();
 		findAllValidRecords().forEach((recordNumber, fieldValues) -> {

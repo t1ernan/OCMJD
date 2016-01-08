@@ -1,5 +1,7 @@
 package suncertify.db;
 
+import static suncertify.util.Constants.PRIMARY_KEY_FIELDS;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,7 +107,7 @@ public class Data implements DBMainExtended {
 	 */
 	@Override
 	public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
-		if (criteria.length > 2) {
+		if (criteria.length != PRIMARY_KEY_FIELDS) {
 			throw new IllegalArgumentException("Search criteria should contain Name and Location values only!");
 		}
 		validateFieldLengths(criteria);
@@ -293,9 +295,6 @@ public class Data implements DBMainExtended {
 		return dbCache.size();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public void load() throws DatabaseException {
 		dbAccessManager.readDatabaseIntoCache(dbCache);
 	}

@@ -1,5 +1,7 @@
 package suncertify.util;
 
+import static suncertify.util.Constants.PRIMARY_KEY_FIELDS;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -18,9 +20,6 @@ public class Converter {
 
 	/** The Constant RECORD_FIELDS. */
 	private static final int RECORD_FIELDS = 6;
-
-	/** The Constant PRIMARY_KEY_FIELDS. */
-	private static final int PRIMARY_KEY_FIELDS = 2;
 
 	public static String[] contractorToStringArray(Contractor contractor) {
 		final String[] fieldValues = new String[RECORD_FIELDS];

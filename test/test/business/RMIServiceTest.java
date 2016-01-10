@@ -24,7 +24,7 @@ import suncertify.business.rmi.RMIService;
 import suncertify.db.DBMainExtended;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
-import suncertify.db.DatabaseManagerFactory;
+import suncertify.db.DBFactory;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 import suncertify.util.ContractorBuilder;
@@ -57,7 +57,7 @@ public class RMIServiceTest {
 
 	@BeforeClass
 	public static void setup() throws DatabaseException, RemoteException, NotBoundException, ServiceException {
-		data = DatabaseManagerFactory.getDatabaseManager(DB_FILE_NAME);
+		data = DBFactory.getDatabase(DB_FILE_NAME);
 		server = new RMIServer(data);
 		server.startServer(DEFAULT_PORT_NUMBER);
 		service = new RMIClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);

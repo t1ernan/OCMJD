@@ -1,8 +1,12 @@
-package suncertify.cli;
+package suncertify.ui;
 
 import java.rmi.RemoteException;
 
 import suncertify.business.ServiceException;
+import suncertify.ui.view.ClientConfigWindow;
+import suncertify.ui.view.ConfigWindow;
+import suncertify.ui.view.ServerConfigWindow;
+import suncertify.ui.view.StandaloneConfigWindow;
 
 public class CliLauncher {
 
@@ -38,15 +42,18 @@ public class CliLauncher {
 	}
 
 	private static void runClient() {
-		// new ClientConfigWindow();
+		final ConfigWindow clientConfig = new ClientConfigWindow();
+		clientConfig.setVisible(true);
 	}
 
-	private static void runServer() throws RemoteException, ServiceException {
-		// new ServerConfigWindow();
+	private static void runServer(){
+		final ConfigWindow clientConfig = new ServerConfigWindow();
+		clientConfig.setVisible(true);
 	}
 
 	private static void runStandalone() {
-		// new StandaloneConfigWindow();
+		final ConfigWindow standaloneConfig = new StandaloneConfigWindow();
+		standaloneConfig.setVisible(true);
 	}
 
 	private static boolean isNonNetworked(final String mode) {

@@ -8,7 +8,7 @@ import java.util.List;
 
 import suncertify.db.DBMain;
 import suncertify.db.DatabaseException;
-import suncertify.db.DatabaseManagerFactory;
+import suncertify.db.DBFactory;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 import suncertify.util.ContractorBuilder;
@@ -19,7 +19,7 @@ public class DataConcurrencyTest {
 	private static DBMain data;
 
 	public DataConcurrencyTest(DBMain data) throws DatabaseException {
-		this.data = DatabaseManagerFactory.getDatabaseManager(DEFAULT_DB_LOCATION_STANDALONE);
+		this.data = DBFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 
 	/*

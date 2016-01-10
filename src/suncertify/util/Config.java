@@ -16,25 +16,25 @@ import java.util.Properties;
 public final class Config {
 	
 	/** The Constant CONFIGURATION_FILE_NAME. */
-	public static final String CONFIGURATION_FILE_NAME = "suncertify.properties";
+	private static final String CONFIGURATION_FILE_NAME = "suncertify.properties";
 
 	/** The Constant DB_LOCATION_SERVER. */
-	public static final String SERVER_DB_LOCATION = "server.databaseLocation";
+	private static final String SERVER_DB_LOCATION = "server.databaseLocation";
 	
 	/** The Constant SERVER_IPADDRESS. */
-	public static final String SERVER_IP_ADDRESS = "server.ipaddress";
+	private static final String SERVER_IP_ADDRESS = "server.ipaddress";
 	
 	/** The Constant PORT_NUMBER. */
-	public static final String SERVER_PORT_NUMBER = "server.port";
+	private static final String SERVER_PORT_NUMBER = "server.port";
 	
 	/** The Constant DB_LOCATION_STANDALONE. */
-	public static final String ALONE_DB_LOCATION = "alone.databaseLocation";
+	private static final String ALONE_DB_LOCATION = "alone.databaseLocation";
 	
 	/** The Constant PORT_NUMBER. */
-	public static final String CLIENT_PORT_NUMBER = "client.serverPort";
+	private static final String CLIENT_PORT_NUMBER = "client.serverPort";
 	
 	/** The Constant DEFAULT_PORT_NUMBER. */
-	public static final String DEFAULT_PORT_NUMBER = "1099";
+	private static final String DEFAULT_PORT_NUMBER = "1099";
 	
 	private static final Properties prop = new Properties();
 
@@ -68,7 +68,7 @@ public final class Config {
 		}
 	}
 
-	private static void saveProperties() {
+	public static void saveProperties() {
 		try (OutputStream output = new FileOutputStream(CONFIGURATION_FILE_NAME);) {
 			prop.store(output, null);
 		} catch (IOException e) {
@@ -92,33 +92,46 @@ public final class Config {
 		return prop.getProperty(CLIENT_PORT_NUMBER);
 	}
 
-	public static String getAloneDBAddress() {
+	public static String getAloneDBLocation() {
 		return prop.getProperty(ALONE_DB_LOCATION);
 	}
 
-	public static void saveServerDBLocation(final String serverDBLocation) {
+	public static void setServerDBLocation(final String serverDBLocation) {
+		if(serverDBLocation.isEmpty()){
+			throw new IllegalArgumentException("Database Location field must not be left blank");
+		}
 		prop.setProperty(SERVER_DB_LOCATION, serverDBLocation);
-		saveProperties();
 	}
 
-	public static void saveServerIPAddress(final String serverIPAddress) {
+	public static void setServerIPAddress(final String serverIPAddress) {
+		if(serverIPAddress.isEmpty()){
+			throw new IllegalArgumentException("IP address field must not be left blank");
+		}
 		prop.setProperty(SERVER_IP_ADDRESS, serverIPAddress);
-		saveProperties();
 	}
 
-	public static void saveServerPortNumber(final String serverPortNumber) {
+	public static void setServerPortNumber(final String serverPortNumber) {
+		if(isInvalidPortNumber(serverPortNumber)){
+			throw new IllegalArgumentException("Port number must contain only digits");
+		}
 		prop.setProperty(SERVER_PORT_NUMBER, serverPortNumber);
-		saveProperties();
 	}
 
-	public static void saveClientPortNumber(final String clientPortNumber) {
+	public static void setClientPortNumber(final String clientPortNumber) {
+		if(isInvalidPortNumber(clientPortNumber)){
+			throw new IllegalArgumentException("Port number must contain only digits");
+		}
 		prop.setProperty(CLIENT_PORT_NUMBER, clientPortNumber);
-		saveProperties();
 	}
 
-	public static void saveAloneDBLocation(final String aloneDBLocation) {
+	public static void setAloneDBLocation(final String aloneDBLocation) {
+		if(aloneDBLocation.isEmpty()){
+			throw new IllegalArgumentException("Database Location field must not be left blank");
+		}
 		prop.setProperty(ALONE_DB_LOCATION, aloneDBLocation);
-		saveProperties();
 	}
 
+	private static boolean isInvalidPortNumber(final String serverPortNumber) {
+		return !serverPortNumber.matches("[0-9]+");
+	}
 }

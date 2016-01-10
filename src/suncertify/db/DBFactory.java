@@ -3,7 +3,7 @@ package suncertify.db;
 /**
  * A factory for creating database manager objects. It contains
  */
-public class DatabaseManagerFactory {
+public class DBFactory {
 
 	/** The databaseManager object. */
 	private static DBMainExtended databaseManager;
@@ -19,7 +19,7 @@ public class DatabaseManagerFactory {
 	 * @throws DatabaseException
 	 *             if a databaseManager instance could not be created
 	 */
-	public static DBMainExtended getDatabaseManager(final String dbFileLocation) throws DatabaseException {
+	public static DBMainExtended getDatabase(final String dbFileLocation) throws DatabaseException {
 		if (databaseManager == null) {
 			databaseManager = Data.getInstance();
 			databaseManager.initialize(dbFileLocation);

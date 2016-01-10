@@ -9,7 +9,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorService;
+import suncertify.db.DBFactory;
+import suncertify.db.DBMainExtended;
+import suncertify.db.DatabaseException;
 import suncertify.ui.DatabaseFileChooser;
 import suncertify.util.Config;
 
@@ -61,15 +65,18 @@ public class StandaloneConfigWindow extends ConfigWindow {
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
 	}
-
-	@Override
-	public ContractorService getService() {
-		return null;
-	}
 	
 	@Override
 	public void launch() {
-		new MainWindow(getService());
-		this.dispose();
+		try {
+			final DBMainExtended data = DBFactory.getDatabase(Config.getAloneDBLocation());
+			final ContractorService service = new BasicContractorService(data);
+			new MainWindow(service);
+		} catch (DatabaseException e) {
+			final String errorMessage = "Failed to launch application: " + e.getMessage();
+			JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
+		}finally{
+			this.dispose();
+		}
 	}
 }

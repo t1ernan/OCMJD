@@ -4,8 +4,12 @@ import static suncertify.util.Constants.EMPTY_STRING;
 import static suncertify.util.Utils.convertBytesToString;
 import static suncertify.util.Utils.convertStringToBytes;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -62,6 +66,7 @@ public class DBFileAccessManager implements DBAccessManager {
 	 */
 	@Override
 	public void initialize(final String dbFileLocation) throws DatabaseException {
+		checkIfFileExists(dbFileLocation);
 		this.dbFileLocation = dbFileLocation;
 		try (RandomAccessFile dbFile = new RandomAccessFile(dbFileLocation, "rwd")) {
 			checkMagicCookie(dbFile);
@@ -72,7 +77,13 @@ public class DBFileAccessManager implements DBAccessManager {
 			readSchemaDescription(dbFile);
 			checkRecordOffset(dbFile, recordOffset);
 		} catch (IOException e) {
-			throw new DatabaseException("Could not read data: " + e);
+			throw new DatabaseException("Could not read data from the specified file: " + dbFileLocation + ". " + e);
+		}
+	}
+
+	private void checkIfFileExists(final String dbFileLocation) throws DatabaseException {
+		if (!Files.exists(Paths.get(dbFileLocation))) {
+			throw new DatabaseException("Could not find the specified file: " + dbFileLocation);
 		}
 	}
 
@@ -101,12 +112,13 @@ public class DBFileAccessManager implements DBAccessManager {
 				} else if (flagvalue == DELETED_FLAG) {
 					map.put(recordNumber, null);
 				} else {
-					throw new DatabaseException("Corrupted flag value: " + flagvalue);
+					throw new DatabaseException(
+							"Corrupted database. Flag value does not conform to schema: " + flagvalue);
 				}
 				recordNumber++;
 			}
 		} catch (IOException e) {
-			throw new DatabaseException("Could not read data: " + e);
+			throw new DatabaseException("Could not read data from the specified file: " + dbFileLocation + ". " + e);
 		}
 	}
 
@@ -325,7 +337,8 @@ public class DBFileAccessManager implements DBAccessManager {
 	private void checkRecordOffset(final RandomAccessFile dbFile, final int recordOffset)
 			throws IOException, DatabaseException {
 		if (recordOffset != dbFile.getFilePointer()) {
-			throw new DatabaseException("Invalid Record Offset");
+			throw new DatabaseException(
+					"Invalid Database File. Record Offset value does not match value specifiied in schema.");
 		}
 	}
 
@@ -346,7 +359,8 @@ public class DBFileAccessManager implements DBAccessManager {
 	private void checkMagicCookie(final RandomAccessFile dbFile) throws IOException, DatabaseException {
 		final int magicCookie = dbFile.readInt();
 		if (magicCookie != EXPECTED_MAGIC_COOKIE) {
-			throw new DatabaseException("Invalid Magic Cookie: " + magicCookie);
+			throw new DatabaseException(
+					"Invalid Database File. Magic Cookie value doesn't match expected value: " + magicCookie);
 		}
 	}
 

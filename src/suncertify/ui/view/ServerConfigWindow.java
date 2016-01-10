@@ -10,13 +10,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import suncertify.business.ContractorService;
 import suncertify.business.rmi.RMIServer;
 import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseException;
 import suncertify.db.DBFactory;
 import suncertify.ui.DatabaseFileChooser;
-import suncertify.ui.LaunchException;
 import suncertify.util.Config;
 
 public class ServerConfigWindow extends ConfigWindow {
@@ -32,7 +30,7 @@ public class ServerConfigWindow extends ConfigWindow {
 	private JFileChooser dbFileChooser = new DatabaseFileChooser();
 
 	public ServerConfigWindow() {
-		super("Standalone Configuration Settings");
+		super("Server Configuration Settings");
 		this.getContentPane().add(createContentPanel(), BorderLayout.NORTH);
 		this.getConfirmButton().addActionListener(x -> {
 			saveConfig();
@@ -49,10 +47,10 @@ public class ServerConfigWindow extends ConfigWindow {
 		dbFileLocationField.setToolTipText("The location of the database file on the file system.");
 		serverPortNumberField.setToolTipText("The port number that the server will run on.");
 		browse.setToolTipText("Click to browse file system for database file.");
-		configPane.add(dbFileLocationLabel);
-		configPane.add(dbFileLocationField);
 		configPane.add(serverPortNumberLabel);
 		configPane.add(serverPortNumberField);
+		configPane.add(dbFileLocationLabel);
+		configPane.add(dbFileLocationField);
 		browse.addActionListener(x -> {
 			int state = dbFileChooser.showOpenDialog(configPane);
 			if (state == JFileChooser.APPROVE_OPTION) {
@@ -76,19 +74,16 @@ public class ServerConfigWindow extends ConfigWindow {
 	}
 
 	@Override
-	public ContractorService getService() throws LaunchException{
-		ContractorService service=null;
+	public void launch() {
 		try {
 			DBMainExtended data = DBFactory.getDatabase(Config.getServerDBLocation());
-			service = new RMIServer(data);
+			int portNumber = Integer.parseInt(Config.getServerPortNumber());
+			new RMIServer(data).startServer(portNumber);
 		} catch (DatabaseException | RemoteException e) {
-			throw new LaunchException("Failed to launch application: " + e.getMessage());
+			final String errorMessage = "Failed to launch application: " + e.getMessage();
+			JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
+		}finally{
+			this.dispose();
 		}
-		return service;
-	}
-
-	@Override
-	public void launch(){
-		this.dispose();
 	}
 }

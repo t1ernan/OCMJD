@@ -27,6 +27,15 @@ public class Contractor implements Serializable {
 	/** The size. */
 	private int size;
 
+	
+	public Contractor() {
+		this.primaryKey = new ContractorPK();
+		this.specialties = "";
+		this.rate = "";
+		this.customerId = "";
+		this.size = 0;
+	}
+
 	/**
 	 * Gets the primary key.
 	 *

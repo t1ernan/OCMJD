@@ -26,7 +26,7 @@ public class ContractorBuilder {
 	}
 
 	private static void validateCustomerIdField(final String customerId) {
-		final boolean isValidCustomerId = (isEightDigits(customerId) || customerId.isEmpty());
+		final boolean isValidCustomerId = isEightDigits(customerId);
 		if (!isValidCustomerId) {
 			throw new IllegalArgumentException(
 					"The 'customer id' field must either be an 8 digit number or left blank.");

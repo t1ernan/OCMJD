@@ -8,8 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import suncertify.db.DBMain;
 import suncertify.db.DBFactory;
+import suncertify.db.DBMain;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.db.DuplicateKeyException;
@@ -87,8 +87,7 @@ public class DataTest {
 	public void testDelete_ValidRecord() throws DatabaseException {
 		data.delete(VALID_RECORD_NUMBER);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
-		// assertEquals(new Integer(VALID_RECORD_NUMBER),
-		// data.getRecordNumber());
+		assertEquals(VALID_RECORD_NUMBER, ((Data) data).getRecordNumber());
 	}
 
 	@Test

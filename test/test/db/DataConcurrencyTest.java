@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import suncertify.db.DBFactory;
 import suncertify.db.DBMain;
 import suncertify.db.DatabaseException;
-import suncertify.db.DBFactory;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
-import suncertify.util.ContractorBuilder;
-import suncertify.util.Utils;
 
 public class DataConcurrencyTest {
 
@@ -83,7 +81,7 @@ public class DataConcurrencyTest {
 			final ContractorPK primaryKey = new ContractorPK("Palace", "Smallville");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
-			contractor.setSize(2);
+			contractor.setSize("2");
 			contractor.setSpecialities("Getting stuff done, horsing it");
 			contractor.setRate("$150.00");
 			contractor.setCustomerId("54120584");
@@ -133,10 +131,10 @@ public class DataConcurrencyTest {
 		@Override
 		@SuppressWarnings("deprecation")
 		public void run() {
-			final ContractorPK primaryKey = new ContractorPK("Castle","Digitopolis");
+			final ContractorPK primaryKey = new ContractorPK("Castle", "Digitopolis");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
-			contractor.setSize(2);
+			contractor.setSize("2");
 			contractor.setSpecialities("Living life, loving music");
 			contractor.setRate("$90.00");
 			contractor.setCustomerId("88006644");
@@ -168,10 +166,10 @@ public class DataConcurrencyTest {
 		@Override
 		@SuppressWarnings("deprecation")
 		public void run() {
-			final ContractorPK primaryKey = new ContractorPK("Elephant Inn","EmeraldCity");
+			final ContractorPK primaryKey = new ContractorPK("Elephant Inn", "EmeraldCity");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
-			contractor.setSize(6);
+			contractor.setSize("6");
 			contractor.setSpecialities("hating peanuts, shouting loud");
 			contractor.setRate("$120.00");
 			contractor.setCustomerId("");

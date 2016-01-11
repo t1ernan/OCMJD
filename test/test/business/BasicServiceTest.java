@@ -16,14 +16,13 @@ import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
 import suncertify.business.ServiceException;
+import suncertify.db.DBFactory;
 import suncertify.db.DBMainExtended;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
-import suncertify.db.DBFactory;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 import suncertify.util.ContractorBuilder;
-import suncertify.util.Utils;
 
 public class BasicServiceTest {
 
@@ -44,10 +43,10 @@ public class BasicServiceTest {
 	private final Contractor newContractor = ContractorBuilder.build(newContractorValues);
 
 	private final ContractorPK NO_SEARCH_CRITERIA = new ContractorPK("", "");
-	private final ContractorPK FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK( "Dogs With Tools", "Smallville" );
-	private final ContractorPK NAME_SEARCH_CRITERIA = new ContractorPK( "Dogs With Tools", "" );
-	private final ContractorPK LOCATION_SEARCH_CRITERIA = new ContractorPK( "", "Smallville" );
-	private final ContractorPK NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK( "Smack my Itch up", "Gotham" );
+	private final ContractorPK FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK("Dogs With Tools", "Smallville");
+	private final ContractorPK NAME_SEARCH_CRITERIA = new ContractorPK("Dogs With Tools", "");
+	private final ContractorPK LOCATION_SEARCH_CRITERIA = new ContractorPK("", "Smallville");
+	private final ContractorPK NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK("Smack my Itch up", "Gotham");
 
 	@Before
 	public void setup() throws DatabaseException {
@@ -65,7 +64,7 @@ public class BasicServiceTest {
 	public void testBook_availableContractor() throws ServiceException, DatabaseException, RemoteException {
 		services.book(firstContractor_Booked);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
-		// assertEquals(28, data.getAllValidRecords().size());
+		assertEquals(28, ((Data) data).getAllValidRecords().size());
 		assertEquals(0, data.find(firstContractorSearchCriteria)[0]);
 		final String[] actual = data.read(0);
 		assertArrayEquals(firstContractorValues_Booked, actual);
@@ -81,7 +80,7 @@ public class BasicServiceTest {
 	public void testBook_DeletedContractor() throws ServiceException, DatabaseException, RemoteException {
 		data.delete(0);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
-		// assertEquals(27, data.getAllValidRecords().size());
+		assertEquals(27, ((Data) data).getAllValidRecords().size());
 		services.book(firstContractor_Booked);
 	}
 
@@ -93,8 +92,7 @@ public class BasicServiceTest {
 
 	@Test
 	public void testFind_SingleContractor() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services
-				.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
+		Map<Integer, Contractor> results = services.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
 		assertEquals(1, results.size());
 	}
 

@@ -1,8 +1,10 @@
 package suncertify.domain;
 
+import static suncertify.util.Constants.RECORD_FIELDS;
+import static suncertify.util.Utils.isEightDigits;
+
 import java.io.Serializable;
-import static suncertify.util.Constants.*;
-import static suncertify.util.Utils.*;
+
 /**
  * A Data Transfer Object (DTO) used to transfer record data between the
  * different layers of the application. Implements {@link Serializable}.
@@ -25,16 +27,7 @@ public class Contractor implements Serializable {
 	private String customerId;
 
 	/** The size. */
-	private int size;
-
-	
-	public Contractor() {
-		this.primaryKey = new ContractorPK();
-		this.specialties = "";
-		this.rate = "";
-		this.customerId = "";
-		this.size = 0;
-	}
+	private String size;
 
 	/**
 	 * Gets the primary key.
@@ -98,7 +91,7 @@ public class Contractor implements Serializable {
 	 *
 	 * @return the size
 	 */
-	public int getSize() {
+	public String getSize() {
 		return size;
 	}
 
@@ -108,7 +101,7 @@ public class Contractor implements Serializable {
 	 * @param size
 	 *            the new size
 	 */
-	public void setSize(final int size) {
+	public void setSize(final String size) {
 		this.size = size;
 	}
 
@@ -130,17 +123,17 @@ public class Contractor implements Serializable {
 	public void setCustomerId(final String customerId) {
 		this.customerId = customerId;
 	}
-	
-	public boolean isBooked(){
+
+	public boolean isBooked() {
 		return isEightDigits(customerId);
 	}
-	
-	public String[] toStringArray(){
+
+	public String[] toStringArray() {
 		final String[] fieldValues = new String[RECORD_FIELDS];
 		fieldValues[0] = primaryKey.getName();
 		fieldValues[1] = primaryKey.getLocation();
 		fieldValues[2] = specialties;
-		fieldValues[3] = String.valueOf(size);
+		fieldValues[3] = size;
 		fieldValues[4] = rate;
 		fieldValues[5] = customerId;
 		return fieldValues;

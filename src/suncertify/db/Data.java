@@ -305,4 +305,25 @@ public class Data implements DBMainExtended {
 	public synchronized void clear() {
 		dbCache.clear();
 	}
+
+	public int getRecordNumber() {
+		int deletedRecordNumber = dbCache.size();
+		for (Entry<Integer, String[]> record : dbCache.entrySet()) {
+			if (record.getValue() == null) {
+				deletedRecordNumber = record.getKey();
+				break;
+			}
+		}
+		return deletedRecordNumber;
+	}
+
+	public Map<Integer, String[]> getAllValidRecords() {
+		final Map<Integer, String[]> validRecords = new HashMap<>();
+		dbCache.forEach((recordNumber, fieldValues) -> {
+			if (fieldValues != null) {
+				validRecords.put(new Integer(recordNumber), fieldValues);
+			}
+		});
+		return validRecords;
+	}
 }

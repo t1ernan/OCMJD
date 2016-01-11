@@ -4,12 +4,8 @@ import static suncertify.util.Constants.EMPTY_STRING;
 import static suncertify.util.Utils.convertBytesToString;
 import static suncertify.util.Utils.convertStringToBytes;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -66,7 +62,6 @@ public class DBFileAccessManager implements DBAccessManager {
 	 */
 	@Override
 	public void initialize(final String dbFileLocation) throws DatabaseException {
-		checkIfFileExists(dbFileLocation);
 		this.dbFileLocation = dbFileLocation;
 		try (RandomAccessFile dbFile = new RandomAccessFile(dbFileLocation, "rwd")) {
 			checkMagicCookie(dbFile);
@@ -78,12 +73,6 @@ public class DBFileAccessManager implements DBAccessManager {
 			checkRecordOffset(dbFile, recordOffset);
 		} catch (IOException e) {
 			throw new DatabaseException("Could not read data from the specified file: " + dbFileLocation + ". " + e);
-		}
-	}
-
-	private void checkIfFileExists(final String dbFileLocation) throws DatabaseException {
-		if (!Files.exists(Paths.get(dbFileLocation))) {
-			throw new DatabaseException("Could not find the specified file: " + dbFileLocation);
 		}
 	}
 

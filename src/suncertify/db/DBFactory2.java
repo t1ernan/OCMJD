@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 /**
  * A factory for creating database manager objects. It contains
  */
-public class DBFactory {
+public class DBFactory2 {
 
 	/** The databaseManager object. */
 	private static DBMainExtended databaseManager;
@@ -24,7 +24,7 @@ public class DBFactory {
 	 */
 	public static DBMainExtended getDatabase(final String dbFileLocation) throws DatabaseException {
 		if (databaseManager == null) {
-			databaseManager = Data.getInstance();
+			databaseManager = Data2.getInstance();
 			if (!Files.exists(Paths.get(dbFileLocation))) {
 				throw new DatabaseException("Could not find the specified file: " + dbFileLocation);
 			}

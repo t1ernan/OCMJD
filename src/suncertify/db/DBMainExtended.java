@@ -1,5 +1,7 @@
 package suncertify.db;
 
+import java.io.IOException;
+
 public interface DBMainExtended extends DBMain {
 
 	/**
@@ -115,6 +117,6 @@ public interface DBMainExtended extends DBMain {
 	 */
 	public void initialize(String dbFileLocation) throws DatabaseException;
 
-	public void save() throws DatabaseException;
+	public void save() throws IOException, DatabaseException;
 
 }

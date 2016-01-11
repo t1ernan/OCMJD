@@ -26,4 +26,8 @@ public class DatabaseException extends Exception {
 	public DatabaseException(final String message) {
 		super(message);
 	}
+
+	public DatabaseException(final String message, final Throwable throwable) {
+		super(message, throwable);
+	}
 }

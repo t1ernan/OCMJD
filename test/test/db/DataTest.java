@@ -2,6 +2,7 @@ package test.db;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static test.util.Constants.DB_FILE_NAME;
 
 import org.junit.After;
@@ -32,6 +33,7 @@ public class DataTest {
 	private final String[] searchCriteria_InvalidName_ValidLocation = new String[] { "Smack my Itch up", "Smallville" };
 	private final String[] searchCriteria_InvalidName_InvalidLocation = new String[] { "Smack my Itch up", "Gotham" };
 	private final String[] searchCriteria_InvalidName_NoLocation = new String[] { "Smack my Itch up", "" };
+	private final String[] searchCriteria_TooManyFields = new String[] { "Smack my Itch up", "", "" };
 
 	private final int VALID_RECORD_NUMBER = 0;
 	private final int INVALID_RECORD_NUMBER = 50;
@@ -56,6 +58,28 @@ public class DataTest {
 	public void testSaveData() throws DatabaseException {
 		((Data) data).save();
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
+	}
+
+	@Test
+	public void testIsLocked_UnLocked() throws DatabaseException {
+		assertFalse(data.isLocked(VALID_RECORD_NUMBER));
+	}
+
+	@Test(expected = RecordNotFoundException.class)
+	public void testIsLocked_Invalid() throws DatabaseException {
+		data.isLocked(INVALID_RECORD_NUMBER);
+	}
+
+	@Test
+	public void testUnlock_Valid() throws DatabaseException {
+		data.lock(VALID_RECORD_NUMBER);
+		data.unlock(VALID_RECORD_NUMBER);
+		assertFalse(data.isLocked(VALID_RECORD_NUMBER));
+	}
+
+	@Test
+	public void testUnlock_Invalid() throws DatabaseException {
+		data.unlock(INVALID_RECORD_NUMBER);
 	}
 
 	@Test
@@ -238,6 +262,12 @@ public class DataTest {
 	public void testFind_InvalidName_NoLocation_Deleted() throws DatabaseException {
 		data.delete(VALID_RECORD_NUMBER);
 		data.find(searchCriteria_InvalidName_NoLocation);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testFind_InvalidNumberOFFields() throws DatabaseException {
+		data.delete(VALID_RECORD_NUMBER);
+		data.find(searchCriteria_TooManyFields);
 	}
 
 }

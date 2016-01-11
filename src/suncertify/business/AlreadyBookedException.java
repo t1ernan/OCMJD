@@ -19,13 +19,6 @@ public class AlreadyBookedException extends ServiceException {
 		super();
 	}
 
-	/**
-	 * Constructs a new AlreadyBookedException with the specified detail
-	 * message.
-	 *
-	 * @param message
-	 *            the detail message
-	 */
 	public AlreadyBookedException(final String message) {
 		super(message);
 	}

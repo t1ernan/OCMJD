@@ -29,8 +29,8 @@ public class MainWindow extends JFrame {
 	private final ContractorTableModel tableModel;
 	private final String[] columnNames = { "Name", "Location", "Specialties", "Size", "Rate", "Customer ID" };
 	private final JButton bookButton;
-	
-	public MainWindow(final ContractorService service){
+
+	public MainWindow(final ContractorService service) {
 		super("Bodgitt & Scarper Booking System");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
@@ -39,7 +39,7 @@ public class MainWindow extends JFrame {
 		this.tableModel = new ContractorTableModel(columnNames, getAllRecords());
 		this.bookButton = createBookButton();
 		this.table = new ContractorTable(tableModel, bookButton);
-		
+
 		final JScrollPane scrollPane = new JScrollPane(table);
 		this.getContentPane().add(scrollPane, BorderLayout.NORTH);
 		this.getContentPane().add(bookButton, BorderLayout.SOUTH);
@@ -48,7 +48,7 @@ public class MainWindow extends JFrame {
 		this.setVisible(true);
 	}
 
-	private Map<Integer, Contractor> getAllRecords(){
+	private Map<Integer, Contractor> getAllRecords() {
 		Map<Integer, Contractor> records = null;
 		try {
 			return service.find(new ContractorPK("", ""));
@@ -59,8 +59,8 @@ public class MainWindow extends JFrame {
 		}
 		return records;
 	}
-	
-	public JButton createBookButton(){
+
+	private JButton createBookButton() {
 		final JButton bookButton = new JButton("Book");
 		bookButton.addActionListener(action -> {
 			final int rowIndex = table.getSelectedRows()[0];
@@ -69,17 +69,18 @@ public class MainWindow extends JFrame {
 			final String customerId = JOptionPane.showInputDialog("Please enter the customer ID number.");
 			fieldValues[5] = customerId;
 			try {
-				final Contractor contractor =ContractorBuilder.build(fieldValues);
+				final Contractor contractor = ContractorBuilder.build(fieldValues);
 				service.book(contractor);
 				updateView();
 			} catch (Exception e) {
-				JOptionPane.showMessageDialog(this, "Try again: " + e.getMessage(), "System Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Try again: " + e.getMessage(), "System Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		return bookButton;
 	}
-	
-	public void updateView(){
+
+	public void updateView() {
 		this.tableModel.updateData(getAllRecords());
 	}
 }

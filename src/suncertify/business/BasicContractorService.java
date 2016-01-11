@@ -9,7 +9,6 @@ import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 import suncertify.util.ContractorBuilder;
-import suncertify.util.Utils;
 
 /**
  * BasicContractorService is a default implementation of
@@ -37,16 +36,16 @@ public class BasicContractorService implements ContractorService {
 	@Override
 	public void book(final Contractor contractor)
 			throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
-		final String[] fieldValues = contractor.toStringArray();
-		final String[] uniqueId = contractor.getPrimaryKey().toStringArray();
 		int recordNumber = -1;
 		try {
+			final String[] fieldValues = contractor.toStringArray();
+			final String[] uniqueId = contractor.getPrimaryKey().toStringArray();
 			recordNumber = databaseManager.find(uniqueId)[0];
 			databaseManager.lock(recordNumber);
 			checkContractorIsAvailable(recordNumber);
 			databaseManager.update(recordNumber, fieldValues);
 		} catch (RecordNotFoundException e) {
-			throw new ContractorNotFoundException("Contractor could not be found. " + e.getMessage());
+			throw new ContractorNotFoundException("Contractor could not be found.", e);
 		} finally {
 			databaseManager.unlock(recordNumber);
 		}
@@ -59,8 +58,8 @@ public class BasicContractorService implements ContractorService {
 	public Map<Integer, Contractor> find(final ContractorPK contractorPK)
 			throws ContractorNotFoundException, RemoteException {
 		final Map<Integer, Contractor> matchingRecords = new HashMap<>();
-		final String[] searchCriteria = contractorPK.toStringArray();
 		try {
+			final String[] searchCriteria = contractorPK.toStringArray();
 			final int[] recordNumbers = databaseManager.find(searchCriteria);
 			for (int index = 0; index < recordNumbers.length; index++) {
 				final Integer recordNumber = recordNumbers[index];
@@ -69,7 +68,7 @@ public class BasicContractorService implements ContractorService {
 				matchingRecords.put(recordNumber, contractor);
 			}
 		} catch (RecordNotFoundException e) {
-			throw new ContractorNotFoundException("Contractor could not be found. " + e.getMessage());
+			throw new ContractorNotFoundException("Contractor could not be found.", e);
 		}
 		return matchingRecords;
 	}

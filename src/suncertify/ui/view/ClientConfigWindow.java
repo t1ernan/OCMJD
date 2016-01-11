@@ -1,20 +1,14 @@
 package suncertify.ui.view;
 
 import java.awt.BorderLayout;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import suncertify.business.ContractorService;
 import suncertify.business.rmi.RMIClient;
-import suncertify.business.rmi.RMIServer;
-import suncertify.db.DBFactory;
-import suncertify.db.DBMainExtended;
-import suncertify.db.DatabaseException;
 import suncertify.util.Config;
 
 public class ClientConfigWindow extends ConfigWindow {
@@ -58,7 +52,7 @@ public class ClientConfigWindow extends ConfigWindow {
 			Config.setClientPortNumber(serverPortNumberField.getText().trim());
 			Config.saveProperties();
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage());
+			displayWarningException(e);
 		}
 	}
 
@@ -69,12 +63,8 @@ public class ClientConfigWindow extends ConfigWindow {
 			final int port = Integer.parseInt(Config.getClientPortNumber());
 			final ContractorService service = new RMIClient(ipAddress, port);
 			new MainWindow(service);
-		} catch (RemoteException | NotBoundException e) {
-			final String errorMessage = "Failed to launch application: " + e.getMessage();
-			JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
-		}finally{
-			this.dispose();
+		} catch (RemoteException e) {
+			displayFatalException(e);
 		}
-		
 	}
 }

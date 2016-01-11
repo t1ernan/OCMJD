@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static test.util.Constants.DB_FILE_NAME;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Map;
 
@@ -29,18 +30,12 @@ public class BasicServiceTest {
 	private DBMainExtended data;
 	private ContractorService services;
 
-	private final String[] firstContractorValues = new String[] { "Dogs With Tools", "Smallville", "Roofing", "7",
-			"$35.00", "" };
 	private final String[] firstContractorValues_Booked = new String[] { "Dogs With Tools", "Smallville", "Roofing",
 			"7", "$35.00", "12345678" };
-	private final String[] newContractorValues = new String[] { "Smack my Itch up", "Gotham",
-			"Getting It Done,Horsing It", "12", "$79.00", "87654321" };
 
 	private final String[] firstContractorSearchCriteria = new String[] { "Dogs With Tools", "Smallville" };
 
-	private final Contractor firstContractor = ContractorBuilder.build(firstContractorValues);
 	private final Contractor firstContractor_Booked = ContractorBuilder.build(firstContractorValues_Booked);
-	private final Contractor newContractor = ContractorBuilder.build(newContractorValues);
 
 	private final ContractorPK NO_SEARCH_CRITERIA = new ContractorPK("", "");
 	private final ContractorPK FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK("Dogs With Tools", "Smallville");
@@ -55,7 +50,7 @@ public class BasicServiceTest {
 	}
 
 	@After
-	public void teardown() throws DatabaseException {
+	public void teardown() throws IOException {
 		((Data) data).clear();
 		((Data) data).load();
 	}
@@ -86,14 +81,8 @@ public class BasicServiceTest {
 
 	@Test
 	public void testFind_AllContractors() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(NO_SEARCH_CRITERIA);
+		final Map<Integer, Contractor> results = services.find(NO_SEARCH_CRITERIA);
 		assertEquals(28, results.size());
-	}
-
-	@Test
-	public void testFind_SingleContractor() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
-		assertEquals(1, results.size());
 	}
 
 	@Test
@@ -102,9 +91,27 @@ public class BasicServiceTest {
 		data.delete(0);
 		data.delete(12);
 		data.delete(21);
-		Map<Integer, Contractor> results = services.find(NO_SEARCH_CRITERIA);
+		final Map<Integer, Contractor> results = services.find(NO_SEARCH_CRITERIA);
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 		assertEquals(25, results.size());
+	}
+
+	@Test
+	public void testFind_MultipleContractors_LocationSearch() throws ServiceException, RemoteException {
+		final Map<Integer, Contractor> results = services.find(LOCATION_SEARCH_CRITERIA);
+		assertEquals(2, results.size());
+	}
+
+	@Test
+	public void testFind_MultipleContractors_NameSearch() throws ServiceException, RemoteException {
+		final Map<Integer, Contractor> results = services.find(NAME_SEARCH_CRITERIA);
+		assertEquals(6, results.size());
+	}
+
+	@Test
+	public void testFind_SingleContractor() throws ServiceException, RemoteException {
+		final Map<Integer, Contractor> results = services.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
+		assertEquals(1, results.size());
 	}
 
 	@Test(expected = ContractorNotFoundException.class)
@@ -112,18 +119,6 @@ public class BasicServiceTest {
 			throws DatabaseException, ServiceException, RemoteException {
 		data.delete(0);
 		services.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
-	}
-
-	@Test
-	public void testFind_MultipleContractors_NameSearch() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(NAME_SEARCH_CRITERIA);
-		assertEquals(6, results.size());
-	}
-
-	@Test
-	public void testFind_MultipleContractors_LocationSearch() throws ServiceException, RemoteException {
-		Map<Integer, Contractor> results = services.find(LOCATION_SEARCH_CRITERIA);
-		assertEquals(2, results.size());
 	}
 
 	@Test(expected = ContractorNotFoundException.class)

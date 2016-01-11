@@ -1,7 +1,5 @@
 package suncertify.domain;
 
-import static suncertify.util.Constants.PRIMARY_KEY_FIELDS;
-
 import java.io.Serializable;
 
 /**
@@ -20,35 +18,33 @@ public class ContractorPK implements Serializable {
 	/** The location. */
 	private String location;
 
-	public ContractorPK(){
-		
+	public ContractorPK() {
+		name = "";
+		location = "";
 	}
-	
+
 	public ContractorPK(final String name, final String location) {
 		this.name = name;
 		this.location = location;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
 	}
 
 	public String getLocation() {
 		return location;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public void setLocation(final String location) {
 		this.location = location;
 	}
 
-	public String[] toStringArray(){
-		final String[] fieldValues = new String[PRIMARY_KEY_FIELDS];
-		fieldValues[0] = name;
-		fieldValues[1] = location;
-		return fieldValues;
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public String[] toStringArray() {
+		return new String[] { name, location };
 	}
 }

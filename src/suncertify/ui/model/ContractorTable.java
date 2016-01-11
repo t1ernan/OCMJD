@@ -13,41 +13,14 @@ import suncertify.util.ContractorBuilder;
 
 public class ContractorTable extends JTable {
 
-	private JButton bookButton;
-	
+	/** The serial version UID. */
+	private static final long serialVersionUID = 17011991;
+
 	public ContractorTable(final ContractorTableModel model, final JButton bookButton) {
 		super(model);
-		this.bookButton = bookButton;
-		this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		this.setRowSelectionAllowed(true);
-		this.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				hideButtonIfBooked(model, bookButton);
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				hideButtonIfBooked(model, bookButton);
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				hideButtonIfBooked(model, bookButton);
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				//DO NOTHING
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				//DO NOTHING
-			}
+		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		setRowSelectionAllowed(true);
+		addMouseListener(new MouseListener() {
 
 			private void hideButtonIfBooked(final ContractorTableModel model, final JButton bookButton) {
 				final int rowIndex = getTable().getSelectedRows()[0];
@@ -59,9 +32,36 @@ public class ContractorTable extends JTable {
 					bookButton.setVisible(true);
 				}
 			}
+
+			@Override
+			public void mouseClicked(final MouseEvent e) {
+				hideButtonIfBooked(model, bookButton);
+			}
+
+			@Override
+			public void mouseEntered(final MouseEvent e) {
+				//DO NOTHING
+			}
+
+			@Override
+			public void mouseExited(final MouseEvent e) {
+				//DO NOTHING
+			}
+
+			@Override
+			public void mousePressed(final MouseEvent e) {
+				hideButtonIfBooked(model, bookButton);
+
+			}
+
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+				hideButtonIfBooked(model, bookButton);
+
+			}
 		});
 	}
-	
+
 	private ContractorTable getTable(){
 		return this;
 	}

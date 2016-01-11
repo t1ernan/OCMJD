@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -69,7 +68,7 @@ public class ServerConfigWindow extends ConfigWindow {
 			Config.setServerPortNumber(serverPortNumberField.getText().trim());
 			Config.saveProperties();
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage());
+			displayWarningException(e);
 		}
 	}
 
@@ -80,10 +79,7 @@ public class ServerConfigWindow extends ConfigWindow {
 			int portNumber = Integer.parseInt(Config.getServerPortNumber());
 			new RMIServer(data).startServer(portNumber);
 		} catch (DatabaseException | RemoteException e) {
-			final String errorMessage = "Failed to launch application: " + e.getMessage();
-			JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
-		}finally{
-			this.dispose();
+			displayFatalException(e);
 		}
 	}
 }

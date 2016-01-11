@@ -5,7 +5,11 @@ import static suncertify.util.Constants.RECORD_FIELDS;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPK;
 
-public class ContractorBuilder {
+public final class ContractorBuilder {
+
+	private ContractorBuilder(){
+
+	}
 
 	public static Contractor build(final String[] fieldValues) {
 		if (fieldValues.length != RECORD_FIELDS) {

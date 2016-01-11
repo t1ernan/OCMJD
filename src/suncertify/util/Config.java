@@ -1,6 +1,6 @@
 package suncertify.util;
 
-import static suncertify.util.Constants.*;
+import static suncertify.util.Constants.EMPTY_STRING;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,124 +14,124 @@ import java.util.Properties;
  * The Class Config.
  */
 public final class Config {
-	
+
 	/** The Constant CONFIGURATION_FILE_NAME. */
-	private static final String CONFIGURATION_FILE_NAME = "suncertify.properties";
+	private static final String PROPERTIES_FILE = "suncertify.properties";
 
 	/** The Constant DB_LOCATION_SERVER. */
-	private static final String SERVER_DB_LOCATION = "server.databaseLocation";
-	
+	private static final String SERVER_DB = "server.databaseLocation";
+
 	/** The Constant SERVER_IPADDRESS. */
-	private static final String SERVER_IP_ADDRESS = "server.ipaddress";
-	
+	private static final String SERVER_IP = "server.ipaddress";
+
 	/** The Constant PORT_NUMBER. */
-	private static final String SERVER_PORT_NUMBER = "server.port";
-	
+	private static final String SERVER_PORT = "server.port";
+
 	/** The Constant DB_LOCATION_STANDALONE. */
-	private static final String ALONE_DB_LOCATION = "alone.databaseLocation";
-	
+	private static final String LOCAL_DB = "alone.databaseLocation";
+
 	/** The Constant PORT_NUMBER. */
-	private static final String CLIENT_PORT_NUMBER = "client.serverPort";
-	
+	private static final String CLIENT_PORT = "client.serverPort";
+
 	/** The Constant DEFAULT_PORT_NUMBER. */
-	private static final String DEFAULT_PORT_NUMBER = "1099";
-	
-	private static final Properties prop = new Properties();
+	private static final String RMI_PORT = "1099";
+
+	private static final Properties PROP = new Properties();
 
 	static {
-		final File configFile = new File(CONFIGURATION_FILE_NAME);
-		if (!configFile.exists()) {
-			createNewPropertiesFile();
-		}else{
+		final File configFile = new File(PROPERTIES_FILE);
+		if (configFile.exists()) {
 			loadPropertiesFile();
+		}else{
+			createNewPropertiesFile();
 		}
 	}
-	
+
 	private Config(){
-		
-	}
 
-	private static void createNewPropertiesFile() {
-		prop.setProperty(SERVER_DB_LOCATION, EMPTY_STRING);
-		prop.setProperty(SERVER_IP_ADDRESS, EMPTY_STRING);
-		prop.setProperty(SERVER_PORT_NUMBER, DEFAULT_PORT_NUMBER);
-		prop.setProperty(CLIENT_PORT_NUMBER, DEFAULT_PORT_NUMBER);
-		prop.setProperty(ALONE_DB_LOCATION, EMPTY_STRING);
-		saveProperties();
-	}
-
-	private static void loadPropertiesFile() {
-		try (InputStream input = new FileInputStream(CONFIGURATION_FILE_NAME);) {
-			prop.load(input);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void saveProperties() {
-		try (OutputStream output = new FileOutputStream(CONFIGURATION_FILE_NAME);) {
-			prop.store(output, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static String getServerDBLocation() {
-		return prop.getProperty(SERVER_DB_LOCATION);
-	}
-
-	public static String getServerIPAddress() {
-		return prop.getProperty(SERVER_IP_ADDRESS);
-	}
-
-	public static String getServerPortNumber() {
-		return prop.getProperty(SERVER_PORT_NUMBER);
-	}
-
-	public static String getClientPortNumber() {
-		return prop.getProperty(CLIENT_PORT_NUMBER);
 	}
 
 	public static String getAloneDBLocation() {
-		return prop.getProperty(ALONE_DB_LOCATION);
+		return PROP.getProperty(LOCAL_DB);
 	}
 
-	public static void setServerDBLocation(final String serverDBLocation) {
-		if(serverDBLocation.isEmpty()){
-			throw new IllegalArgumentException("Database Location field must not be left blank");
-		}
-		prop.setProperty(SERVER_DB_LOCATION, serverDBLocation);
+	public static String getClientPortNumber() {
+		return PROP.getProperty(CLIENT_PORT);
 	}
 
-	public static void setServerIPAddress(final String serverIPAddress) {
-		if(serverIPAddress.isEmpty()){
-			throw new IllegalArgumentException("IP address field must not be left blank");
-		}
-		prop.setProperty(SERVER_IP_ADDRESS, serverIPAddress);
+	public static String getServerDBLocation() {
+		return PROP.getProperty(SERVER_DB);
 	}
 
-	public static void setServerPortNumber(final String serverPortNumber) {
-		if(isInvalidPortNumber(serverPortNumber)){
-			throw new IllegalArgumentException("Port number must contain only digits");
-		}
-		prop.setProperty(SERVER_PORT_NUMBER, serverPortNumber);
+	public static String getServerIPAddress() {
+		return PROP.getProperty(SERVER_IP);
 	}
 
-	public static void setClientPortNumber(final String clientPortNumber) {
-		if(isInvalidPortNumber(clientPortNumber)){
-			throw new IllegalArgumentException("Port number must contain only digits");
+	public static String getServerPortNumber() {
+		return PROP.getProperty(SERVER_PORT);
+	}
+
+	public static void saveProperties() {
+		try (OutputStream output = new FileOutputStream(PROPERTIES_FILE);) {
+			PROP.store(output, null);
+		} catch (final IOException e) {
+			e.printStackTrace();
 		}
-		prop.setProperty(CLIENT_PORT_NUMBER, clientPortNumber);
 	}
 
 	public static void setAloneDBLocation(final String aloneDBLocation) {
 		if(aloneDBLocation.isEmpty()){
 			throw new IllegalArgumentException("Database Location field must not be left blank");
 		}
-		prop.setProperty(ALONE_DB_LOCATION, aloneDBLocation);
+		PROP.setProperty(LOCAL_DB, aloneDBLocation);
+	}
+
+	public static void setClientPortNumber(final String clientPortNumber) {
+		if(isInvalidPortNumber(clientPortNumber)){
+			throw new IllegalArgumentException("Port number must contain only digits");
+		}
+		PROP.setProperty(CLIENT_PORT, clientPortNumber);
+	}
+
+	public static void setServerDBLocation(final String serverDBLocation) {
+		if(serverDBLocation.isEmpty()){
+			throw new IllegalArgumentException("Database Location field must not be left blank");
+		}
+		PROP.setProperty(SERVER_DB, serverDBLocation);
+	}
+
+	public static void setServerIPAddress(final String serverIPAddress) {
+		if(serverIPAddress.isEmpty()){
+			throw new IllegalArgumentException("IP address field must not be left blank");
+		}
+		PROP.setProperty(SERVER_IP, serverIPAddress);
+	}
+
+	public static void setServerPortNumber(final String serverPortNumber) {
+		if(isInvalidPortNumber(serverPortNumber)){
+			throw new IllegalArgumentException("Port number must contain only digits");
+		}
+		PROP.setProperty(SERVER_PORT, serverPortNumber);
+	}
+
+	private static void createNewPropertiesFile() {
+		PROP.setProperty(SERVER_DB, EMPTY_STRING);
+		PROP.setProperty(SERVER_IP, EMPTY_STRING);
+		PROP.setProperty(SERVER_PORT, RMI_PORT);
+		PROP.setProperty(CLIENT_PORT, RMI_PORT);
+		PROP.setProperty(LOCAL_DB, EMPTY_STRING);
+		saveProperties();
 	}
 
 	private static boolean isInvalidPortNumber(final String serverPortNumber) {
 		return !serverPortNumber.matches("[0-9]+");
+	}
+
+	private static void loadPropertiesFile() {
+		try (InputStream input = new FileInputStream(PROPERTIES_FILE);) {
+			PROP.load(input);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

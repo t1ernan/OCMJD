@@ -2,6 +2,8 @@ package test.business;
 
 import static test.util.Constants.DEFAULT_DB_LOCATION_SERVER;
 import static test.util.Constants.DEFAULT_DB_LOCATION_STANDALONE;
+import static test.util.Constants.DEFAULT_PORT_NUMBER;
+import static test.util.Constants.DEFAULT_SERVER_IPADDRESS;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -9,9 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 import suncertify.business.AlreadyBookedException;
-import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
+import suncertify.business.rmi.RMIClient;
+import suncertify.business.rmi.RMIServer;
 import suncertify.db.DBFactory;
 import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseException;
@@ -19,7 +22,7 @@ import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
 import suncertify.util.ContractorBuilder;
 
-public class TestBusinessService {
+public class TestRMIBusinessService {
 
 	private class BookThread implements Runnable {
 		private final int id;
@@ -42,6 +45,7 @@ public class TestBusinessService {
 					try {
 						final Contractor contractor = ContractorBuilder.build(data.read(recNo));
 						contractor.setCustomerId(customer);
+						final ContractorService service = new RMIClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
 						service.book(contractor);
 						endRun = true;
 					} catch (final RecordNotFoundException e) {
@@ -69,18 +73,18 @@ public class TestBusinessService {
 			}
 		}
 	}
-	private static DBMainExtended data;
 
-	private static ContractorService service;
+	private static DBMainExtended data;
 
 	public static void main(final String[] args) throws RemoteException, DatabaseException {
 		// start your RMI-server
-		service = new BasicContractorService(DBFactory.getDatabase(DEFAULT_DB_LOCATION_SERVER));
-		new TestBusinessService(data).startTests();
+		final ContractorService service = new RMIServer(DBFactory.getDatabase(DEFAULT_DB_LOCATION_SERVER));
+		((RMIServer) service).startServer(DEFAULT_PORT_NUMBER);
+		new TestRMIBusinessService(data).startTests();
 	}
 
-	public TestBusinessService(final DBMainExtended data) throws DatabaseException {
-		TestBusinessService.data = DBFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
+	public TestRMIBusinessService(final DBMainExtended data) throws DatabaseException {
+		TestRMIBusinessService.data = DBFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 
 	public void startTests() {
@@ -88,7 +92,7 @@ public class TestBusinessService {
 		try {
 			// create book-threads
 			for (int i = 0; i < 35; i++) {
-				threads.add(new Thread(new BookThread(54120584), String.valueOf(i)));
+				threads.add(new Thread(new BookThread(12345678), String.valueOf(i)));
 			}
 			// random order
 			Collections.shuffle(threads);

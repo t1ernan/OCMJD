@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static test.util.Constants.DB_FILE_NAME;
 
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +46,7 @@ public class DataTest {
 	}
 
 	@After
-	public void teardown() throws DatabaseException {
+	public void teardown() throws DatabaseException, IOException {
 		((Data) data).clear();
 		((Data) data).load();
 	}
@@ -55,7 +57,7 @@ public class DataTest {
 	}
 
 	@Test
-	public void testSaveData() throws DatabaseException {
+	public void testSaveData() throws DatabaseException, IOException {
 		((Data) data).save();
 		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
 	}
@@ -269,4 +271,5 @@ public class DataTest {
 		data.delete(VALID_RECORD_NUMBER);
 		data.find(searchCriteria_TooManyFields);
 	}
+
 }

@@ -27,7 +27,7 @@ public interface ContractorService {
 	 * @throws RemoteException
 	 *             if an RMI communication-related exception occurs.
 	 */
-	public void book(final Contractor contractor)
+	void book(final Contractor contractor)
 			throws ContractorNotFoundException, AlreadyBookedException, RemoteException;
 
 	/**
@@ -65,6 +65,6 @@ public interface ContractorService {
 	 * @throws RemoteException
 	 *             if an RMI communication-related exception occurs.
 	 */
-	public Map<Integer, Contractor> find(final ContractorPK primaryKey)
+	Map<Integer, Contractor> find(final ContractorPK primaryKey)
 			throws ContractorNotFoundException, RemoteException;
 }

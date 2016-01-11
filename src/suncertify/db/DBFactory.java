@@ -4,13 +4,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * A factory for creating database manager objects. It contains
+ * A factory for creating database manager objects.
  */
-public class DBFactory {
+public final class DBFactory {
 
 	/** The databaseManager object. */
-	private static DBMainExtended databaseManager;
+	private static DBMainExtended databaseManager = Data.getInstance();
 
+	private DBFactory(){
+	}
 	/**
 	 * Gets a database manager for the database file at specified location. This
 	 * method should ensure there is only one instance of the database manager
@@ -23,13 +25,10 @@ public class DBFactory {
 	 *             if a databaseManager instance could not be created
 	 */
 	public static DBMainExtended getDatabase(final String dbFileLocation) throws DatabaseException {
-		if (databaseManager == null) {
-			databaseManager = Data.getInstance();
-			if (!Files.exists(Paths.get(dbFileLocation))) {
-				throw new DatabaseException("Could not find the specified file: " + dbFileLocation);
-			}
-			databaseManager.initialize(dbFileLocation);
+		if (!Files.exists(Paths.get(dbFileLocation))) {
+			throw new DatabaseException("Could not find the specified file: " + dbFileLocation);
 		}
+		databaseManager.initialize(dbFileLocation);
 		return databaseManager;
 	}
 }

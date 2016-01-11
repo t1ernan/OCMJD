@@ -20,6 +20,6 @@ public interface RMIService extends ContractorService, Remote {
 	 * @throws RemoteException
 	 *             if an RMI communication-related exception occurs.
 	 */
-	public void startServer(int portNumber) throws RemoteException;
+	void startServer(int portNumber) throws RemoteException;
 
 }

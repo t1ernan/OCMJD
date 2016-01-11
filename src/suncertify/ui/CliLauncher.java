@@ -8,14 +8,18 @@ import suncertify.ui.view.ConfigWindow;
 import suncertify.ui.view.ServerConfigWindow;
 import suncertify.ui.view.StandaloneConfigWindow;
 
-public class CliLauncher {
+public final class CliLauncher {
 
 	private static final String NETWORKED = "server";
 	private static final String STANDALONE = "alone";
-	private final static int ZERO = 0;
-	private final static int ONE = 1;
+	private static final int ZERO = 0;
+	private static final int ONE = 1;
 
-	public static void main(String[] args) throws RemoteException, ServiceException {
+	private CliLauncher(){
+
+	}
+
+	public static void main(final String[] args) throws RemoteException, ServiceException {
 		final int NUM_OF_ARGS = args.length;
 
 		switch (NUM_OF_ARGS) {
@@ -41,6 +45,14 @@ public class CliLauncher {
 
 	}
 
+	private static boolean isNetworked(final String mode) {
+		return mode.equals(NETWORKED);
+	}
+
+	private static boolean isNonNetworked(final String mode) {
+		return mode.equals(STANDALONE);
+	}
+
 	private static void runClient() {
 		final ConfigWindow clientConfig = new ClientConfigWindow();
 		clientConfig.setVisible(true);
@@ -54,13 +66,5 @@ public class CliLauncher {
 	private static void runStandalone() {
 		final ConfigWindow standaloneConfig = new StandaloneConfigWindow();
 		standaloneConfig.setVisible(true);
-	}
-
-	private static boolean isNonNetworked(final String mode) {
-		return mode.equals(STANDALONE);
-	}
-
-	private static boolean isNetworked(final String mode) {
-		return mode.equals(NETWORKED);
 	}
 }

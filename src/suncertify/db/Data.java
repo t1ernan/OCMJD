@@ -1,189 +1,127 @@
 package suncertify.db;
 
-import static suncertify.util.Constants.PRIMARY_KEY_FIELDS;
+import static suncertify.util.Constants.EMPTY_STRING;
+import static suncertify.util.Constants.RECORD_FIELDS;
+import static suncertify.util.Constants.SEARCH_FIELDS;
+import static suncertify.util.Utils.readString;
+import static suncertify.util.Utils.writeString;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.OptionalInt;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 
-import suncertify.util.Utils;
+public final class Data implements DBMainExtended {
 
-// TODO: Auto-generated Javadoc
-/**
- * The class Data is an implementation of {@link DBMain}. It reads the contents
- * of the non-relational database file into an in-memory cache when an instance
- * is created. All queries and updates to the database are then done to the
- * in-memory cache instead using the public methods declared in the
- * {@link DBMain} interface. It writes the contents of the cache back to the
- * database file when the application terminates. <br>
- * Uses the singleton pattern to ensure there is at most one instance at any one
- * time.
- */
-public class Data implements DBMainExtended {
+	private static final Data INSTANCE = new Data();
+	private static final int MAGIC_COOKIE = 514;
+	private static final String[] FIELD_NAMES = { "name", "location", "specialties", "size", "rate", "owner" };
+	private static final int[] MAX_FIELD_SIZES = { 32, 64, 64, 6, 8, 8 };
+	private static final int VALID_FLAG = 00;
+	private static final int DELETED_FLAG = 0x8000;
+	private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
+	private final Map<Integer, String[]> cache = new HashMap<>();
+	private final Set<Integer> lockedRecords = new HashSet<>();
+	private String dbFileLocation;
+	private int recordOffset;
 
-	/** The Constant INSTANCE. */
-	private static final DBMainExtended INSTANCE = new Data();
-
-	private static final String UNDERSCORE = "_";
-
-	/** The in-memory cache containing the contents of the database file. */
-	private Map<Integer, String[]> dbCache = new HashMap<>();
-
-	/** The in-memory cache of records which have been locked by a thread. */
-	private Set<Integer> lockedRecords = new HashSet<>();
-
-	/**
-	 * Used to perform read/write operations on the database file.
-	 */
-	private DBAccessManager dbAccessManager;
-
-	/**
-	 * Constructs a new default Data instance.
-	 */
 	private Data() {
-
 	}
 
-	/**
-	 * Gets the single instance of DBMainExtended.
-	 *
-	 * @return single instance of DBMainExtended.
-	 */
-	public static DBMainExtended getInstance() {
+	public static Data getInstance() {
 		return INSTANCE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public synchronized void initialize(final String dbFileLocation) throws DatabaseException {
-		this.dbAccessManager = DBFileAccessManager.getInstance();
-		dbAccessManager.initialize(dbFileLocation);
-		load();
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			try {
-				save();
-			} catch (DatabaseException e) {
-				System.err.println("Could not save data: " + e.getMessage());
-			}
-		}));
+	public synchronized void clear() {
+		cache.clear();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public synchronized String[] read(final int recNo) throws RecordNotFoundException {
-		if (isInvalidRecord(recNo)) {
-			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
-		}
-		return dbCache.get(recNo);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public synchronized void update(final int recNo, final String[] data) {
-		validateFieldLengths(data);
-		dbCache.put(recNo, data);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public synchronized void delete(final int recNo) {
-		dbCache.put(recNo, null);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
-		if (criteria.length != PRIMARY_KEY_FIELDS) {
-			throw new IllegalArgumentException("Search criteria should contain Name and Location values only!");
-		}
-		validateFieldLengths(criteria);
-		final List<Integer> recordNumberList = new ArrayList<>();
-		findAllValidRecords().forEach((recordNumber, fieldValues) -> {
-			boolean isMatch = true;
-			for (int index = 0; index < criteria.length; index++) {
-				final String recordValue = fieldValues[index].toUpperCase();
-				final String searchValue = criteria[index].toUpperCase();
-				if (!recordValue.startsWith(searchValue)) {
-					isMatch = false;
-					break;
-				}
-			}
-			if (isMatch) {
-				recordNumberList.add(recordNumber);
-			}
-		});
-
-		if (recordNumberList.isEmpty()) {
-			throw new RecordNotFoundException(
-					"No matching records for selected criteria: Name=" + criteria[0] + " , Location=" + criteria[1]);
-		}
-		final int[] matchingRecordNumbers = Utils.convertIntegerListToIntArray(recordNumberList);
-		return matchingRecordNumbers;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public synchronized int create(final String[] data) throws DuplicateKeyException {
-		validateFieldLengths(data);
-		final String newPrimaryKey = generatePrimaryKey(data);
-		for (Entry<Integer, String[]> record : findAllValidRecords().entrySet()) {
-			final Integer recordNumber = record.getKey();
-			final String[] fieldValues = record.getValue();
-			final String existingPrimaryKey = generatePrimaryKey(fieldValues);
-			if (newPrimaryKey.equalsIgnoreCase(existingPrimaryKey)) {
-				throw new DuplicateKeyException("Record already exists! See record " + recordNumber);
-			}
-		}
-		final int recordNumber = generateRecordNumber();
-		dbCache.put(new Integer(recordNumber), data);
+		validateFields(data);
+		checkForDuplicateKey(data);
+		final OptionalInt recordNumberOptional = getDeletedRecordsStream().mapToInt(entry -> entry.getKey()).findAny();
+		final int recordNumber = recordNumberOptional.orElse(cache.size());
+		cache.put(recordNumber, data);
 		return recordNumber;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public synchronized void lock(final int recNo) throws RecordNotFoundException {
-		while (isLocked(recNo)) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				System.out.println(e.getMessage());
+	public synchronized void delete(final int recNo) {
+		cache.put(recNo, null);
+	}
+
+	@Override
+	public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
+		validateFields(criteria);
+		if (criteria.length != SEARCH_FIELDS) {
+			throw new IllegalArgumentException("Search criteria should contain Name and Location values only!");
+		}
+		final int[] matchingRecordNumbers = getValidRecordsStream()
+				.filter(entry -> doesEntryMatchCriteria(entry.getValue(), criteria)).mapToInt(entry -> entry.getKey())
+				.toArray();
+		if (matchingRecordNumbers.length == 0) {
+			throw new RecordNotFoundException(
+					"No matching records for selected criteria: Name=" + criteria[0] + " , Location=" + criteria[1]);
+		}
+		return matchingRecordNumbers;
+	}
+
+	public Map<Integer, String[]> getAllValidRecords() {
+		final Map<Integer, String[]> validRecords = new HashMap<>();
+		cache.forEach((recordNumber, fieldValues) -> {
+			if (fieldValues != null) {
+				validRecords.put(recordNumber, fieldValues);
+			}
+		});
+		return validRecords;
+	}
+
+	public int getRecordNumber() {
+		int deletedRecordNumber = cache.size();
+		for (final Entry<Integer, String[]> record : cache.entrySet()) {
+			if (record.getValue() == null) {
+				deletedRecordNumber = record.getKey();
+				break;
 			}
 		}
-		lockedRecords.add(recNo);
+		return deletedRecordNumber;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	public int getTotalNumberOfRecords() {
+		return cache.size();
+	}
+
 	@Override
-	public synchronized void unlock(final int recNo) {
-		if (lockedRecords.contains(recNo)) {
-			lockedRecords.remove(recNo);
-			notifyAll();
+	public synchronized void initialize(final String dbFileLocation) throws DatabaseException {
+		try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
+			if (raf.readInt() != MAGIC_COOKIE) {
+				throw new DatabaseException("Invalid file. Unexpected magic cookie value");
+			}
+			this.dbFileLocation = dbFileLocation;
+			recordOffset = raf.readInt();
+			loadCache();
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				try {
+					save();
+				} catch (final IOException e) {
+					if (LOGGER.isLoggable(Level.WARNING)) {
+						LOGGER.warning("Could not save data: " + e.getMessage());
+					}
+				}
+			}));
+		} catch (final IOException e) {
+			throw new DatabaseException("Could not read data from the specified file: " + dbFileLocation, e);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public synchronized boolean isLocked(final int recNo) throws RecordNotFoundException {
 		if (isInvalidRecord(recNo)) {
@@ -192,12 +130,129 @@ public class Data implements DBMainExtended {
 		return lockedRecords.contains(recNo);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	public synchronized void load() throws IOException {
+		loadCache();
+	}
+
 	@Override
-	public synchronized void save() throws DatabaseException {
-		dbAccessManager.persist(dbCache);
+	public synchronized void lock(final int recNo) throws RecordNotFoundException {
+		while (isLocked(recNo)) {
+			try {
+				wait();
+			} catch (final InterruptedException e) {
+				LOGGER.warning(e.getMessage());
+			}
+		}
+		lockedRecords.add(recNo);
+	}
+
+	@Override
+	public synchronized String[] read(final int recNo) throws RecordNotFoundException {
+		if (isInvalidRecord(recNo)) {
+			throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
+		}
+		return cache.get(recNo);
+	}
+
+	@Override
+	public synchronized void save() throws IOException {
+		try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
+			raf.seek(recordOffset);
+			raf.setLength(recordOffset);
+			for (final String[] fieldValues : cache.values()) {
+				writeRecord(raf, fieldValues);
+			}
+		}
+	}
+
+	@Override
+	public synchronized void unlock(final int recNo) {
+		if (lockedRecords.contains(recNo)) {
+			lockedRecords.remove(recNo);
+			notifyAll();
+		}
+	}
+
+	@Override
+	public synchronized void update(final int recNo, final String[] data) {
+		validateFields(data);
+		cache.put(recNo, data);
+	}
+
+	private void checkForDuplicateKey(final String[] data) throws DuplicateKeyException {
+		final String newId = getUniqueId(data);
+		final boolean isDuplicate = getValidRecordsStream().map(entry -> entry.getValue())
+				.anyMatch(values -> newId.equals(getUniqueId(values)));
+		if (isDuplicate) {
+			throw new DuplicateKeyException("Record already exists");
+		}
+	}
+
+	/**
+	 * Does entry match criteria.
+	 *
+	 * @param fieldValues
+	 *            the field values
+	 * @param searchValues
+	 *            the search values
+	 * @return true, if successful
+	 */
+	private boolean doesEntryMatchCriteria(final String[] fieldValues, final String[] searchValues) {
+		boolean isMatch = true;
+		for (int index = 0; index < searchValues.length; index++) {
+			final String fieldValue = fieldValues[index].toUpperCase();
+			final String searchValue = searchValues[index].toUpperCase();
+			if (!fieldValue.startsWith(searchValue)) {
+				isMatch = false;
+				break;
+			}
+		}
+		return isMatch;
+	}
+
+	private Stream<Entry<Integer, String[]>> getDeletedRecordsStream() {
+		return cache.entrySet().stream().filter(entry -> entry.getValue() == null);
+	}
+
+	private String getUniqueId(final String[] fieldValues) {
+		final String name = fieldValues[0].toUpperCase();
+		final String location = fieldValues[1].toUpperCase();
+		return (name + location);
+	}
+
+	private Stream<Entry<Integer, String[]>> getValidRecordsStream() {
+		return cache.entrySet().stream().filter(entry -> entry.getValue() != null);
+	}
+
+	// TODO: DELETE TEST METHODS BELOW BEFORE SUBMISSION
+
+	private boolean isInvalidRecord(final int recNo) {
+		return getValidRecordsStream().noneMatch(entry -> entry.getKey() == recNo);
+	}
+
+	private void loadCache() throws IOException {
+		try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
+			int recordNumber = 0;
+			raf.seek(recordOffset);
+			while (raf.getFilePointer() < raf.length()) {
+				cache.put(recordNumber, readFieldValues(raf));
+				recordNumber++;
+			}
+		}
+	}
+
+	private String[] readFieldValues(final RandomAccessFile raf) throws IOException {
+		final int flagvalue = raf.readUnsignedShort();
+		String[] fieldValues = new String[RECORD_FIELDS];
+		for (int index = 0; index < RECORD_FIELDS; index++) {
+			final String fieldValue = readString(raf, MAX_FIELD_SIZES[index]);
+			fieldValues[index] = fieldValue;
+		}
+		if (flagvalue != VALID_FLAG) {
+			fieldValues = null;
+		}
+		return fieldValues;
+
 	}
 
 	/**
@@ -208,122 +263,49 @@ public class Data implements DBMainExtended {
 	 * permitted for that field, a {@link IllegalArgumentException} will be
 	 * thrown.
 	 *
-	 * @param fields
-	 *            the fields
+	 * @param fieldValues
+	 *            a string array where each element is a record value.
 	 * @throws IllegalArgumentException
 	 *             if the number of characters used in a field exceeds the max
 	 *             number of characters permitted for that field
 	 */
-	private void validateFieldLengths(final String[] fields) {
-		dbAccessManager.validateFieldsAgainstSchema(fields);
-	}
-
-	/**
-	 * Generates the record number. If the database contains any deleted
-	 * records, this method will return the lowest record number of the deleted
-	 * records, thereby reusing any existing record numbers of deleted records.
-	 * Otherwise, it will return {@code dbCache.size()}
-	 *
-	 * @return the record number
-	 */
-	private int generateRecordNumber() {
-		int deletedRecordNumber = dbCache.size();
-		for (Entry<Integer, String[]> record : dbCache.entrySet()) {
-			if (record.getValue() == null) {
-				deletedRecordNumber = record.getKey();
-				break;
+	private void validateFields(final String[] fieldValues) {
+		for (int index = 0; index < fieldValues.length; index++) {
+			final int fieldSize = fieldValues[index].length();
+			final int maxFieldSize = MAX_FIELD_SIZES[index];
+			if (fieldSize > maxFieldSize) {
+				throw new IllegalArgumentException("'" + fieldValues[index]
+						+ "' exceeds the maximum number of characters permitted for the field '" + FIELD_NAMES[index]
+								+ ". Max permitted characters: " + maxFieldSize);
 			}
 		}
-		return deletedRecordNumber;
 	}
 
 	/**
-	 * Generates a primary key from the String[] argument using the first two
-	 * elements in the String array, i.e. the name of the contractor and their
-	 * location.
+	 * Writes a record to the specified {@code dbFile}. The record will be have
+	 * the field values specified in the elements of the {@code fieldValues}
+	 * string array. If the specified {@code fieldValues} argument is null, the
+	 * record will be filled with blank space ASCII characters.
 	 *
-	 * @param data
-	 *            the data
-	 * @return the primary key in String form
+	 * @param raf
+	 *            a {@link RandomAccessFile} file for reading and writing to the
+	 *            database file.
+	 * @param fieldValues
+	 *            a string array where each element is a record value
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	private String generatePrimaryKey(final String[] data) {
-		final String name = data[0];
-		final String location = data[1];
-		final String uniqueKey = name + UNDERSCORE + location;
-		return uniqueKey;
-	}
-
-	/**
-	 * Checks if a specified record is invalid. Returns true if the specified
-	 * record does not exist or is marked as deleted in the database. Otherwise,
-	 * returns false;
-	 *
-	 * @param recNo
-	 *            the record number
-	 * @return true, if the specified record does not exist or is marked as
-	 *         deleted in the database
-	 */
-	private boolean isInvalidRecord(final int recNo) {
-		return !findAllValidRecords().containsKey(recNo);
-	}
-
-	/**
-	 * Returns a map containing all records in the database which are not marked
-	 * as deleted.
-	 *
-	 * @return a map containing all the valid record numbers as the map keys and
-	 *         their corresponding records as the map values
-	 */
-	private Map<Integer, String[]> findAllValidRecords() {
-		final Map<Integer, String[]> validRecords = new HashMap<>();
-		dbCache.forEach((recordNumber, fieldValues) -> {
-			if (fieldValues != null) {
-				validRecords.put(new Integer(recordNumber), fieldValues);
+	private void writeRecord(final RandomAccessFile raf, final String[] fieldValues) throws IOException {
+		if (fieldValues != null) {
+			raf.writeShort(VALID_FLAG);
+			for (int index = 0; index < RECORD_FIELDS; index++) {
+				writeString(raf, fieldValues[index], MAX_FIELD_SIZES[index]);
 			}
-		});
-		return validRecords;
-	}
-
-	// TODO: DELETE TEST METHODS BELOW BEFORE SUBMISSION
-
-	/**
-	 * Gets the total number of records.
-	 *
-	 * @return the total number of records
-	 */
-	public int getTotalNumberOfRecords() {
-		return dbCache.size();
-	}
-
-	public void load() throws DatabaseException {
-		dbAccessManager.readDatabaseIntoCache(dbCache);
-	}
-
-	/**
-	 * Clear.
-	 */
-	public synchronized void clear() {
-		dbCache.clear();
-	}
-
-	public int getRecordNumber() {
-		int deletedRecordNumber = dbCache.size();
-		for (Entry<Integer, String[]> record : dbCache.entrySet()) {
-			if (record.getValue() == null) {
-				deletedRecordNumber = record.getKey();
-				break;
+		} else {
+			raf.writeShort(DELETED_FLAG);
+			for (int index = 0; index < RECORD_FIELDS; index++) {
+				writeString(raf, EMPTY_STRING, MAX_FIELD_SIZES[index]);
 			}
 		}
-		return deletedRecordNumber;
-	}
-
-	public Map<Integer, String[]> getAllValidRecords() {
-		final Map<Integer, String[]> validRecords = new HashMap<>();
-		dbCache.forEach((recordNumber, fieldValues) -> {
-			if (fieldValues != null) {
-				validRecords.put(new Integer(recordNumber), fieldValues);
-			}
-		});
-		return validRecords;
 	}
 }

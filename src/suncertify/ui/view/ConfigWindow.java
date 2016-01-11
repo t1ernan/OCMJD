@@ -5,6 +5,7 @@ import java.awt.Color;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
@@ -26,6 +27,16 @@ public abstract class ConfigWindow extends JFrame implements LaunchManager {
 	
 	protected JButton getConfirmButton(){
 		return confirm;
+	}
+	
+	protected void displayFatalException(Exception e){
+		final String errorMessage = "Failed to launch application: " + e.getMessage();
+		JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
+		this.dispose();
+	}
+	
+	protected void displayWarningException(Exception e){
+		JOptionPane.showMessageDialog(this, e.getMessage(), "Invalid Input", JOptionPane.WARNING_MESSAGE);
 	}
 	
 	protected abstract JPanel createContentPanel();

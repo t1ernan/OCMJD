@@ -1,6 +1,5 @@
 package suncertify.domain;
 
-import static suncertify.util.Constants.RECORD_FIELDS;
 import static suncertify.util.Utils.isEightDigits;
 
 import java.io.Serializable;
@@ -29,6 +28,24 @@ public class Contractor implements Serializable {
 	/** The size. */
 	private String size;
 
+	public Contractor() {
+		super();
+		primaryKey = new ContractorPK();
+		specialties = "";
+		rate = "";
+		customerId = "";
+		size = "";
+	}
+
+	/**
+	 * Gets the customerId.
+	 *
+	 * @return the customerId
+	 */
+	public String getCustomerId() {
+		return customerId;
+	}
+
 	/**
 	 * Gets the primary key.
 	 *
@@ -36,6 +53,47 @@ public class Contractor implements Serializable {
 	 */
 	public ContractorPK getPrimaryKey() {
 		return primaryKey;
+	}
+
+	/**
+	 * Gets the rate.
+	 *
+	 * @return the rate
+	 */
+	public String getRate() {
+		return rate;
+	}
+
+	/**
+	 * Gets the size.
+	 *
+	 * @return the size
+	 */
+	public String getSize() {
+		return size;
+	}
+
+	/**
+	 * Gets the specialties.
+	 *
+	 * @return the specialties
+	 */
+	public String getSpecialties() {
+		return specialties;
+	}
+
+	public boolean isBooked() {
+		return isEightDigits(customerId);
+	}
+
+	/**
+	 * Sets the customerId.
+	 *
+	 * @param customerId
+	 *            the new customerId
+	 */
+	public void setCustomerId(final String customerId) {
+		this.customerId = customerId;
 	}
 
 	/**
@@ -49,34 +107,6 @@ public class Contractor implements Serializable {
 	}
 
 	/**
-	 * Gets the specialties.
-	 *
-	 * @return the specialties
-	 */
-	public String getSpecialties() {
-		return specialties;
-	}
-
-	/**
-	 * Sets the specialties.
-	 *
-	 * @param specialties
-	 *            the new specialties
-	 */
-	public void setSpecialities(final String specialties) {
-		this.specialties = specialties;
-	}
-
-	/**
-	 * Gets the rate.
-	 *
-	 * @return the rate
-	 */
-	public String getRate() {
-		return rate;
-	}
-
-	/**
 	 * Sets the rate.
 	 *
 	 * @param rate
@@ -84,15 +114,6 @@ public class Contractor implements Serializable {
 	 */
 	public void setRate(final String rate) {
 		this.rate = rate;
-	}
-
-	/**
-	 * Gets the size.
-	 *
-	 * @return the size
-	 */
-	public String getSize() {
-		return size;
 	}
 
 	/**
@@ -106,36 +127,18 @@ public class Contractor implements Serializable {
 	}
 
 	/**
-	 * Gets the customerId.
+	 * Sets the specialties.
 	 *
-	 * @return the customerId
+	 * @param specialties
+	 *            the new specialties
 	 */
-	public String getCustomerId() {
-		return customerId;
-	}
-
-	/**
-	 * Sets the customerId.
-	 *
-	 * @param customerId
-	 *            the new customerId
-	 */
-	public void setCustomerId(final String customerId) {
-		this.customerId = customerId;
-	}
-
-	public boolean isBooked() {
-		return isEightDigits(customerId);
+	public void setSpecialities(final String specialties) {
+		this.specialties = specialties;
 	}
 
 	public String[] toStringArray() {
-		final String[] fieldValues = new String[RECORD_FIELDS];
-		fieldValues[0] = primaryKey.getName();
-		fieldValues[1] = primaryKey.getLocation();
-		fieldValues[2] = specialties;
-		fieldValues[3] = size;
-		fieldValues[4] = rate;
-		fieldValues[5] = customerId;
-		return fieldValues;
+		final String name = primaryKey.getName();
+		final String location = primaryKey.getLocation();
+		return new String[] { name, location, specialties, size, rate, customerId };
 	}
 }

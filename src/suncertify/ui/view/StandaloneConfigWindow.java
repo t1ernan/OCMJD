@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -62,7 +61,7 @@ public class StandaloneConfigWindow extends ConfigWindow {
 			Config.setAloneDBLocation(dbFileLocationField.getText().trim());
 			Config.saveProperties();
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage());
+			displayWarningException(e);
 		}
 	}
 	
@@ -73,10 +72,7 @@ public class StandaloneConfigWindow extends ConfigWindow {
 			final ContractorService service = new BasicContractorService(data);
 			new MainWindow(service);
 		} catch (DatabaseException e) {
-			final String errorMessage = "Failed to launch application: " + e.getMessage();
-			JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
-		}finally{
-			this.dispose();
+			displayFatalException(e);
 		}
 	}
 }

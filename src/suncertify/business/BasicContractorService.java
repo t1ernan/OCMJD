@@ -18,7 +18,7 @@ import suncertify.util.ContractorBuilder;
 public class BasicContractorService implements ContractorService {
 
 	/** The database manager used to interact with the database. */
-	private DBMainExtended databaseManager;
+	private final DBMainExtended databaseManager;
 
 	/**
 	 * Constructs a new BasicContractorService with the specified {@link }.
@@ -44,7 +44,7 @@ public class BasicContractorService implements ContractorService {
 			databaseManager.lock(recordNumber);
 			checkContractorIsAvailable(recordNumber);
 			databaseManager.update(recordNumber, fieldValues);
-		} catch (RecordNotFoundException e) {
+		} catch (final RecordNotFoundException e) {
 			throw new ContractorNotFoundException("Contractor could not be found.", e);
 		} finally {
 			databaseManager.unlock(recordNumber);
@@ -61,13 +61,12 @@ public class BasicContractorService implements ContractorService {
 		try {
 			final String[] searchCriteria = contractorPK.toStringArray();
 			final int[] recordNumbers = databaseManager.find(searchCriteria);
-			for (int index = 0; index < recordNumbers.length; index++) {
-				final Integer recordNumber = recordNumbers[index];
+			for (final int recordNumber : recordNumbers) {
 				final String[] fieldValues = databaseManager.read(recordNumber);
 				final Contractor contractor = ContractorBuilder.build(fieldValues);
 				matchingRecords.put(recordNumber, contractor);
 			}
-		} catch (RecordNotFoundException e) {
+		} catch (final RecordNotFoundException e) {
 			throw new ContractorNotFoundException("Contractor could not be found.", e);
 		}
 		return matchingRecords;

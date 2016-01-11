@@ -34,19 +34,21 @@ public class RMIClient implements ContractorService {
 	 *            the port number
 	 * @throws RemoteException
 	 *             the remote exception
-	 * @throws NotBoundException
-	 *             the not bound exception
 	 */
-	public RMIClient(final String serverIPAddress, final int portNumber) throws RemoteException, NotBoundException {
+	public RMIClient(final String serverIPAddress, final int portNumber) throws RemoteException {
 		final Registry registry = LocateRegistry.getRegistry(serverIPAddress, portNumber);
-		service = (ContractorService) registry.lookup(RMI_ID);
+		try {
+			service = (ContractorService) registry.lookup(RMI_ID);
+		} catch (final NotBoundException e) {
+			throw new RemoteException(RMI_ID + " is not bound: ", e);
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void book(Contractor contractor)
+	public void book(final Contractor contractor)
 			throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
 		service.book(contractor);
 	}
@@ -55,8 +57,7 @@ public class RMIClient implements ContractorService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Map<Integer, Contractor> find(ContractorPK primaryKey) throws ContractorNotFoundException, RemoteException {
+	public Map<Integer, Contractor> find(final ContractorPK primaryKey) throws ContractorNotFoundException, RemoteException {
 		return service.find(primaryKey);
 	}
-
 }

@@ -4,36 +4,70 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.List;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Converter.
  */
-public class Utils {
+public final class Utils {
 
 	/** The Constant CHARACTER_ENCODING. */
-	private static final String CHARACTER_ENCODING = "US-ASCII";
+	private static final String ENCODING = "US-ASCII";
+
 	private static final int BLANK_SPACE_HEX = 0x20;
+	private Utils(){
+
+	}
+
+	/**
+	 * Copies the specified {@code unpaddedBytes} into a new byte[] of length
+	 * equal to the specified {@code size} filled with blank space ASCII
+	 * characters. Returns the new byte[].
+	 *
+	 * @param unpaddedBytes
+	 *            the bytes to copy into the byte[] filled with blank space
+	 *            ASCII characters.
+	 * @param size
+	 *            the size of the byte[] filled with blank space ASCII
+	 *            characters.
+	 * @return the new byte[]
+	 */
+	public static byte[] addPadding(final byte[] unpaddedBytes, final int size) {
+		final byte[] paddedBytes = new byte[size];
+		Arrays.fill(paddedBytes, (byte) BLANK_SPACE_HEX);
+		System.arraycopy(unpaddedBytes, 0, paddedBytes, 0, unpaddedBytes.length);
+		return paddedBytes;
+	}
+
+	public static String convertBytesToString(final byte[] valueBytes) throws IOException {
+		return new String(valueBytes, Charset.forName(ENCODING));
+	}
+
+	public static byte[] convertStringToBytes(final String message) {
+		return message.getBytes(Charset.forName(ENCODING));
+	}
 
 	public static boolean isEightDigits(final String number) {
 		return number.matches("[0-9]{8}");
 	}
 
-	public static int[] convertIntegerListToIntArray(List<Integer> list) {
-		final int[] intArray = new int[list.size()];
-		for (int index = 0; index < list.size(); index++) {
-			intArray[index] = list.get(index);
-		}
-		return intArray;
-	}
-
-	public static String convertBytesToString(byte[] valueBytes) throws IOException {
-		return new String(valueBytes, Charset.forName(CHARACTER_ENCODING));
-	}
-
-	public static byte[] convertStringToBytes(String message) {
-		return message.getBytes(Charset.forName(CHARACTER_ENCODING));
+	/**
+	 * Reads the specified number of bytes from the specified {@code dbFile} and
+	 * returns them as a byte[].
+	 *
+	 * @param dbFile
+	 *            a {@link RandomAccessFile} file for reading and writing to the
+	 *            database file.
+	 * @param numberOfBytes
+	 *            the number of bytes which will be read from the file.
+	 * @return the byte[]
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static byte[] readBytes(final RandomAccessFile dbFile, final int numberOfBytes) throws IOException {
+		final byte[] valueBytes = new byte[numberOfBytes];
+		dbFile.read(valueBytes);
+		return valueBytes;
 	}
 
 	/**
@@ -54,25 +88,6 @@ public class Utils {
 		final byte[] valueBytes = readBytes(dbFile, numberOfBytes);
 		final String paddedFieldValue = convertBytesToString(valueBytes);
 		return paddedFieldValue.trim();
-	}
-
-	/**
-	 * Reads the specified number of bytes from the specified {@code dbFile} and
-	 * returns them as a byte[].
-	 *
-	 * @param dbFile
-	 *            a {@link RandomAccessFile} file for reading and writing to the
-	 *            database file.
-	 * @param numberOfBytes
-	 *            the number of bytes which will be read from the file.
-	 * @return the byte[]
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public static byte[] readBytes(final RandomAccessFile dbFile, final int numberOfBytes) throws IOException {
-		final byte[] valueBytes = new byte[numberOfBytes];
-		dbFile.read(valueBytes);
-		return valueBytes;
 	}
 
 	/**
@@ -98,25 +113,4 @@ public class Utils {
 		final byte[] paddedBytes = addPadding(unpaddedBytes, fieldSize);
 		dbFile.write(paddedBytes);
 	}
-
-	/**
-	 * Copies the specified {@code unpaddedBytes} into a new byte[] of length
-	 * equal to the specified {@code size} filled with blank space ASCII
-	 * characters. Returns the new byte[].
-	 *
-	 * @param unpaddedBytes
-	 *            the bytes to copy into the byte[] filled with blank space
-	 *            ASCII characters.
-	 * @param size
-	 *            the size of the byte[] filled with blank space ASCII
-	 *            characters.
-	 * @return the new byte[]
-	 */
-	public static byte[] addPadding(final byte[] unpaddedBytes, final int size) {
-		final byte[] paddedBytes = new byte[size];
-		Arrays.fill(paddedBytes, (byte) BLANK_SPACE_HEX);
-		System.arraycopy(unpaddedBytes, 0, paddedBytes, 0, unpaddedBytes.length);
-		return paddedBytes;
-	}
-
 }

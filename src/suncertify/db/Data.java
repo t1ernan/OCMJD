@@ -43,6 +43,10 @@ public final class Data implements DBMainExtended {
   private Data() {
   }
 
+  public void clear() {
+    cache.clear();
+  }
+
   @Override
   public synchronized int create(final String[] data) throws DuplicateKeyException {
     validateFields(data);
@@ -77,6 +81,10 @@ public final class Data implements DBMainExtended {
     return recordNumbers;
   }
 
+  public Stream<Entry<Integer, String[]>> getValidRecordsStream() {
+    return cache.entrySet().stream().filter(entry -> entry.getValue() != null);
+  }
+
   @Override
   public synchronized void initialize(final String dbFileLocation) throws DatabaseException {
     try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
@@ -101,12 +109,20 @@ public final class Data implements DBMainExtended {
     }
   }
 
+  public boolean isInvalidRecord(final int recNo) {
+    return getValidRecordsStream().noneMatch(entry -> entry.getKey() == recNo);
+  }
+
   @Override
   public synchronized boolean isLocked(final int recNo) throws RecordNotFoundException {
     if (isInvalidRecord(recNo)) {
       throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
     }
     return lockedRecords.contains(recNo);
+  }
+
+  public void load() throws IOException {
+    loadCache();
   }
 
   @Override
@@ -206,14 +222,6 @@ public final class Data implements DBMainExtended {
     final String name = fieldValues[0].toUpperCase();
     final String location = fieldValues[1].toUpperCase();
     return (name + location);
-  }
-
-  private Stream<Entry<Integer, String[]>> getValidRecordsStream() {
-    return cache.entrySet().stream().filter(entry -> entry.getValue() != null);
-  }
-
-  private boolean isInvalidRecord(final int recNo) {
-    return getValidRecordsStream().noneMatch(entry -> entry.getKey() == recNo);
   }
 
   private void loadCache() throws IOException {

@@ -6,6 +6,21 @@ import static test.util.Constants.DB_FILE_NAME;
 import static test.util.Constants.DEFAULT_PORT_NUMBER;
 import static test.util.Constants.DEFAULT_SERVER_IPADDRESS;
 
+import suncertify.business.AlreadyBookedException;
+import suncertify.business.ContractorNotFoundException;
+import suncertify.business.ContractorService;
+import suncertify.business.ServiceException;
+import suncertify.business.rmi.RmiClient;
+import suncertify.business.rmi.RmiServer;
+import suncertify.business.rmi.RmiService;
+import suncertify.db.DBMainExtended;
+import suncertify.db.Data;
+import suncertify.db.DatabaseException;
+import suncertify.db.DatabaseFactory;
+import suncertify.domain.Contractor;
+import suncertify.domain.ContractorPk;
+import suncertify.util.ContractorBuilder;
+
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -15,122 +30,114 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import suncertify.business.AlreadyBookedException;
-import suncertify.business.ContractorNotFoundException;
-import suncertify.business.ContractorService;
-import suncertify.business.ServiceException;
-import suncertify.business.rmi.RmiClient;
-import suncertify.business.rmi.RmiServer;
-import suncertify.business.rmi.RmiService;
-import suncertify.db.DatabaseFactory;
-import suncertify.db.DBMainExtended;
-import suncertify.db.Data;
-import suncertify.db.DatabaseException;
-import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPk;
-import suncertify.util.ContractorBuilder;
-
 public class RMIServiceTest {
 
-	private static DBMainExtended data;
-	private static RmiService server;
-	private static ContractorService service;
+  private static DBMainExtended data;
+  private static RmiService server;
+  private static ContractorService service;
 
-	@BeforeClass
-	public static void setup() throws DatabaseException, RemoteException, NotBoundException, ServiceException {
-		data = DatabaseFactory.getDatabase(DB_FILE_NAME);
-		server = new RmiServer(data);
-		server.startServer(DEFAULT_PORT_NUMBER);
-		service = new RmiClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
-	}
+  private final String[] firstContractorValues_Booked = new String[] { "Dogs With Tools",
+      "Smallville", "Roofing", "7", "$35.00", "12345678" };
 
-	private final String[] firstContractorValues_Booked = new String[] { "Dogs With Tools", "Smallville", "Roofing",
-			"7", "$35.00", "12345678" };
+  private final String[] firstContractorSearchCriteria = new String[] { "Dogs With Tools",
+      "Smallville" };
 
-	private final String[] firstContractorSearchCriteria = new String[] { "Dogs With Tools", "Smallville" };
+  private final Contractor firstContractor_Booked = ContractorBuilder
+      .build(firstContractorValues_Booked);
 
-	private final Contractor firstContractor_Booked = ContractorBuilder.build(firstContractorValues_Booked);
-	private final ContractorPk NO_SEARCH_CRITERIA = new ContractorPk("", "");
-	private final ContractorPk FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools", "Smallville");
-	private final ContractorPk NAME_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools", "");
-	private final ContractorPk LOCATION_SEARCH_CRITERIA = new ContractorPk("", "Smallville");
+  private final ContractorPk NO_SEARCH_CRITERIA = new ContractorPk("", "");
+  private final ContractorPk FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools",
+      "Smallville");
+  private final ContractorPk NAME_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools", "");
+  private final ContractorPk LOCATION_SEARCH_CRITERIA = new ContractorPk("", "Smallville");
+  private final ContractorPk NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Smack my Itch up",
+      "Gotham");
 
-	private final ContractorPk NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Smack my Itch up", "Gotham");
+  @BeforeClass
+  public static void setup()
+      throws DatabaseException, RemoteException, NotBoundException, ServiceException {
+    data = DatabaseFactory.getDatabase(DB_FILE_NAME);
+    server = new RmiServer(data);
+    server.startServer(DEFAULT_PORT_NUMBER);
+    service = new RmiClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
+  }
 
-	@After
-	public void teardown() throws IOException {
-		((Data) data).clear();
-		((Data) data).load();
-	}
+  @After
+  public void teardown() throws IOException {
+    ((Data) data).clear();
+    ((Data) data).load();
+  }
 
-	@Test
-	public void testBook_availableContractor() throws ServiceException, DatabaseException, RemoteException {
-		service.book(firstContractor_Booked);
-		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
-		assertEquals(28, ((Data) data).getAllValidRecords().size());
-		assertEquals(0, data.find(firstContractorSearchCriteria)[0]);
-		assertArrayEquals(firstContractorValues_Booked, data.read(0));
-	}
+  @Test
+  public void testBook_availableContractor()
+      throws ServiceException, DatabaseException, RemoteException {
+    service.book(firstContractor_Booked);
+    assertEquals(28, ((Data) data).getValidRecordsStream().count());
+    assertEquals(0, data.find(firstContractorSearchCriteria)[0]);
+    assertArrayEquals(firstContractorValues_Booked, data.read(0));
+  }
 
-	@Test(expected = AlreadyBookedException.class)
-	public void testBook_bookedContractor() throws ServiceException, DatabaseException, RemoteException {
-		service.book(firstContractor_Booked);
-		service.book(firstContractor_Booked);
-	}
+  @Test(expected = AlreadyBookedException.class)
+  public void testBook_bookedContractor()
+      throws ServiceException, DatabaseException, RemoteException {
+    service.book(firstContractor_Booked);
+    service.book(firstContractor_Booked);
+  }
 
-	@Test(expected = ContractorNotFoundException.class)
-	public void testBook_DeletedContractor() throws ServiceException, DatabaseException, RemoteException {
-		data.delete(0);
-		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
-		assertEquals(27, ((Data) data).getAllValidRecords().size());
-		service.book(firstContractor_Booked);
-	}
+  @Test(expected = ContractorNotFoundException.class)
+  public void testBook_DeletedContractor()
+      throws ServiceException, DatabaseException, RemoteException {
+    data.delete(0);
+    assertEquals(27, ((Data) data).getValidRecordsStream().count());
+    service.book(firstContractor_Booked);
+  }
 
-	@Test
-	public void testFind_AllContractors() throws ServiceException, RemoteException {
-		final Map<Integer, Contractor> results = service.find(NO_SEARCH_CRITERIA);
-		assertEquals(28, results.size());
-	}
+  @Test
+  public void testFind_AllContractors() throws ServiceException, RemoteException {
+    final Map<Integer, Contractor> results = service.find(NO_SEARCH_CRITERIA);
+    assertEquals(28, results.size());
+  }
 
-	@Test
-	public void testFind_AllContractors_WithDeletedRecords()
-			throws ServiceException, DatabaseException, RemoteException {
-		data.delete(0);
-		data.delete(12);
-		data.delete(21);
-		final Map<Integer, Contractor> results = service.find(NO_SEARCH_CRITERIA);
-		assertEquals(28, ((Data) data).getTotalNumberOfRecords());
-		assertEquals(25, results.size());
-	}
+  @Test
+  public void testFind_AllContractors_WithDeletedRecords()
+      throws ServiceException, DatabaseException, RemoteException {
+    data.delete(0);
+    data.delete(12);
+    data.delete(21);
+    final Map<Integer, Contractor> results = service.find(NO_SEARCH_CRITERIA);
+    assertEquals(25, ((Data) data).getValidRecordsStream().count());
+    assertEquals(25, results.size());
+  }
 
-	@Test
-	public void testFind_MultipleContractors_LocationSearch() throws ServiceException, RemoteException {
-		final Map<Integer, Contractor> results = service.find(LOCATION_SEARCH_CRITERIA);
-		assertEquals(2, results.size());
-	}
+  @Test
+  public void testFind_MultipleContractors_LocationSearch()
+      throws ServiceException, RemoteException {
+    final Map<Integer, Contractor> results = service.find(LOCATION_SEARCH_CRITERIA);
+    assertEquals(2, results.size());
+  }
 
-	@Test
-	public void testFind_MultipleContractors_NameSearch() throws ServiceException, RemoteException {
-		final Map<Integer, Contractor> results = service.find(NAME_SEARCH_CRITERIA);
-		assertEquals(6, results.size());
-	}
+  @Test
+  public void testFind_MultipleContractors_NameSearch() throws ServiceException, RemoteException {
+    final Map<Integer, Contractor> results = service.find(NAME_SEARCH_CRITERIA);
+    assertEquals(6, results.size());
+  }
 
-	@Test
-	public void testFind_SingleContractor() throws ServiceException, RemoteException {
-		final Map<Integer, Contractor> results = service.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
-		assertEquals(1, results.size());
-	}
+  @Test
+  public void testFind_SingleContractor() throws ServiceException, RemoteException {
+    final Map<Integer, Contractor> results = service.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
+    assertEquals(1, results.size());
+  }
 
-	@Test(expected = ContractorNotFoundException.class)
-	public void testFind_SingleContractor_WithDeletedRecords()
-			throws DatabaseException, ServiceException, RemoteException {
-		data.delete(0);
-		service.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
-	}
+  @Test(expected = ContractorNotFoundException.class)
+  public void testFind_SingleContractor_WithDeletedRecords()
+      throws DatabaseException, ServiceException, RemoteException {
+    data.delete(0);
+    service.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
+  }
 
-	@Test(expected = ContractorNotFoundException.class)
-	public void testFind_UnknownContractor() throws ServiceException, RemoteException {
-		service.find(NEW_CONTRACTOR_SEARCH_CRITERIA);
-	}
+  @Test(expected = ContractorNotFoundException.class)
+  public void testFind_UnknownContractor() throws ServiceException, RemoteException {
+    service.find(NEW_CONTRACTOR_SEARCH_CRITERIA);
+  }
 
 }

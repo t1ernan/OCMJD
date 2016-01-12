@@ -47,7 +47,8 @@ public final class Data implements DBMainExtended {
 	public synchronized int create(final String[] data) throws DuplicateKeyException {
 		validateFields(data);
 		checkForDuplicateKey(data);
-		final OptionalInt recordNumberOptional = getDeletedRecordsStream().mapToInt(entry -> entry.getKey()).findAny();
+		final Stream<Entry<Integer, String[]>> deletedRecordsStream = cache.entrySet().stream().filter(entry -> entry.getValue() == null);
+		final OptionalInt recordNumberOptional = deletedRecordsStream.mapToInt(entry -> entry.getKey()).findAny();
 		final int recordNumber = recordNumberOptional.orElse(cache.size());
 		cache.put(recordNumber, data);
 		return recordNumber;
@@ -210,10 +211,6 @@ public final class Data implements DBMainExtended {
 		return isMatch;
 	}
 
-	private Stream<Entry<Integer, String[]>> getDeletedRecordsStream() {
-		return cache.entrySet().stream().filter(entry -> entry.getValue() == null);
-	}
-
 	private String getUniqueId(final String[] fieldValues) {
 		final String name = fieldValues[0].toUpperCase();
 		final String location = fieldValues[1].toUpperCase();
@@ -235,24 +232,20 @@ public final class Data implements DBMainExtended {
 			int recordNumber = 0;
 			raf.seek(recordOffset);
 			while (raf.getFilePointer() < raf.length()) {
-				cache.put(recordNumber, readFieldValues(raf));
+				final int flagvalue = raf.readUnsignedShort();
+				final String[] fieldValues = new String[RECORD_FIELDS];
+				for (int index = 0; index < RECORD_FIELDS; index++) {
+					final String fieldValue = readString(raf, MAX_FIELD_SIZES[index]);
+					fieldValues[index] = fieldValue;
+				}
+				if (flagvalue == VALID_FLAG) {
+					cache.put(recordNumber, fieldValues);
+				} else {
+					cache.put(recordNumber, null);
+				}
 				recordNumber++;
 			}
 		}
-	}
-
-	private String[] readFieldValues(final RandomAccessFile raf) throws IOException {
-		final int flagvalue = raf.readUnsignedShort();
-		String[] fieldValues = new String[RECORD_FIELDS];
-		for (int index = 0; index < RECORD_FIELDS; index++) {
-			final String fieldValue = readString(raf, MAX_FIELD_SIZES[index]);
-			fieldValues[index] = fieldValue;
-		}
-		if (flagvalue != VALID_FLAG) {
-			fieldValues = null;
-		}
-		return fieldValues;
-
 	}
 
 	/**
@@ -296,15 +289,15 @@ public final class Data implements DBMainExtended {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private void writeRecord(final RandomAccessFile raf, final String[] fieldValues) throws IOException {
-		if (fieldValues != null) {
-			raf.writeShort(VALID_FLAG);
-			for (int index = 0; index < RECORD_FIELDS; index++) {
-				writeString(raf, fieldValues[index], MAX_FIELD_SIZES[index]);
-			}
-		} else {
+		if (fieldValues == null) {
 			raf.writeShort(DELETED_FLAG);
 			for (int index = 0; index < RECORD_FIELDS; index++) {
 				writeString(raf, EMPTY_STRING, MAX_FIELD_SIZES[index]);
+			}
+		} else {
+			raf.writeShort(VALID_FLAG);
+			for (int index = 0; index < RECORD_FIELDS; index++) {
+				writeString(raf, fieldValues[index], MAX_FIELD_SIZES[index]);
 			}
 		}
 	}

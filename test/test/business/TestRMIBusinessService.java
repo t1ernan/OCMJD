@@ -13,9 +13,9 @@ import java.util.List;
 import suncertify.business.AlreadyBookedException;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
-import suncertify.business.rmi.RMIClient;
-import suncertify.business.rmi.RMIServer;
-import suncertify.db.DBFactory;
+import suncertify.business.rmi.RmiClient;
+import suncertify.business.rmi.RmiServer;
+import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseException;
 import suncertify.db.RecordNotFoundException;
@@ -45,7 +45,7 @@ public class TestRMIBusinessService {
 					try {
 						final Contractor contractor = ContractorBuilder.build(data.read(recNo));
 						contractor.setCustomerId(customer);
-						final ContractorService service = new RMIClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
+						final ContractorService service = new RmiClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
 						service.book(contractor);
 						endRun = true;
 					} catch (final RecordNotFoundException e) {
@@ -78,13 +78,13 @@ public class TestRMIBusinessService {
 
 	public static void main(final String[] args) throws RemoteException, DatabaseException {
 		// start your RMI-server
-		final ContractorService service = new RMIServer(DBFactory.getDatabase(DEFAULT_DB_LOCATION_SERVER));
-		((RMIServer) service).startServer(DEFAULT_PORT_NUMBER);
+		final ContractorService service = new RmiServer(DatabaseFactory.getDatabase(DEFAULT_DB_LOCATION_SERVER));
+		((RmiServer) service).startServer(DEFAULT_PORT_NUMBER);
 		new TestRMIBusinessService(data).startTests();
 	}
 
 	public TestRMIBusinessService(final DBMainExtended data) throws DatabaseException {
-		TestRMIBusinessService.data = DBFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
+		TestRMIBusinessService.data = DatabaseFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 
 	public void startTests() {

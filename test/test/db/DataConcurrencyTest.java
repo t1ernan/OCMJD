@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import suncertify.db.DBFactory;
+import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMain;
 import suncertify.db.DatabaseException;
 import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.domain.ContractorPk;
 
 public class DataConcurrencyTest {
 
@@ -18,7 +18,7 @@ public class DataConcurrencyTest {
 
 		@Override
 		public void run() {
-			final ContractorPK primaryKey = new ContractorPK("Elephant Inn", "EmeraldCity");
+			final ContractorPk primaryKey = new ContractorPk("Elephant Inn", "EmeraldCity");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
 			contractor.setSize("6");
@@ -114,7 +114,7 @@ public class DataConcurrencyTest {
 
 		@Override
 		public void run() {
-			final ContractorPK primaryKey = new ContractorPK("Palace", "Smallville");
+			final ContractorPk primaryKey = new ContractorPk("Palace", "Smallville");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
 			contractor.setSize("2");
@@ -166,7 +166,7 @@ public class DataConcurrencyTest {
 
 		@Override
 		public void run() {
-			final ContractorPK primaryKey = new ContractorPK("Castle", "Digitopolis");
+			final ContractorPk primaryKey = new ContractorPk("Castle", "Digitopolis");
 			final Contractor contractor = new Contractor();
 			contractor.setPrimaryKey(primaryKey);
 			contractor.setSize("2");
@@ -217,7 +217,7 @@ public class DataConcurrencyTest {
 	}
 
 	public DataConcurrencyTest(final DBMain data) throws DatabaseException {
-		DataConcurrencyTest.data = DBFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
+		DataConcurrencyTest.data = DatabaseFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 
 	public void startTests() {

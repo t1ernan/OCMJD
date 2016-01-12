@@ -10,13 +10,13 @@ import javax.swing.JTextField;
 
 import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorService;
-import suncertify.db.DBFactory;
+import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseException;
 import suncertify.ui.DatabaseFileChooser;
 import suncertify.util.Config;
 
-public class StandaloneConfigWindow extends ConfigWindow {
+public class StandaloneConfigWindow extends AbstractConfigWindow {
 
 	/** The serial version UID. */
 	private static final long serialVersionUID = 17011991;
@@ -68,7 +68,7 @@ public class StandaloneConfigWindow extends ConfigWindow {
 	@Override
 	public void launch() {
 		try {
-			final DBMainExtended data = DBFactory.getDatabase(Config.getAloneDBLocation());
+			final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDBLocation());
 			final ContractorService service = new BasicContractorService(data);
 			new MainWindow(service);
 		} catch (DatabaseException e) {

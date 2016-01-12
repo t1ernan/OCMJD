@@ -1,12 +1,12 @@
 package suncertify.ui.model;
 
-import java.util.Map;
-
 import suncertify.domain.Contractor;
+
+import java.util.Map;
 
 public interface ContractorModel {
 
-	String[] getRowFields(int rowIndex);
+  String[] getRowFields(int rowIndex);
 
-	void updateData(Map<Integer,Contractor> data);
+  void updateData(Map<Integer, Contractor> data);
 }

@@ -17,12 +17,12 @@ import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
 import suncertify.business.ServiceException;
-import suncertify.db.DBFactory;
+import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMainExtended;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.domain.ContractorPk;
 import suncertify.util.ContractorBuilder;
 
 public class BasicServiceTest {
@@ -37,15 +37,15 @@ public class BasicServiceTest {
 
 	private final Contractor firstContractor_Booked = ContractorBuilder.build(firstContractorValues_Booked);
 
-	private final ContractorPK NO_SEARCH_CRITERIA = new ContractorPK("", "");
-	private final ContractorPK FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK("Dogs With Tools", "Smallville");
-	private final ContractorPK NAME_SEARCH_CRITERIA = new ContractorPK("Dogs With Tools", "");
-	private final ContractorPK LOCATION_SEARCH_CRITERIA = new ContractorPK("", "Smallville");
-	private final ContractorPK NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK("Smack my Itch up", "Gotham");
+	private final ContractorPk NO_SEARCH_CRITERIA = new ContractorPk("", "");
+	private final ContractorPk FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools", "Smallville");
+	private final ContractorPk NAME_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools", "");
+	private final ContractorPk LOCATION_SEARCH_CRITERIA = new ContractorPk("", "Smallville");
+	private final ContractorPk NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Smack my Itch up", "Gotham");
 
 	@Before
 	public void setup() throws DatabaseException {
-		data = DBFactory.getDatabase(DB_FILE_NAME);
+		data = DatabaseFactory.getDatabase(DB_FILE_NAME);
 		services = new BasicContractorService(data);
 	}
 

@@ -11,7 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import suncertify.db.DBFactory;
+import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMain;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
@@ -42,7 +42,7 @@ public class DataTest {
 
 	@Before
 	public void setup() throws DatabaseException {
-		data = DBFactory.getDatabase(DB_FILE_NAME);
+		data = DatabaseFactory.getDatabase(DB_FILE_NAME);
 	}
 
 	@After

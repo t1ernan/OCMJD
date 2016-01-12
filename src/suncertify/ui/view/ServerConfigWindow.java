@@ -9,14 +9,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import suncertify.business.rmi.RMIServer;
+import suncertify.business.rmi.RmiServer;
 import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseException;
-import suncertify.db.DBFactory;
+import suncertify.db.DatabaseFactory;
 import suncertify.ui.DatabaseFileChooser;
 import suncertify.util.Config;
 
-public class ServerConfigWindow extends ConfigWindow {
+public class ServerConfigWindow extends AbstractConfigWindow {
 
 	/** The serial version UID. */
 	private static final long serialVersionUID = 17011991;
@@ -75,9 +75,9 @@ public class ServerConfigWindow extends ConfigWindow {
 	@Override
 	public void launch() {
 		try {
-			DBMainExtended data = DBFactory.getDatabase(Config.getServerDBLocation());
+			DBMainExtended data = DatabaseFactory.getDatabase(Config.getServerDBLocation());
 			int portNumber = Integer.parseInt(Config.getServerPortNumber());
-			new RMIServer(data).startServer(portNumber);
+			new RmiServer(data).startServer(portNumber);
 		} catch (DatabaseException | RemoteException e) {
 			displayFatalException(e);
 		}

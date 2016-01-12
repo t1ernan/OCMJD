@@ -19,29 +19,29 @@ import suncertify.business.AlreadyBookedException;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
 import suncertify.business.ServiceException;
-import suncertify.business.rmi.RMIClient;
-import suncertify.business.rmi.RMIServer;
-import suncertify.business.rmi.RMIService;
-import suncertify.db.DBFactory;
+import suncertify.business.rmi.RmiClient;
+import suncertify.business.rmi.RmiServer;
+import suncertify.business.rmi.RmiService;
+import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMainExtended;
 import suncertify.db.Data;
 import suncertify.db.DatabaseException;
 import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.domain.ContractorPk;
 import suncertify.util.ContractorBuilder;
 
 public class RMIServiceTest {
 
 	private static DBMainExtended data;
-	private static RMIService server;
+	private static RmiService server;
 	private static ContractorService service;
 
 	@BeforeClass
 	public static void setup() throws DatabaseException, RemoteException, NotBoundException, ServiceException {
-		data = DBFactory.getDatabase(DB_FILE_NAME);
-		server = new RMIServer(data);
+		data = DatabaseFactory.getDatabase(DB_FILE_NAME);
+		server = new RmiServer(data);
 		server.startServer(DEFAULT_PORT_NUMBER);
-		service = new RMIClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
+		service = new RmiClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
 	}
 
 	private final String[] firstContractorValues_Booked = new String[] { "Dogs With Tools", "Smallville", "Roofing",
@@ -50,12 +50,12 @@ public class RMIServiceTest {
 	private final String[] firstContractorSearchCriteria = new String[] { "Dogs With Tools", "Smallville" };
 
 	private final Contractor firstContractor_Booked = ContractorBuilder.build(firstContractorValues_Booked);
-	private final ContractorPK NO_SEARCH_CRITERIA = new ContractorPK("", "");
-	private final ContractorPK FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK("Dogs With Tools", "Smallville");
-	private final ContractorPK NAME_SEARCH_CRITERIA = new ContractorPK("Dogs With Tools", "");
-	private final ContractorPK LOCATION_SEARCH_CRITERIA = new ContractorPK("", "Smallville");
+	private final ContractorPk NO_SEARCH_CRITERIA = new ContractorPk("", "");
+	private final ContractorPk FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools", "Smallville");
+	private final ContractorPk NAME_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools", "");
+	private final ContractorPk LOCATION_SEARCH_CRITERIA = new ContractorPk("", "Smallville");
 
-	private final ContractorPK NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPK("Smack my Itch up", "Gotham");
+	private final ContractorPk NEW_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Smack my Itch up", "Gotham");
 
 	@After
 	public void teardown() throws IOException {

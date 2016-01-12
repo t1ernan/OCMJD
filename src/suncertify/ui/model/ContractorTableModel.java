@@ -1,58 +1,61 @@
 package suncertify.ui.model;
 
+import suncertify.domain.Contractor;
+
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-import suncertify.domain.Contractor;
+public class ContractorTableModel extends AbstractTableModel implements ContractorModel {
 
-public class ContractorTableModel extends AbstractTableModel implements ContractorModel{
+  /** The serial version UID. */
+  private static final long serialVersionUID = 17011991;
 
-	/** The serial version UID. */
-	private static final long serialVersionUID = 17011991;
-	
-	private String[] columns;
-	private Map<Integer, Contractor> records;
-	
-	public ContractorTableModel(String[] columns, Map<Integer, Contractor> records){
-		this.columns = columns;
-		this.records= records;
-	}
-	
-	@Override
-	public int getColumnCount() {
-		return this.columns.length;
-	}
+  private final String[] columns;
+  private Map<Integer, Contractor> records;
 
-	@Override
-	public int getRowCount() {
-		return this.records.size();
-	}
-	@Override
-	public String getColumnName(int columnIndex){
-		return this.columns[columnIndex];
-	}
+  public ContractorTableModel(final String[] columns, final Map<Integer, Contractor> records) {
+    super();
+    this.columns = Arrays.copyOf(columns, columns.length);
+    this.records = records;
+  }
 
-	@Override
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		final Contractor contractor = this.records.get(rowIndex);
-		return contractor.toStringArray()[columnIndex];
-	}
-	
-	@Override
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return false;
-	}
-	
-	@Override
-	public String[] getRowFields(int rowIndex) {
-		return this.records.get(rowIndex).toStringArray();
-	}
+  @Override
+  public int getColumnCount() {
+    return columns.length;
+  }
 
-	@Override
-	public void updateData(Map<Integer, Contractor> data) {
-		this.records = data;
-		this.fireTableDataChanged();
-	}
+  @Override
+  public String getColumnName(final int columnIndex) {
+    return columns[columnIndex];
+  }
+
+  @Override
+  public int getRowCount() {
+    return records.size();
+  }
+
+  @Override
+  public String[] getRowFields(final int rowIndex) {
+    return records.get(rowIndex).toStringArray();
+  }
+
+  @Override
+  public Object getValueAt(final int rowIndex, final int columnIndex) {
+    final Contractor contractor = records.get(rowIndex);
+    return contractor.toStringArray()[columnIndex];
+  }
+
+  @Override
+  public boolean isCellEditable(final int rowIndex, final int columnIndex) {
+    return false;
+  }
+
+  @Override
+  public void updateData(final Map<Integer, Contractor> data) {
+    records = data;
+    fireTableDataChanged();
+  }
 
 }

@@ -3,7 +3,7 @@ package suncertify.util;
 import static suncertify.util.Constants.RECORD_FIELDS;
 
 import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.domain.ContractorPk;
 
 public final class ContractorBuilder {
 
@@ -17,7 +17,7 @@ public final class ContractorBuilder {
 					"Must have " + RECORD_FIELDS + " elements in the string array argument.");
 		}
 		final Contractor contractor = new Contractor();
-		final ContractorPK primaryKey = new ContractorPK(fieldValues[0], fieldValues[1]);
+		final ContractorPk primaryKey = new ContractorPk(fieldValues[0], fieldValues[1]);
 		contractor.setPrimaryKey(primaryKey);
 		contractor.setSpecialities(fieldValues[2]);
 		contractor.setSize(fieldValues[3]);

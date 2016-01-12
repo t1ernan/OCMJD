@@ -14,7 +14,7 @@ import javax.swing.JTable;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
 import suncertify.domain.Contractor;
-import suncertify.domain.ContractorPK;
+import suncertify.domain.ContractorPk;
 import suncertify.ui.model.ContractorTable;
 import suncertify.ui.model.ContractorTableModel;
 import suncertify.util.ContractorBuilder;
@@ -51,7 +51,7 @@ public class MainWindow extends JFrame {
 	private Map<Integer, Contractor> getAllRecords() {
 		Map<Integer, Contractor> records = null;
 		try {
-			return service.find(new ContractorPK("", ""));
+			return service.find(new ContractorPk("", ""));
 		} catch (ContractorNotFoundException e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {

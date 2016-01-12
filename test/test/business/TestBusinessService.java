@@ -12,7 +12,7 @@ import suncertify.business.AlreadyBookedException;
 import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
-import suncertify.db.DBFactory;
+import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseException;
 import suncertify.db.RecordNotFoundException;
@@ -75,12 +75,12 @@ public class TestBusinessService {
 
 	public static void main(final String[] args) throws RemoteException, DatabaseException {
 		// start your RMI-server
-		service = new BasicContractorService(DBFactory.getDatabase(DEFAULT_DB_LOCATION_SERVER));
+		service = new BasicContractorService(DatabaseFactory.getDatabase(DEFAULT_DB_LOCATION_SERVER));
 		new TestBusinessService(data).startTests();
 	}
 
 	public TestBusinessService(final DBMainExtended data) throws DatabaseException {
-		TestBusinessService.data = DBFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
+		TestBusinessService.data = DatabaseFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 
 	public void startTests() {

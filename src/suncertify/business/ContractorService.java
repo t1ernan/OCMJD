@@ -1,3 +1,13 @@
+/*
+ * ContractorService.java  1.0  12-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.business;
 
 import suncertify.domain.Contractor;
@@ -7,14 +17,20 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 /**
- * ContractorService is the common interface for all classes that wish to query the database in the
- * Service Layer. The business methods defined in this interface will be exposed to the presentation
- * layer, allowing it to indirectly query the database layer through calling these exposed methods.
+ * ContractorService is the common interface for all classes in the services layer that wish to
+ * query the database. The business methods defined in this interface will be exposed to the
+ * presentation layer, which will allow users of the application to query the database indirectly.
+ *
+ * <p>The presentation layer should <i>never</i> have direct access to the database layer under any
+ * circumstances. The presentation layer should call the methods defined in the services layer to
+ * retrieve data from the database.
  */
 public interface ContractorService {
 
   /**
-   * Book the specified {@code contractor}.
+   * Book the specified {@code contractor}. Updates the contractor record in the database with the
+   * new contractor data. The contractor record updated will have the same {@code primaryKey}
+   * value as the specified contractor's {@code primaryKey} field.
    *
    * @param contractor
    *          the contractor to book.

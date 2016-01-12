@@ -1,3 +1,13 @@
+/*
+ * RmiClient.java  1.0  12-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.business.rmi;
 
 import static suncertify.util.Constants.RMI_ID;
@@ -15,24 +25,24 @@ import java.rmi.registry.Registry;
 import java.util.Map;
 
 /**
- * An rmi client used to connect and request data from a rmi server through the business methods
+ * An RMI client used to connect and request data from an RMI server through the business methods
  * defined in {@link RmiService}, which it implements.
  */
 public class RmiClient implements ContractorService {
 
-  /** The remote server instance. */
+  /** The ContractorService object used to request a service. */
   private final ContractorService service;
 
   /**
-   * Constructs a new rmi client which will request services from the rmi server with the specified
+   * Constructs a new RMI client which will request services from the RMI server with the specified
    * IP address and port number.
    *
    * @param serverIpAddress
-   *          the server ip address of the rmi server
+   *          the IP address of the RMI server.
    * @param portNumber
-   *          the port number of the rmi server
+   *          the port number of the RMI server.
    * @throws RemoteException
-   *           if an RMI communication-related exception occurs
+   *           if an RMI communication-related exception occurs.
    */
   public RmiClient(final String serverIpAddress, final int portNumber) throws RemoteException {
     final Registry registry = LocateRegistry.getRegistry(serverIpAddress, portNumber);

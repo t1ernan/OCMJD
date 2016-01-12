@@ -1,0 +1,593 @@
+src/suncertify/business/BasicContractorService.java:39:	Found 'DD'-anomaly for variable 'recordNumber' (lines '39'-'43').
+src/suncertify/business/BasicContractorService.java:80:	Found 'UR'-anomaly for variable 'recordNumber' (lines '80'-'87').
+src/suncertify/business/BasicContractorService.java:82:	Found 'DU'-anomaly for variable 'matchingRecords' (lines '82'-'95').
+src/suncertify/db/DBMain.java:4:	headerCommentRequirement Required
+src/suncertify/db/DBMain.java:7:	Avoid modifiers which are implied by the context
+src/suncertify/db/DBMain.java:7:	publicMethodCommentRequirement Required
+src/suncertify/db/DBMain.java:11:	Avoid modifiers which are implied by the context
+src/suncertify/db/DBMain.java:11:	publicMethodCommentRequirement Required
+src/suncertify/db/DBMain.java:17:	Avoid modifiers which are implied by the context
+src/suncertify/db/DBMain.java:17:	publicMethodCommentRequirement Required
+src/suncertify/db/DBMain.java:26:	Avoid modifiers which are implied by the context
+src/suncertify/db/DBMain.java:26:	publicMethodCommentRequirement Required
+src/suncertify/db/DBMain.java:33:	Avoid modifiers which are implied by the context
+src/suncertify/db/DBMain.java:33:	publicMethodCommentRequirement Required
+src/suncertify/db/DBMain.java:39:	Avoid modifiers which are implied by the context
+src/suncertify/db/DBMain.java:39:	publicMethodCommentRequirement Required
+src/suncertify/db/DBMain.java:43:	Avoid modifiers which are implied by the context
+src/suncertify/db/DBMain.java:43:	publicMethodCommentRequirement Required
+src/suncertify/db/DBMain.java:48:	Avoid modifiers which are implied by the context
+src/suncertify/db/DBMain.java:48:	publicMethodCommentRequirement Required
+src/suncertify/db/DBMainExtended.java:5:	headerCommentRequirement Required
+src/suncertify/db/DBMainExtended.java:91:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:1:	Too many static imports may lead to messy code
+src/suncertify/db/Data.java:21:	Avoid short class names like Data
+src/suncertify/db/Data.java:21:	headerCommentRequirement Required
+src/suncertify/db/Data.java:23:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:24:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:25:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:27:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:29:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:30:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:31:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:33:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:35:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:36:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:37:	fieldCommentRequirement Required
+src/suncertify/db/Data.java:39:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:46:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:51:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:63:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:68:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:84:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:89:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:97:	To be compliant to J2EE, a webapp should not use any thread.
+src/suncertify/db/Data.java:112:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:117:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:124:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:129:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:141:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:149:	Found 'UR'-anomaly for variable 'fieldValues' (lines '149'-'154').
+src/suncertify/db/Data.java:149:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:160:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:168:	publicMethodCommentRequirement Required
+src/suncertify/db/Data.java:176:	Found 'DD'-anomaly for variable 'fieldValues' (lines '176'-'179').
+src/suncertify/db/Data.java:176:	Found 'DU'-anomaly for variable 'fieldValues' (lines '176'-'187').
+src/suncertify/db/Data.java:179:	Found 'DD'-anomaly for variable 'fieldValues' (lines '179'-'179').
+src/suncertify/db/Data.java:179:	Found 'DU'-anomaly for variable 'fieldValues' (lines '179'-'187').
+src/suncertify/db/Data.java:208:	Found 'DD'-anomaly for variable 'isMatch' (lines '208'-'213').
+src/suncertify/db/Data.java:229:	Found 'DU'-anomaly for variable 'recordNumber' (lines '229'-'236').
+src/suncertify/db/Data.java:233:	Found 'DU'-anomaly for variable 'recordNumber' (lines '233'-'236').
+src/suncertify/domain/Contractor.java:31:	publicMethodCommentRequirement Required
+src/suncertify/domain/Contractor.java:85:	publicMethodCommentRequirement Required
+src/suncertify/domain/Contractor.java:139:	publicMethodCommentRequirement Required
+src/suncertify/domain/ContractorPk.java:20:	publicMethodCommentRequirement Required
+src/suncertify/domain/ContractorPk.java:25:	publicMethodCommentRequirement Required
+src/suncertify/domain/ContractorPk.java:30:	publicMethodCommentRequirement Required
+src/suncertify/domain/ContractorPk.java:34:	publicMethodCommentRequirement Required
+src/suncertify/domain/ContractorPk.java:38:	publicMethodCommentRequirement Required
+src/suncertify/domain/ContractorPk.java:42:	publicMethodCommentRequirement Required
+src/suncertify/domain/ContractorPk.java:46:	publicMethodCommentRequirement Required
+src/suncertify/ui/CliLauncher.java:11:	headerCommentRequirement Required
+src/suncertify/ui/CliLauncher.java:13:	fieldCommentRequirement Required
+src/suncertify/ui/CliLauncher.java:14:	fieldCommentRequirement Required
+src/suncertify/ui/CliLauncher.java:15:	fieldCommentRequirement Required
+src/suncertify/ui/CliLauncher.java:16:	fieldCommentRequirement Required
+src/suncertify/ui/CliLauncher.java:18:	publicMethodCommentRequirement Required
+src/suncertify/ui/DatabaseFileChooser.java:8:	headerCommentRequirement Required
+src/suncertify/ui/DatabaseFileChooser.java:13:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorModel.java:7:	headerCommentRequirement Required
+src/suncertify/ui/model/ContractorModel.java:9:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorModel.java:11:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTable.java:13:	headerCommentRequirement Required
+src/suncertify/ui/model/ContractorTable.java:18:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTable.java:25:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTable.java:30:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTable.java:35:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTable.java:40:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTable.java:46:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:10:	headerCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:15:	fieldCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:16:	fieldCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:18:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:25:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:30:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:35:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:40:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:45:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:51:	publicMethodCommentRequirement Required
+src/suncertify/ui/model/ContractorTableModel.java:56:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/AbstractConfigWindow.java:11:	headerCommentRequirement Required
+src/suncertify/ui/view/AbstractConfigWindow.java:16:	fieldCommentRequirement Required
+src/suncertify/ui/view/AbstractConfigWindow.java:18:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/AbstractConfigWindow.java:27:	protectedMethodCommentRequirement Required
+src/suncertify/ui/view/AbstractConfigWindow.java:29:	protectedMethodCommentRequirement Required
+src/suncertify/ui/view/AbstractConfigWindow.java:35:	protectedMethodCommentRequirement Required
+src/suncertify/ui/view/AbstractConfigWindow.java:40:	protectedMethodCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:14:	headerCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:18:	fieldCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:19:	fieldCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:20:	fieldCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:21:	fieldCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:23:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:34:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:48:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/ClientConfigWindow.java:61:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/LaunchManager.java:3:	headerCommentRequirement Required
+src/suncertify/ui/view/LaunchManager.java:5:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/LaunchManager.java:7:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:27:	headerCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:32:	fieldCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:35:	fieldCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:37:	fieldCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:38:	fieldCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:39:	fieldCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:40:	fieldCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:42:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:72:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/MainWindow.java:79:	Found 'DU'-anomaly for variable 'fieldValues' (lines '79'-'95').
+src/suncertify/ui/view/MainWindow.java:87:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+src/suncertify/ui/view/MainWindow.java:88:	The String literal "System Error" appears 4 times in this file; the first occurrence is on line 88
+src/suncertify/ui/view/MainWindow.java:99:	A method should have only one exit point, and that should be the last statement in the method
+src/suncertify/ui/view/MainWindow.java:117:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+src/suncertify/ui/view/ServerConfigWindow.java:19:	headerCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:24:	fieldCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:25:	fieldCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:26:	fieldCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:27:	fieldCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:28:	fieldCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:29:	fieldCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:31:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:42:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:65:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/ServerConfigWindow.java:77:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:19:	headerCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:24:	fieldCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:25:	fieldCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:26:	fieldCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:27:	fieldCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:29:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:40:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:59:	publicMethodCommentRequirement Required
+src/suncertify/ui/view/StandaloneConfigWindow.java:71:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:39:	fieldCommentRequirement Required
+src/suncertify/util/Config.java:54:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:58:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:62:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:66:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:70:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:74:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:78:	Avoid printStackTrace(); use a logger call instead.
+src/suncertify/util/Config.java:82:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:89:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:96:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:103:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:110:	publicMethodCommentRequirement Required
+src/suncertify/util/Config.java:134:	Avoid printStackTrace(); use a logger call instead.
+src/suncertify/util/ContractorBuilder.java:8:	headerCommentRequirement Required
+src/suncertify/util/ContractorBuilder.java:14:	publicMethodCommentRequirement Required
+src/suncertify/util/Utils.java:17:	fieldCommentRequirement Required
+src/suncertify/util/Utils.java:42:	publicMethodCommentRequirement Required
+src/suncertify/util/Utils.java:46:	publicMethodCommentRequirement Required
+src/suncertify/util/Utils.java:50:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:28:	Each class should declare at least one constructor
+test/test/business/BasicServiceTest.java:28:	headerCommentRequirement Required
+test/test/business/BasicServiceTest.java:30:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:31:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:33:	Avoid excessively long variable names like firstContractorValues_Booked
+test/test/business/BasicServiceTest.java:33:	The String literal "Dogs With Tools" appears 4 times in this file; the first occurrence is on line 33
+test/test/business/BasicServiceTest.java:33:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:34:	The String literal "Smallville" appears 4 times in this file; the first occurrence is on line 34
+test/test/business/BasicServiceTest.java:36:	Avoid excessively long variable names like firstContractorSearchCriteria
+test/test/business/BasicServiceTest.java:36:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:39:	Avoid excessively long variable names like firstContractor_Booked
+test/test/business/BasicServiceTest.java:39:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:42:	Avoid excessively long variable names like NO_SEARCH_CRITERIA
+test/test/business/BasicServiceTest.java:42:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:43:	Avoid excessively long variable names like FIRST_CONTRACTOR_SEARCH_CRITERIA
+test/test/business/BasicServiceTest.java:43:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:45:	Avoid excessively long variable names like NAME_SEARCH_CRITERIA
+test/test/business/BasicServiceTest.java:45:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:46:	Avoid excessively long variable names like LOCATION_SEARCH_CRITERIA
+test/test/business/BasicServiceTest.java:46:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:47:	Avoid excessively long variable names like NEW_CONTRACTOR_SEARCH_CRITERIA
+test/test/business/BasicServiceTest.java:47:	fieldCommentRequirement Required
+test/test/business/BasicServiceTest.java:51:	You may have misspelled a JUnit framework method (setUp or tearDown)
+test/test/business/BasicServiceTest.java:51:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:57:	You may have misspelled a JUnit framework method (setUp or tearDown)
+test/test/business/BasicServiceTest.java:57:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:63:	JUnit tests should not contain more than 1 assert(s).
+test/test/business/BasicServiceTest.java:63:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:63:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:73:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:73:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:80:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:80:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:88:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:88:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:94:	JUnit tests should not contain more than 1 assert(s).
+test/test/business/BasicServiceTest.java:94:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:94:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:105:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:105:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:112:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:112:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:118:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:118:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:124:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:124:	publicMethodCommentRequirement Required
+test/test/business/BasicServiceTest.java:131:	Method names should not contain underscores
+test/test/business/BasicServiceTest.java:131:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:1:	Too many static imports may lead to messy code
+test/test/business/RMIServiceTest.java:33:	headerCommentRequirement Required
+test/test/business/RMIServiceTest.java:35:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:36:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:37:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:39:	Avoid excessively long variable names like firstContractorValues_Booked
+test/test/business/RMIServiceTest.java:39:	The String literal "Dogs With Tools" appears 4 times in this file; the first occurrence is on line 39
+test/test/business/RMIServiceTest.java:39:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:40:	The String literal "Smallville" appears 4 times in this file; the first occurrence is on line 40
+test/test/business/RMIServiceTest.java:42:	Avoid excessively long variable names like firstContractorSearchCriteria
+test/test/business/RMIServiceTest.java:42:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:45:	Avoid excessively long variable names like firstContractor_Booked
+test/test/business/RMIServiceTest.java:45:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:48:	Avoid excessively long variable names like NO_SEARCH_CRITERIA
+test/test/business/RMIServiceTest.java:48:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:49:	Avoid excessively long variable names like FIRST_CONTRACTOR_SEARCH_CRITERIA
+test/test/business/RMIServiceTest.java:49:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:51:	Avoid excessively long variable names like NAME_SEARCH_CRITERIA
+test/test/business/RMIServiceTest.java:51:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:52:	Avoid excessively long variable names like LOCATION_SEARCH_CRITERIA
+test/test/business/RMIServiceTest.java:52:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:53:	Avoid excessively long variable names like NEW_CONTRACTOR_SEARCH_CRITERIA
+test/test/business/RMIServiceTest.java:53:	fieldCommentRequirement Required
+test/test/business/RMIServiceTest.java:57:	You may have misspelled a JUnit framework method (setUp or tearDown)
+test/test/business/RMIServiceTest.java:57:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:66:	You may have misspelled a JUnit framework method (setUp or tearDown)
+test/test/business/RMIServiceTest.java:66:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:72:	JUnit tests should not contain more than 1 assert(s).
+test/test/business/RMIServiceTest.java:72:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:72:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:81:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:81:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:88:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:88:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:96:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:96:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:102:	JUnit tests should not contain more than 1 assert(s).
+test/test/business/RMIServiceTest.java:102:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:102:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:113:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:113:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:120:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:120:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:126:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:126:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:132:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:132:	publicMethodCommentRequirement Required
+test/test/business/RMIServiceTest.java:139:	Method names should not contain underscores
+test/test/business/RMIServiceTest.java:139:	publicMethodCommentRequirement Required
+test/test/business/TestBusinessService.java:22:	headerCommentRequirement Required
+test/test/business/TestBusinessService.java:24:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestBusinessService.java:24:	headerCommentRequirement Required
+test/test/business/TestBusinessService.java:25:	Avoid variables with short names like id
+test/test/business/TestBusinessService.java:25:	fieldCommentRequirement Required
+test/test/business/TestBusinessService.java:26:	fieldCommentRequirement Required
+test/test/business/TestBusinessService.java:27:	fieldCommentRequirement Required
+test/test/business/TestBusinessService.java:28:	fieldCommentRequirement Required
+test/test/business/TestBusinessService.java:30:	Avoid variables with short names like id
+test/test/business/TestBusinessService.java:30:	publicMethodCommentRequirement Required
+test/test/business/TestBusinessService.java:38:	publicMethodCommentRequirement Required
+test/test/business/TestBusinessService.java:39:	Found 'DU'-anomaly for variable 'recNo' (lines '39'-'70').
+test/test/business/TestBusinessService.java:48:	New exception is thrown in catch block, original stack trace may be lost
+test/test/business/TestBusinessService.java:51:	System.out.println is used
+test/test/business/TestBusinessService.java:52:	Avoid using exceptions as flow control.
+test/test/business/TestBusinessService.java:55:	Avoid empty catch blocks
+test/test/business/TestBusinessService.java:55:	Avoid empty catch blocks
+test/test/business/TestBusinessService.java:64:	System.out.println is used
+test/test/business/TestBusinessService.java:68:	System.out.println is used
+test/test/business/TestBusinessService.java:72:	Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.
+test/test/business/TestBusinessService.java:72:	Possible unsafe assignment to a non-final static field in a constructor.
+test/test/business/TestBusinessService.java:72:	fieldCommentRequirement Required
+test/test/business/TestBusinessService.java:74:	Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.
+test/test/business/TestBusinessService.java:74:	fieldCommentRequirement Required
+test/test/business/TestBusinessService.java:76:	publicMethodCommentRequirement Required
+test/test/business/TestBusinessService.java:82:	Avoid unused constructor parameters such as 'data'.
+test/test/business/TestBusinessService.java:82:	publicMethodCommentRequirement Required
+test/test/business/TestBusinessService.java:86:	Found 'UR'-anomaly for variable 'thread' (lines '86'-'97').
+test/test/business/TestBusinessService.java:86:	publicMethodCommentRequirement Required
+test/test/business/TestBusinessService.java:87:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestBusinessService.java:87:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestBusinessService.java:91:	Avoid instantiating new objects inside loops
+test/test/business/TestBusinessService.java:91:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestBusinessService.java:96:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestBusinessService.java:100:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestBusinessService.java:103:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/business/TestBusinessService.java:104:	System.out.println is used
+test/test/business/TestBusinessService.java:106:	System.out.println is used
+test/test/business/TestRMIBusinessService.java:25:	headerCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:27:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestRMIBusinessService.java:27:	headerCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:28:	Avoid variables with short names like id
+test/test/business/TestRMIBusinessService.java:28:	fieldCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:29:	fieldCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:30:	fieldCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:31:	fieldCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:33:	Avoid variables with short names like id
+test/test/business/TestRMIBusinessService.java:33:	publicMethodCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:41:	publicMethodCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:42:	Found 'DU'-anomaly for variable 'recNo' (lines '42'-'74').
+test/test/business/TestRMIBusinessService.java:48:	Avoid instantiating new objects inside loops
+test/test/business/TestRMIBusinessService.java:52:	New exception is thrown in catch block, original stack trace may be lost
+test/test/business/TestRMIBusinessService.java:55:	System.out.println is used
+test/test/business/TestRMIBusinessService.java:56:	Avoid using exceptions as flow control.
+test/test/business/TestRMIBusinessService.java:59:	Avoid empty catch blocks
+test/test/business/TestRMIBusinessService.java:59:	Avoid empty catch blocks
+test/test/business/TestRMIBusinessService.java:68:	System.out.println is used
+test/test/business/TestRMIBusinessService.java:72:	System.out.println is used
+test/test/business/TestRMIBusinessService.java:77:	Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.
+test/test/business/TestRMIBusinessService.java:77:	Possible unsafe assignment to a non-final static field in a constructor.
+test/test/business/TestRMIBusinessService.java:77:	fieldCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:79:	publicMethodCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:86:	Avoid unused constructor parameters such as 'data'.
+test/test/business/TestRMIBusinessService.java:86:	publicMethodCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:90:	Found 'UR'-anomaly for variable 'thread' (lines '90'-'101').
+test/test/business/TestRMIBusinessService.java:90:	publicMethodCommentRequirement Required
+test/test/business/TestRMIBusinessService.java:91:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestRMIBusinessService.java:91:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestRMIBusinessService.java:95:	Avoid instantiating new objects inside loops
+test/test/business/TestRMIBusinessService.java:95:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestRMIBusinessService.java:100:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestRMIBusinessService.java:104:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/business/TestRMIBusinessService.java:107:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/business/TestRMIBusinessService.java:108:	System.out.println is used
+test/test/business/TestRMIBusinessService.java:110:	System.out.println is used
+test/test/db/DBFactoryTest.java:12:	Each class should declare at least one constructor
+test/test/db/DBFactoryTest.java:12:	headerCommentRequirement Required
+test/test/db/DBFactoryTest.java:15:	Method names should not contain underscores
+test/test/db/DBFactoryTest.java:15:	publicMethodCommentRequirement Required
+test/test/db/DBFactoryTest.java:22:	Method names should not contain underscores
+test/test/db/DBFactoryTest.java:22:	publicMethodCommentRequirement Required
+test/test/db/DBFactoryTest.java:27:	Method names should not contain underscores
+test/test/db/DBFactoryTest.java:27:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:15:	headerCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:17:	Each class should declare at least one constructor
+test/test/db/DataConcurrencyTest.java:17:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:17:	headerCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:20:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:30:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:32:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/db/DataConcurrencyTest.java:33:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:38:	Each class should declare at least one constructor
+test/test/db/DataConcurrencyTest.java:38:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:38:	headerCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:41:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:43:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:44:	The String literal "DeletingRecord1Thread" appears 6 times in this file; the first occurrence is on line 44
+test/test/db/DataConcurrencyTest.java:46:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:49:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:52:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/db/DataConcurrencyTest.java:53:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:58:	Each class should declare at least one constructor
+test/test/db/DataConcurrencyTest.java:58:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:58:	headerCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:61:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:63:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:66:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:69:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:72:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/db/DataConcurrencyTest.java:73:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:78:	Each class should declare at least one constructor
+test/test/db/DataConcurrencyTest.java:78:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:78:	headerCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:81:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:83:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:88:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:92:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:94:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:95:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:96:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/db/DataConcurrencyTest.java:103:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:106:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:107:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/db/DataConcurrencyTest.java:108:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:113:	Each class should declare at least one constructor
+test/test/db/DataConcurrencyTest.java:113:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:113:	headerCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:116:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:127:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:142:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:156:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:159:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/db/DataConcurrencyTest.java:160:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:165:	Each class should declare at least one constructor
+test/test/db/DataConcurrencyTest.java:165:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:165:	headerCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:168:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:178:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:181:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:184:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:193:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/db/DataConcurrencyTest.java:194:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:199:	Fields should be declared at the top of the class, before any method declarations, constructors, initializers or inner classes.
+test/test/db/DataConcurrencyTest.java:199:	Possible unsafe assignment to a non-final static field in a constructor.
+test/test/db/DataConcurrencyTest.java:199:	fieldCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:211:	Empty initializer was found
+test/test/db/DataConcurrencyTest.java:211:	Empty initializer was found
+test/test/db/DataConcurrencyTest.java:211:	Empty static initializer was found
+test/test/db/DataConcurrencyTest.java:211:	Empty static initializer was found
+test/test/db/DataConcurrencyTest.java:215:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:219:	Avoid unused constructor parameters such as 'data'.
+test/test/db/DataConcurrencyTest.java:219:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:223:	Found 'UR'-anomaly for variable 'thread' (lines '223'-'244').
+test/test/db/DataConcurrencyTest.java:223:	publicMethodCommentRequirement Required
+test/test/db/DataConcurrencyTest.java:231:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:231:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:233:	Avoid instantiating new objects inside loops
+test/test/db/DataConcurrencyTest.java:234:	Avoid instantiating new objects inside loops
+test/test/db/DataConcurrencyTest.java:235:	Avoid instantiating new objects inside loops
+test/test/db/DataConcurrencyTest.java:236:	Avoid instantiating new objects inside loops
+test/test/db/DataConcurrencyTest.java:237:	Avoid instantiating new objects inside loops
+test/test/db/DataConcurrencyTest.java:238:	Avoid instantiating new objects inside loops
+test/test/db/DataConcurrencyTest.java:243:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:247:	To be compliant to J2EE, a webapp should not use any thread.
+test/test/db/DataConcurrencyTest.java:250:	System.out.println is used
+test/test/db/DataConcurrencyTest.java:252:	Avoid catching generic exceptions such as NullPointerException, RuntimeException, Exception in try-catch block
+test/test/db/DataConcurrencyTest.java:253:	System.out.println is used
+test/test/db/DataTest.java:1:	Too many static imports may lead to messy code
+test/test/db/DataTest.java:22:	Each class should declare at least one constructor
+test/test/db/DataTest.java:22:	headerCommentRequirement Required
+test/test/db/DataTest.java:24:	fieldCommentRequirement Required
+test/test/db/DataTest.java:26:	The String literal "Dogs With Tools" appears 4 times in this file; the first occurrence is on line 26
+test/test/db/DataTest.java:26:	The String literal "Smallville" appears 4 times in this file; the first occurrence is on line 26
+test/test/db/DataTest.java:26:	fieldCommentRequirement Required
+test/test/db/DataTest.java:28:	The String literal "Gotham" appears 4 times in this file; the first occurrence is on line 28
+test/test/db/DataTest.java:28:	The String literal "Smack my Itch up" appears 5 times in this file; the first occurrence is on line 28
+test/test/db/DataTest.java:28:	fieldCommentRequirement Required
+test/test/db/DataTest.java:31:	Avoid excessively long variable names like searchCriteria_ValidName_ValidLocation
+test/test/db/DataTest.java:31:	fieldCommentRequirement Required
+test/test/db/DataTest.java:33:	Avoid excessively long variable names like searchCriteria_ValidName_InvalidLocation
+test/test/db/DataTest.java:33:	fieldCommentRequirement Required
+test/test/db/DataTest.java:35:	Avoid excessively long variable names like searchCriteria_ValidName_NoLocation
+test/test/db/DataTest.java:35:	fieldCommentRequirement Required
+test/test/db/DataTest.java:37:	Avoid excessively long variable names like searchCriteria_NoName_ValidLocation
+test/test/db/DataTest.java:37:	fieldCommentRequirement Required
+test/test/db/DataTest.java:38:	Avoid excessively long variable names like searchCriteria_NoName_InvalidLocation
+test/test/db/DataTest.java:38:	fieldCommentRequirement Required
+test/test/db/DataTest.java:39:	Avoid excessively long variable names like searchCriteria_NoName_NoLocation
+test/test/db/DataTest.java:39:	fieldCommentRequirement Required
+test/test/db/DataTest.java:40:	Avoid excessively long variable names like searchCriteria_InvalidName_ValidLocation
+test/test/db/DataTest.java:40:	fieldCommentRequirement Required
+test/test/db/DataTest.java:42:	Avoid excessively long variable names like searchCriteria_InvalidName_InvalidLocation
+test/test/db/DataTest.java:42:	fieldCommentRequirement Required
+test/test/db/DataTest.java:44:	Avoid excessively long variable names like searchCriteria_InvalidName_NoLocation
+test/test/db/DataTest.java:44:	fieldCommentRequirement Required
+test/test/db/DataTest.java:46:	Avoid excessively long variable names like searchCriteria_TooManyFields
+test/test/db/DataTest.java:46:	fieldCommentRequirement Required
+test/test/db/DataTest.java:48:	Avoid excessively long variable names like VALID_RECORD_NUMBER
+test/test/db/DataTest.java:48:	This final field could be made static
+test/test/db/DataTest.java:48:	fieldCommentRequirement Required
+test/test/db/DataTest.java:49:	Avoid excessively long variable names like INVALID_RECORD_NUMBER
+test/test/db/DataTest.java:49:	This final field could be made static
+test/test/db/DataTest.java:49:	fieldCommentRequirement Required
+test/test/db/DataTest.java:52:	You may have misspelled a JUnit framework method (setUp or tearDown)
+test/test/db/DataTest.java:52:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:57:	You may have misspelled a JUnit framework method (setUp or tearDown)
+test/test/db/DataTest.java:57:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:63:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:63:	Method names should not contain underscores
+test/test/db/DataTest.java:63:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:72:	Method names should not contain underscores
+test/test/db/DataTest.java:72:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:78:	Method names should not contain underscores
+test/test/db/DataTest.java:78:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:83:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:83:	Method names should not contain underscores
+test/test/db/DataTest.java:83:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:92:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:92:	Method names should not contain underscores
+test/test/db/DataTest.java:92:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:101:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:101:	Method names should not contain underscores
+test/test/db/DataTest.java:101:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:108:	Method names should not contain underscores
+test/test/db/DataTest.java:108:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:113:	Method names should not contain underscores
+test/test/db/DataTest.java:113:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:119:	Method names should not contain underscores
+test/test/db/DataTest.java:119:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:125:	Method names should not contain underscores
+test/test/db/DataTest.java:125:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:131:	Method names should not contain underscores
+test/test/db/DataTest.java:131:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:137:	Method names should not contain underscores
+test/test/db/DataTest.java:137:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:143:	Method names should not contain underscores
+test/test/db/DataTest.java:143:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:149:	Method names should not contain underscores
+test/test/db/DataTest.java:149:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:154:	Method names should not contain underscores
+test/test/db/DataTest.java:154:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:160:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:160:	Method names should not contain underscores
+test/test/db/DataTest.java:160:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:167:	Method names should not contain underscores
+test/test/db/DataTest.java:167:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:174:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:174:	Method names should not contain underscores
+test/test/db/DataTest.java:174:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:181:	Method names should not contain underscores
+test/test/db/DataTest.java:181:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:188:	Method names should not contain underscores
+test/test/db/DataTest.java:188:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:193:	Method names should not contain underscores
+test/test/db/DataTest.java:193:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:199:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:199:	Method names should not contain underscores
+test/test/db/DataTest.java:199:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:206:	Method names should not contain underscores
+test/test/db/DataTest.java:206:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:213:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:213:	Method names should not contain underscores
+test/test/db/DataTest.java:213:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:220:	Method names should not contain underscores
+test/test/db/DataTest.java:220:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:226:	Method names should not contain underscores
+test/test/db/DataTest.java:226:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:231:	Method names should not contain underscores
+test/test/db/DataTest.java:231:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:236:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:241:	Method names should not contain underscores
+test/test/db/DataTest.java:241:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:247:	Method names should not contain underscores
+test/test/db/DataTest.java:247:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:252:	Method names should not contain underscores
+test/test/db/DataTest.java:252:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:258:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:264:	Method names should not contain underscores
+test/test/db/DataTest.java:264:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:269:	Method names should not contain underscores
+test/test/db/DataTest.java:269:	publicMethodCommentRequirement Required
+test/test/db/DataTest.java:276:	JUnit tests should not contain more than 1 assert(s).
+test/test/db/DataTest.java:276:	Method names should not contain underscores
+test/test/db/DataTest.java:276:	publicMethodCommentRequirement Required
+test/test/util/Constants.java:5:	Each class should declare at least one constructor
+test/test/util/Constants.java:5:	headerCommentRequirement Required
+test/test/util/Constants.java:11:	Avoid excessively long variable names like DEFAULT_DB_LOCATION_SERVER
+test/test/util/Constants.java:15:	Avoid excessively long variable names like DEFAULT_DB_LOCATION_STANDALONE
+test/test/util/Constants.java:19:	Avoid excessively long variable names like DEFAULT_SERVER_IPADDRESS
+test/test/util/Constants.java:22:	Avoid excessively long variable names like DEFAULT_PORT_NUMBER
+test/test/util/DBFileReader.java:17:	All methods are static.  Consider using a utility class instead. Alternatively, you could add a private constructor or make the class abstract to silence this warning.
+test/test/util/DBFileReader.java:20:	Avoid excessively long variable names like CHARACTER_ENCODING
+test/test/util/DBFileReader.java:23:	Avoid excessively long variable names like DATABASE_FILE_LOCATION
+test/test/util/DBFileReader.java:32:	Local variable 'databasePath' could be declared final
+test/test/util/DBFileReader.java:35:	Local variable 'byteBuffer' could be declared final
+test/test/util/DBFileReader.java:39:	Found 'DD'-anomaly for variable 'fieldValueSizes' (lines '39'-'50').
+test/test/util/DBFileReader.java:39:	Found 'DU'-anomaly for variable 'fieldValueSizes' (lines '39'-'76').
+test/test/util/DBFileReader.java:40:	Found 'DD'-anomaly for variable 'fieldValues' (lines '40'-'61').
+test/test/util/DBFileReader.java:40:	Found 'DU'-anomaly for variable 'fieldValues' (lines '40'-'76').
+test/test/util/DBFileReader.java:41:	Found 'DD'-anomaly for variable 'fieldNames' (lines '41'-'49').
+test/test/util/DBFileReader.java:41:	Found 'DU'-anomaly for variable 'fieldNames' (lines '41'-'76').
+test/test/util/DBFileReader.java:43:	Found 'DD'-anomaly for variable 'recordCount' (lines '43'-'69').
+test/test/util/DBFileReader.java:49:	Found 'DD'-anomaly for variable 'fieldNames' (lines '49'-'49').
+test/test/util/DBFileReader.java:49:	Found 'DU'-anomaly for variable 'fieldNames' (lines '49'-'76').
+test/test/util/DBFileReader.java:50:	Found 'DD'-anomaly for variable 'fieldValueSizes' (lines '50'-'50').
+test/test/util/DBFileReader.java:50:	Found 'DU'-anomaly for variable 'fieldValueSizes' (lines '50'-'76').
+test/test/util/DBFileReader.java:51:	System.out.println is used
+test/test/util/DBFileReader.java:53:	System.out.println is used
+test/test/util/DBFileReader.java:54:	System.out.println is used
+test/test/util/DBFileReader.java:58:	System.out.println is used
+test/test/util/DBFileReader.java:61:	Found 'DD'-anomaly for variable 'fieldValues' (lines '61'-'61').
+test/test/util/DBFileReader.java:61:	Found 'DU'-anomaly for variable 'fieldValues' (lines '61'-'76').
+test/test/util/DBFileReader.java:64:	System.out.println is used
+test/test/util/DBFileReader.java:66:	System.out.println is used
+test/test/util/DBFileReader.java:67:	System.out.println is used
+test/test/util/DBFileReader.java:68:	System.out.println is used
+test/test/util/DBFileReader.java:69:	Found 'DD'-anomaly for variable 'recordCount' (lines '69'-'69').
+test/test/util/DBFileReader.java:71:	System.out.println is used
+test/test/util/DBFileReader.java:74:	Avoid printStackTrace(); use a logger call instead.
+test/test/util/DBFileReader.java:84:	Parameter 'flagvalue' is not assigned and could be declared final
+test/test/util/DBFileReader.java:85:	Avoid using Literals in Conditional Statements
+test/test/util/DBFileReader.java:86:	A method should have only one exit point, and that should be the last statement in the method
+test/test/util/DBFileReader.java:99:	Parameter 'byteBuffer' is not assigned and could be declared final
+test/test/util/DBFileReader.java:99:	Parameter 'size' is not assigned and could be declared final

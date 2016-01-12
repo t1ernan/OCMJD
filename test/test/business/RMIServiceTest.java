@@ -65,14 +65,14 @@ public class RMIServiceTest {
   @After
   public void teardown() throws IOException {
     ((Data) data).clear();
-    ((Data) data).load();
+    ((Data) data).loadCache();
   }
 
   @Test
   public void testBook_availableContractor()
       throws ServiceException, DatabaseException, RemoteException {
     service.book(firstContractor_Booked);
-    assertEquals(28, ((Data) data).getValidRecordsStream().count());
+    assertEquals(28, ((Data) data).getValidEntryStream().count());
     assertEquals(0, data.find(firstContractorSearchCriteria)[0]);
     assertArrayEquals(firstContractorValues_Booked, data.read(0));
   }
@@ -88,7 +88,7 @@ public class RMIServiceTest {
   public void testBook_DeletedContractor()
       throws ServiceException, DatabaseException, RemoteException {
     data.delete(0);
-    assertEquals(27, ((Data) data).getValidRecordsStream().count());
+    assertEquals(27, ((Data) data).getValidEntryStream().count());
     service.book(firstContractor_Booked);
   }
 
@@ -105,7 +105,7 @@ public class RMIServiceTest {
     data.delete(12);
     data.delete(21);
     final Map<Integer, Contractor> results = service.find(NO_SEARCH_CRITERIA);
-    assertEquals(25, ((Data) data).getValidRecordsStream().count());
+    assertEquals(25, ((Data) data).getValidEntryStream().count());
     assertEquals(25, results.size());
   }
 

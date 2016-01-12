@@ -56,14 +56,14 @@ public class BasicServiceTest {
   @After
   public void teardown() throws IOException {
     ((Data) data).clear();
-    ((Data) data).load();
+    ((Data) data).loadCache();
   }
 
   @Test
   public void testBook_availableContractor()
       throws ServiceException, DatabaseException, RemoteException {
     services.book(firstContractor_Booked);
-    assertEquals(28, ((Data) data).getValidRecordsStream().count());
+    assertEquals(28, ((Data) data).getValidEntryStream().count());
     assertEquals(0, data.find(firstContractorSearchCriteria)[0]);
     final String[] actual = data.read(0);
     assertArrayEquals(firstContractorValues_Booked, actual);
@@ -80,7 +80,7 @@ public class BasicServiceTest {
   public void testBook_DeletedContractor()
       throws ServiceException, DatabaseException, RemoteException {
     data.delete(0);
-    assertEquals(27, ((Data) data).getValidRecordsStream().count());
+    assertEquals(27, ((Data) data).getValidEntryStream().count());
     services.book(firstContractor_Booked);
   }
 
@@ -97,7 +97,7 @@ public class BasicServiceTest {
     data.delete(12);
     data.delete(21);
     final Map<Integer, Contractor> results = services.find(NO_SEARCH_CRITERIA);
-    assertEquals(25, ((Data) data).getValidRecordsStream().count());
+    assertEquals(25, ((Data) data).getValidEntryStream().count());
     assertEquals(25, results.size());
   }
 

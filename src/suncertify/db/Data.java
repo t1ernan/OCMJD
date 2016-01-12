@@ -1,3 +1,13 @@
+/*
+ * Data.java  1.0  12-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.db;
 
 import static suncertify.util.Constants.EMPTY_STRING;
@@ -18,52 +28,97 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+/**
+ * Data is an implementation of the {@link DBMainExtended} which acts as a DAO for a non-relation
+ * database file. The database schema information for the expected database file is hard-coded as
+ * constants in this class
+ */
 public final class Data implements DBMainExtended {
 
+  /** The single instance of Data. */
   private static final Data INSTANCE = new Data();
+
+  /** The magic cookie value, specified in schema information. */
   private static final int MAGIC_COOKIE = 514;
+
+  /** The names of the record fields, specified in schema information. */
   private static final String[] FIELD_NAMES = { "name", "location", "specialties", "size", "rate",
       "owner" };
+
+  /** The size of the record fields in bytes, specified in schema information. */
   private static final int[] MAX_FIELD_SIZES = { 32, 64, 64, 6, 8, 8 };
 
+  /** The 2 byte value which denotes a valid record, specified in schema information. */
   private static final int VALID_FLAG = 00;
+
+  /** The 2 byte value which denotes a deleted record, specified in schema information. */
   private static final int DELETED_FLAG = 0x8000;
+
+  /** Logger used for Data class. */
   private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
 
-  private final Map<Integer, String[]> cache = new HashMap<>();
+  /**
+   * The in-memory cache which stores record numbers and fields values of the corresponding record.
+   */
+  private final Map<Integer, String[]> recordCache = new HashMap<>();
 
+  /** The set which stores the record numbers of any currently locked records. */
   private final Set<Integer> lockedRecords = new HashSet<>();
-  private String dbFileLocation;
+
+  /** The file path of the database file. */
+  private String dbFilePath;
+
+  /** The record offset, specified in the schema information. */
   private int recordOffset;
 
+  /**
+   * Constructs a new Data instance.
+   */
+  private Data() {
+  }
+
+  /**
+   * Gets the single instance of Data.
+   *
+   * @return single instance of Data.
+   */
   public static Data getInstance() {
     return INSTANCE;
   }
 
-  private Data() {
-  }
-
+  /**
+   * Clear.
+   */
   public void clear() {
-    cache.clear();
+    recordCache.clear();
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized int create(final String[] data) throws DuplicateKeyException {
     validateFields(data);
     checkForDuplicateKey(data);
-    final Stream<Entry<Integer, String[]>> deletedRecords = cache.entrySet().stream()
+    final Stream<Entry<Integer, String[]>> deletedRecords = recordCache.entrySet().stream()
         .filter(entry -> entry.getValue() == null);
     final OptionalInt recNoOptional = deletedRecords.mapToInt(entry -> entry.getKey()).findAny();
-    final int recordNumber = recNoOptional.orElse(cache.size());
-    cache.put(recordNumber, data);
+    final int recordNumber = recNoOptional.orElse(recordCache.size());
+    recordCache.put(recordNumber, data);
     return recordNumber;
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized void delete(final int recNo) {
-    cache.put(recNo, null);
+    recordCache.put(recNo, null);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
     validateFields(criteria);
@@ -71,7 +126,7 @@ public final class Data implements DBMainExtended {
       throw new IllegalArgumentException(
           "Search criteria should contain Name and Location values only!");
     }
-    final int[] recordNumbers = getValidRecordsStream()
+    final int[] recordNumbers = getValidEntryStream()
         .filter(entry -> doesEntryMatchCriteria(entry.getValue(), criteria))
         .mapToInt(entry -> entry.getKey()).toArray();
     if (recordNumbers.length == 0) {
@@ -81,25 +136,36 @@ public final class Data implements DBMainExtended {
     return recordNumbers;
   }
 
-  public Stream<Entry<Integer, String[]>> getValidRecordsStream() {
-    return cache.entrySet().stream().filter(entry -> entry.getValue() != null);
+  /**
+   * Get a {@link Stream} of {@link Entry} objects from the record cache for all non-deleted
+   * records.
+   *
+   * @return a stream of valid {@link Entry} objects, with 'record number' as the key and 'field
+   *         values' as the value.
+   */
+  public Stream<Entry<Integer, String[]>> getValidEntryStream() {
+    return recordCache.entrySet().stream().filter(entry -> entry.getValue() != null);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized void initialize(final String dbFileLocation) throws DatabaseException {
     try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
       if (raf.readInt() != MAGIC_COOKIE) {
-        throw new DatabaseException("Invalid file. Unexpected magic cookie value");
+        throw new DatabaseException("Could not read data from the specified file: " + dbFileLocation
+            + ". Invalid magic cookie value");
       }
-      this.dbFileLocation = dbFileLocation;
+      dbFilePath = dbFileLocation;
       recordOffset = raf.readInt();
       loadCache();
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {
         try {
           save();
         } catch (final IOException e) {
-          if (LOGGER.isLoggable(Level.WARNING)) {
-            LOGGER.warning("Could not save data: " + e.getMessage());
+          if (LOGGER.isLoggable(Level.SEVERE)) {
+            LOGGER.severe("Could not save data: " + e.getMessage());
           }
         }
       }));
@@ -109,10 +175,21 @@ public final class Data implements DBMainExtended {
     }
   }
 
+  /**
+   * Checks if the record with the specified {@code recNo} is valid. Returns true if the record is
+   * not stored in the database or has been marked as deleted. Otherwise, returns false.
+   *
+   * @param recNo
+   *          the record number.
+   * @return true, if the record is not stored in the database or has been marked as deleted.
+   */
   public boolean isInvalidRecord(final int recNo) {
-    return getValidRecordsStream().noneMatch(entry -> entry.getKey() == recNo);
+    return getValidEntryStream().noneMatch(entry -> entry.getKey() == recNo);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized boolean isLocked(final int recNo) throws RecordNotFoundException {
     if (isInvalidRecord(recNo)) {
@@ -121,10 +198,27 @@ public final class Data implements DBMainExtended {
     return lockedRecords.contains(recNo);
   }
 
-  public void load() throws IOException {
-    loadCache();
+  /**
+   * Reads the record data from the database file using a {@link RandomAccessFile} object and loads
+   * the records into an in-memory cache, implemented as a {@link HashMap}.
+   *
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
+  public void loadCache() throws IOException {
+    try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
+      int recordNumber = 0;
+      raf.seek(recordOffset);
+      while (raf.getFilePointer() < raf.length()) {
+        addRecordToCache(raf, recordNumber);
+        recordNumber++;
+      }
+    }
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized void lock(final int recNo) throws RecordNotFoundException {
     while (isLocked(recNo)) {
@@ -137,25 +231,34 @@ public final class Data implements DBMainExtended {
     lockedRecords.add(recNo);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized String[] read(final int recNo) throws RecordNotFoundException {
     if (isInvalidRecord(recNo)) {
       throw new RecordNotFoundException("Record " + recNo + " is not a valid record");
     }
-    return cache.get(recNo);
+    return recordCache.get(recNo);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized void save() throws IOException {
-    try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
+    try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
       raf.seek(recordOffset);
       raf.setLength(recordOffset);
-      for (final String[] fieldValues : cache.values()) {
+      for (final String[] fieldValues : recordCache.values()) {
         writeRecord(raf, fieldValues);
       }
     }
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized void unlock(final int recNo) {
     if (lockedRecords.contains(recNo)) {
@@ -164,12 +267,30 @@ public final class Data implements DBMainExtended {
     }
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public synchronized void update(final int recNo, final String[] data) {
     validateFields(data);
-    cache.put(recNo, data);
+    recordCache.put(recNo, data);
   }
 
+  // TODO:FINISH JAVADOC
+  /**
+   * Reads a single record from the database file using a {@link RandomAccessFile} object and adds
+   * the record to the cache.
+   *
+   * <p>The field values for the records are read into a string array {@code fieldValues}. If the two
+   * bytes in the database file preceding the record data are equal to {@code VALID_FLAG}
+   *
+   * @param raf
+   *          the raf
+   * @param recordNumber
+   *          the record number
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
   private void addRecordToCache(final RandomAccessFile raf, final int recordNumber)
       throws IOException {
     final int flagvalue = raf.readUnsignedShort();
@@ -179,16 +300,24 @@ public final class Data implements DBMainExtended {
       fieldValues[index] = fieldValue;
     }
     if (flagvalue == VALID_FLAG) {
-      cache.put(recordNumber, fieldValues);
+      recordCache.put(recordNumber, fieldValues);
     } else {
-      cache.put(recordNumber, null);
+      recordCache.put(recordNumber, null);
     }
 
   }
 
+  /**
+   * Check for duplicate key.
+   *
+   * @param data
+   *          the data
+   * @throws DuplicateKeyException
+   *           the duplicate key exception
+   */
   private void checkForDuplicateKey(final String[] data) throws DuplicateKeyException {
     final String newId = getUniqueId(data);
-    final boolean isDuplicate = getValidRecordsStream().map(entry -> entry.getValue())
+    final boolean isDuplicate = getValidEntryStream().map(entry -> entry.getValue())
         .anyMatch(values -> newId.equals(getUniqueId(values)));
     if (isDuplicate) {
       throw new DuplicateKeyException("Record already exists");
@@ -218,21 +347,17 @@ public final class Data implements DBMainExtended {
 
   }
 
+  /**
+   * Gets the unique id.
+   *
+   * @param fieldValues
+   *          the field values
+   * @return the unique id
+   */
   private String getUniqueId(final String[] fieldValues) {
     final String name = fieldValues[0].toUpperCase();
     final String location = fieldValues[1].toUpperCase();
     return (name + location);
-  }
-
-  private void loadCache() throws IOException {
-    try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
-      int recordNumber = 0;
-      raf.seek(recordOffset);
-      while (raf.getFilePointer() < raf.length()) {
-        addRecordToCache(raf, recordNumber);
-        recordNumber++;
-      }
-    }
   }
 
   /**

@@ -1,9 +1,19 @@
+/*
+ * AlreadyBookedException.java  1.0  12-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.business;
 
 /**
  * The class AlreadyBookedException is a direct subclass of {@link ServiceException}. It's thrown
- * when attempting to book a Contractor which has been marked as booked in the database, i.e. the
- * Contractor already has a valid customer Id value.
+ * when attempting to book a contractor which has been marked as booked in the database, i.e. the
+ * contractor's customer ID field is not empty.
  */
 public class AlreadyBookedException extends ServiceException {
 
@@ -21,7 +31,7 @@ public class AlreadyBookedException extends ServiceException {
    * Constructs a new AlreadyBookedException with the specified detail message.
    *
    * @param message
-   *          the detail message
+   *          the detail message.
    */
   public AlreadyBookedException(final String message) {
     super(message);

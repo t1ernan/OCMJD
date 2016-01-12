@@ -56,15 +56,15 @@ public class DataTest {
   @After
   public void teardown() throws IOException {
     ((Data) data).clear();
-    ((Data) data).load();
+    ((Data) data).loadCache();
   }
 
   @Test
   public void testCreate_DeletedKey_DeletedRecordsInCache() throws DatabaseException {
     data.delete(VALID_RECORD_NUMBER);
-    assertEquals(27, ((Data) data).getValidRecordsStream().count());
+    assertEquals(27, ((Data) data).getValidEntryStream().count());
     assertEquals(VALID_RECORD_NUMBER, data.create(oldValues));
-    assertEquals(28, ((Data) data).getValidRecordsStream().count());
+    assertEquals(28, ((Data) data).getValidEntryStream().count());
     assertArrayEquals(oldValues, data.read(VALID_RECORD_NUMBER));
   }
 
@@ -82,25 +82,25 @@ public class DataTest {
   @Test
   public void testCreate_NewKey_DeletedRecordsInCache() throws DatabaseException {
     data.delete(4);
-    assertEquals(27, ((Data) data).getValidRecordsStream().count());
+    assertEquals(27, ((Data) data).getValidEntryStream().count());
     assertEquals(4, data.create(newValues));
-    assertEquals(28, ((Data) data).getValidRecordsStream().count());
+    assertEquals(28, ((Data) data).getValidEntryStream().count());
     assertArrayEquals(newValues, data.read(4));
   }
 
   @Test
   public void testCreate_NewKey_NoDeletedRecordsInCache() throws DatabaseException {
-    final int newRecordNumber = (int) ((Data) data).getValidRecordsStream().count();
+    final int newRecordNumber = (int) ((Data) data).getValidEntryStream().count();
     assertEquals(28, newRecordNumber);
     assertEquals(28, data.create(newValues));
-    assertEquals(29, ((Data) data).getValidRecordsStream().count());
+    assertEquals(29, ((Data) data).getValidEntryStream().count());
     assertArrayEquals(newValues, data.read(newRecordNumber));
   }
 
   @Test
   public void testDelete_ValidRecord() throws DatabaseException {
     data.delete(VALID_RECORD_NUMBER);
-    assertEquals(27, ((Data) data).getValidRecordsStream().count());
+    assertEquals(27, ((Data) data).getValidEntryStream().count());
     assertTrue(((Data) data).isInvalidRecord(VALID_RECORD_NUMBER));
   }
 
@@ -234,7 +234,7 @@ public class DataTest {
 
   @Test
   public void testLoadCache() {
-    assertEquals(28, ((Data) data).getValidRecordsStream().count());
+    assertEquals(28, ((Data) data).getValidEntryStream().count());
   }
 
   @Test(expected = RecordNotFoundException.class)
@@ -257,7 +257,7 @@ public class DataTest {
   @Test
   public void testSaveData() throws DatabaseException, IOException {
     ((Data) data).save();
-    assertEquals(28, ((Data) data).getValidRecordsStream().count());
+    assertEquals(28, ((Data) data).getValidEntryStream().count());
   }
 
   @Test
@@ -277,7 +277,7 @@ public class DataTest {
     data.update(VALID_RECORD_NUMBER, newValues);
     final String[] fieldValues = data.read(VALID_RECORD_NUMBER);
     assertArrayEquals(newValues, fieldValues);
-    assertEquals(28, ((Data) data).getValidRecordsStream().count());
+    assertEquals(28, ((Data) data).getValidEntryStream().count());
   }
 
 }

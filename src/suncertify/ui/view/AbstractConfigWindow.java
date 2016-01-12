@@ -13,15 +13,15 @@ public abstract class AbstractConfigWindow extends JFrame implements LaunchManag
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
 
-  private final JButton confirm = new JButton("Confirm");
+  private final JButton confirmButton = new JButton("Confirm");
 
   public AbstractConfigWindow(final String title) {
     super(title);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
     setBackground(Color.LIGHT_GRAY);
-    confirm.setToolTipText("Click to save configuration settings and start application");
-    getContentPane().add(confirm, BorderLayout.SOUTH);
+    confirmButton.setToolTipText("Click to save configuration settings and start application");
+    getContentPane().add(confirmButton, BorderLayout.SOUTH);
   }
 
   protected abstract JPanel createContentPanel();
@@ -38,6 +38,6 @@ public abstract class AbstractConfigWindow extends JFrame implements LaunchManag
   }
 
   protected JButton getConfirmButton() {
-    return confirm;
+    return confirmButton;
   }
 }

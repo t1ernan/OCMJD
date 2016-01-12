@@ -1,5 +1,13 @@
 package suncertify.ui.view;
 
+import suncertify.business.BasicContractorService;
+import suncertify.business.ContractorService;
+import suncertify.db.DBMainExtended;
+import suncertify.db.DatabaseException;
+import suncertify.db.DatabaseFactory;
+import suncertify.ui.DatabaseFileChooser;
+import suncertify.util.Config;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;
@@ -8,71 +16,64 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import suncertify.business.BasicContractorService;
-import suncertify.business.ContractorService;
-import suncertify.db.DatabaseFactory;
-import suncertify.db.DBMainExtended;
-import suncertify.db.DatabaseException;
-import suncertify.ui.DatabaseFileChooser;
-import suncertify.util.Config;
+public final class StandaloneConfigWindow extends AbstractConfigWindow {
 
-public class StandaloneConfigWindow extends AbstractConfigWindow {
+  /** The serial version UID. */
+  private static final long serialVersionUID = 17011991;
 
-	/** The serial version UID. */
-	private static final long serialVersionUID = 17011991;
+  private final JLabel dbFileLabel = new JLabel("Database file location: ");
+  private final JTextField dbFileField = new JTextField(20);
+  private final JButton browseButton = new JButton("Browse");
+  private final JFileChooser dbFileChooser = new DatabaseFileChooser();
 
-	private JLabel dbFileLocationLabel = new JLabel("Database file location: ");
-	private JTextField dbFileLocationField = new JTextField(20);
-	private JButton browse = new JButton("Browse");
-	private JFileChooser dbFileChooser = new DatabaseFileChooser();
+  public StandaloneConfigWindow() {
+    super("Standalone Configuration Settings");
+    getContentPane().add(createContentPanel(), BorderLayout.NORTH);
+    getConfirmButton().addActionListener(action -> {
+      saveConfig();
+      launch();
+    });
+    pack();
+  }
 
-	public StandaloneConfigWindow() {
-		super("Standalone Configuration Settings");
-		this.getContentPane().add(createContentPanel(), BorderLayout.NORTH);
-		this.getConfirmButton().addActionListener(x -> {
-			saveConfig();
-			launch();
-		});
-		this.pack();
-	}
+  @Override
+  public JPanel createContentPanel() {
+    final JPanel configPane = new JPanel();
+    dbFileField.setText(Config.getAloneDBLocation());
+    dbFileField.setToolTipText("The location of the database file on the file system.");
+    browseButton.setToolTipText("Click to browseButton file system for database file.");
+    configPane.add(dbFileLabel);
+    configPane.add(dbFileField);
+    browseButton.addActionListener(action -> {
+      final int state = dbFileChooser.showOpenDialog(configPane);
+      if (state == JFileChooser.APPROVE_OPTION) {
+        final String fileName = dbFileChooser.getSelectedFile().getAbsolutePath();
+        dbFileField.setText(fileName);
+      }
+    });
+    configPane.add(browseButton);
+    return configPane;
+  }
 
-	@Override
-	public JPanel createContentPanel() {
-		final JPanel configPane = new JPanel();
-		dbFileLocationField.setText(Config.getAloneDBLocation());
-		dbFileLocationField.setToolTipText("The location of the database file on the file system.");
-		browse.setToolTipText("Click to browse file system for database file.");
-		configPane.add(dbFileLocationLabel);
-		configPane.add(dbFileLocationField);
-		browse.addActionListener(x -> {
-			int state = dbFileChooser.showOpenDialog(configPane);
-			if (state == JFileChooser.APPROVE_OPTION) {
-				final String fileName = dbFileChooser.getSelectedFile().getAbsolutePath();
-				dbFileLocationField.setText(fileName);
-			}
-		});
-		configPane.add(browse);
-		return configPane;
-	}
+  @Override
+  public void launch() {
+    try {
+      final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDBLocation());
+      final ContractorService service = new BasicContractorService(data);
+      new MainWindow(service);
+      dispose();
+    } catch (final DatabaseException e) {
+      displayFatalException(e);
+    }
+  }
 
-	@Override
-	public void saveConfig() {
-		try {
-			Config.setAloneDBLocation(dbFileLocationField.getText().trim());
-			Config.saveProperties();
-		} catch (IllegalArgumentException e) {
-			displayWarningException(e);
-		}
-	}
-	
-	@Override
-	public void launch() {
-		try {
-			final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDBLocation());
-			final ContractorService service = new BasicContractorService(data);
-			new MainWindow(service);
-		} catch (DatabaseException e) {
-			displayFatalException(e);
-		}
-	}
+  @Override
+  public void saveConfig() {
+    try {
+      Config.setAloneDBLocation(dbFileField.getText().trim());
+      Config.saveProperties();
+    } catch (final IllegalArgumentException e) {
+      displayWarningException(e);
+    }
+  }
 }

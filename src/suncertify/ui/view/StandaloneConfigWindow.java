@@ -73,7 +73,7 @@ public final class StandaloneConfigWindow extends AbstractConfigWindow {
       Config.setAloneDBLocation(dbFileField.getText().trim());
       Config.saveProperties();
     } catch (final IllegalArgumentException e) {
-      displayWarningException(e);
+      displayWarningException(e,"F");
     }
   }
 }

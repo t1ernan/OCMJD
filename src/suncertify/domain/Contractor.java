@@ -1,3 +1,13 @@
+/*
+ * Contractor.java  1.0  13-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.domain;
 
 import static suncertify.util.Utils.isEightDigits;
@@ -5,8 +15,10 @@ import static suncertify.util.Utils.isEightDigits;
 import java.io.Serializable;
 
 /**
- * A Data Transfer Object (DTO) used to transfer record data between the different layers of the
- * application. Implements {@link Serializable}.
+ * A domain object representing a contractor. Used to transfer contractor data between the different
+ * layers of the application. Contains helpful methods for determining if the contractor has been
+ * booked by a customer and for converting the contractor fields to a string array. Implements
+ * {@link Serializable}.
  */
 public class Contractor implements Serializable {
 
@@ -28,6 +40,9 @@ public class Contractor implements Serializable {
   /** The size. */
   private String size;
 
+  /**
+   * Constructs a new default contractor.
+   */
   public Contractor() {
     super();
     primaryKey = new ContractorPk();
@@ -82,6 +97,12 @@ public class Contractor implements Serializable {
     return specialties;
   }
 
+  /**
+   * Checks if the contractor is booked by a customer. Returns true if the {@code customerId} field
+   * contains an eight digit number, i.e. if the contractor is booked.
+   *
+   * @return true, if is booked.
+   */
   public boolean isBooked() {
     return isEightDigits(customerId);
   }
@@ -136,6 +157,11 @@ public class Contractor implements Serializable {
     this.specialties = specialties;
   }
 
+  /**
+   * Converts the fields of the contractor object to a string array.
+   *
+   * @return the string[]
+   */
   public String[] toStringArray() {
     final String name = primaryKey.getName();
     final String location = primaryKey.getLocation();

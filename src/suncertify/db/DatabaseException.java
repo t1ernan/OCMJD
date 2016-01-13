@@ -1,3 +1,13 @@
+/*
+ * DatabaseException.java  1.0  13-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.db;
 
 /**
@@ -29,8 +39,7 @@ public class DatabaseException extends Exception {
   /**
    * Constructs a new DatabaseException with the specified detail message and cause.
    *
-   * <p>
-   * Note that the detail message associated with {@code cause} is <i>not</i> automatically
+   * <p>Note that the detail message associated with {@code cause} is <i>not</i> automatically
    * incorporated in this exception's detail message.
    *
    * @param message

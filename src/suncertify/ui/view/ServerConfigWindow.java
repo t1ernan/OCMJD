@@ -80,7 +80,7 @@ public final class ServerConfigWindow extends AbstractConfigWindow {
       Config.setServerPortNumber(portField.getText().trim());
       Config.saveProperties();
     } catch (final IllegalArgumentException e) {
-      displayWarningException(e);
+      displayWarningException(e,"F");
     }
   }
 }

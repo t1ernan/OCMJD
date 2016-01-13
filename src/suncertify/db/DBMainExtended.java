@@ -1,7 +1,22 @@
+/*
+ * DBMainExtended.java  1.0  13-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.db;
 
 import java.io.IOException;
 
+/**
+ * DBMainExtended extends DBMain, the common interface for any data access objects in the
+ * persistence layer. It defines two extra methods, {@code initialize} and {@code save}, used for
+ * initializing the data access object on and persisting records to disk respectively.
+ */
 public interface DBMainExtended extends DBMain {
 
   /**
@@ -9,11 +24,11 @@ public interface DBMainExtended extends DBMain {
    * data, and returns the record number of the new record.
    *
    * @param data
-   *          a string array where each element is a record value
-   * @return the record number of the new record
+   *          a string array where each element is a record value.
+   * @return the record number of the new record.
    * @throws DuplicateKeyException
    *           If an existing record in the database, which has not been marked as deleted, contains
-   *           the same key specified in the given data
+   *           the same key specified in the given data.
    */
   @Override
   int create(String[] data) throws DuplicateKeyException;
@@ -22,7 +37,7 @@ public interface DBMainExtended extends DBMain {
    * Deletes a record, making the record number and associated disk storage available for reuse.
    *
    * @param recNo
-   *          the record number
+   *          the record number.
    */
   @Override
   void delete(int recNo);
@@ -34,10 +49,10 @@ public interface DBMainExtended extends DBMain {
    * example, "Fred" matches "Fred" or "Freddy".)
    *
    * @param criteria
-   *          the criteria
-   * @return an array of record numbers that match the specified criteria
+   *          the criteria.
+   * @return an array of record numbers that match the specified criteria.
    * @throws RecordNotFoundException
-   *           If the specified record does not exist or is marked as deleted in the database
+   *           If the specified record does not exist or is marked as deleted in the database.
    */
   @Override
   int[] find(String[] criteria) throws RecordNotFoundException;
@@ -47,8 +62,14 @@ public interface DBMainExtended extends DBMain {
    * database file specified into the in-memory cache and adding the shutdown hook to ensure that
    * the contents of the cache is written back to the database file when the application is shut
    * down.
+   *
+   * @param dbFilePath
+   *          the filePath of the database file.
+   * @throws DatabaseException
+   *           If the specified database file does not contain the expected magic cookie value or
+   *           some I/O related exception occurred when attempting to read the file.
    */
-  void initialize(String dbFileLocation) throws DatabaseException;
+  void initialize(String dbFilePath) throws DatabaseException;
 
   /**
    * Determines if a record is currently locked. Returns true if the record is locked, false
@@ -88,6 +109,13 @@ public interface DBMainExtended extends DBMain {
   @Override
   String[] read(int recNo) throws RecordNotFoundException;
 
+  /**
+   * Writes the record cache to the database file, overwriting the existing record data stored in
+   * the database file.
+   *
+   * @throws IOException
+   *           Signals that an I/O exception has occurred when writing the records to disk.
+   */
   void save() throws IOException;
 
   /**

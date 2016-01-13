@@ -1,3 +1,12 @@
+/*
+ * ContractorTable.java  1.0  13-Jan-2016
+ * 
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ * 
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
 package suncertify.ui.model;
 
 import suncertify.domain.Contractor;
@@ -10,11 +19,21 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ContractorTable.
+ */
 public class ContractorTable extends JTable {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
 
+  /**
+   * Instantiates a new contractor table.
+   *
+   * @param model the model
+   * @param bookButton the book button
+   */
   public ContractorTable(final ContractorTableModel model, final JButton bookButton) {
     super(model);
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -62,6 +81,11 @@ public class ContractorTable extends JTable {
     });
   }
 
+  /**
+   * Gets the table.
+   *
+   * @return the table
+   */
   private ContractorTable getTable() {
     return this;
   }

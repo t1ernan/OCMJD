@@ -64,7 +64,7 @@ public final class ClientConfigWindow extends AbstractConfigWindow {
       Config.setClientPortNumber(portField.getText().trim());
       Config.saveProperties();
     } catch (final IllegalArgumentException e) {
-      displayWarningException(e);
+      displayWarningException(e,"F");
     }
   }
 }

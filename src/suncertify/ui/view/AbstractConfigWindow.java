@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public abstract class AbstractConfigWindow extends JFrame implements LaunchManager {
+public abstract class AbstractConfigWindow extends JFrame implements LaunchManager,DisplayManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
@@ -24,18 +24,20 @@ public abstract class AbstractConfigWindow extends JFrame implements LaunchManag
     getContentPane().add(confirmButton, BorderLayout.SOUTH);
   }
 
-  protected abstract JPanel createContentPanel();
-
-  protected void displayFatalException(final Exception exception) {
+  @Override
+  public void displayFatalException(final Exception exception) {
     final String errorMessage = "Failed to launch application: " + exception.getMessage();
     JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
     dispose();
   }
 
-  protected void displayWarningException(final Exception exception) {
-    JOptionPane.showMessageDialog(this, exception.getMessage(), "Invalid Input",
+  @Override
+  public void displayWarningException(final Exception exception, final String title) {
+    JOptionPane.showMessageDialog(this, exception.getMessage(), title,
         JOptionPane.WARNING_MESSAGE);
   }
+
+  protected abstract JPanel createContentPanel();
 
   protected JButton getConfirmButton() {
     return confirmButton;

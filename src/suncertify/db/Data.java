@@ -244,6 +244,9 @@ public final class Data implements DBMainExtended {
 
   /**
    * {@inheritDoc}.
+   *
+   * <p>This method will be called when the application terminates in order to
+   * persist any database changes to the database file.
    */
   @Override
   public synchronized void save() throws IOException {
@@ -276,18 +279,16 @@ public final class Data implements DBMainExtended {
     recordCache.put(recNo, data);
   }
 
-  // TODO:FINISH JAVADOC
   /**
-   * Reads a single record from the database file using a {@link RandomAccessFile} object and adds
-   * the record to the cache.
-   *
-   * <p>The field values for the records are read into a string array {@code fieldValues}. If the two
-   * bytes in the database file preceding the record data are equal to {@code VALID_FLAG}
+   * Reads a single record from the database file using a {@link RandomAccessFile} and updates the
+   * cache. If the record has been marked as valid, it will store the record in the cache with the
+   * specified {@code recordNumber} as the key. Otherwise, it will store {@code null} in the cache
+   * for the specified {@code recordNumber}.
    *
    * @param raf
-   *          the raf
+   *          the random access file used to read the database file.
    * @param recordNumber
-   *          the record number
+   *          the record number, used as the record cache key.
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
@@ -308,30 +309,37 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * Check for duplicate key.
+   * Check if the primary key of the specified {@code data} already exists in the database. If the
+   * key already exists, it will throw a {@link DuplicateKeyException}.
    *
    * @param data
-   *          the data
+   *          a string array where each element is a record value.
    * @throws DuplicateKeyException
-   *           the duplicate key exception
+   *           if the primary key of the specified {@code data} already exists in the database.
    */
   private void checkForDuplicateKey(final String[] data) throws DuplicateKeyException {
-    final String newId = getUniqueId(data);
+    final String newId = retrieveUniqueId(data);
     final boolean isDuplicate = getValidEntryStream().map(entry -> entry.getValue())
-        .anyMatch(values -> newId.equals(getUniqueId(values)));
+        .anyMatch(values -> newId.equals(retrieveUniqueId(values)));
     if (isDuplicate) {
       throw new DuplicateKeyException("Record already exists");
     }
   }
 
   /**
-   * Does entry match criteria.
+   * Checks if each element of the specified {@code fieldValues} begins with the corresponding
+   * element of the specified {@code searchValues}. If the two specified arrays differ in length,
+   * the search will terminate after the last element of {@code searchValues} is evaluated. This is
+   * a case insensitive search. Returns true if each element of {@code fieldValues} begins with the
+   * corresponding element of {@code searchValues}.
+   *
    *
    * @param fieldValues
-   *          the field values
+   *          a string array where each element is a record value
    * @param searchValues
-   *          the search values
-   * @return true, if successful
+   *          a string array where each element is a search value
+   * @return true, if each element of {@code fieldValues} begins with the corresponding element of
+   *         {@code searchValues}.
    */
   private boolean doesEntryMatchCriteria(final String[] fieldValues, final String[] searchValues) {
     boolean isMatch = true;
@@ -348,13 +356,15 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * Gets the unique id.
+   * Gets a unique id from the specified string array {@code fieldValues}. Returns a string created
+   * by concatenating the first two elements of {@code fieldValues} together, i.e. the name and
+   * location field values combined.
    *
    * @param fieldValues
-   *          the field values
-   * @return the unique id
+   *          a string array where each element is a record value
+   * @return the first two elements of fieldValues concatenated together
    */
-  private String getUniqueId(final String[] fieldValues) {
+  private String retrieveUniqueId(final String[] fieldValues) {
     final String name = fieldValues[0].toUpperCase();
     final String location = fieldValues[1].toUpperCase();
     return (name + location);
@@ -385,13 +395,15 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * Writes a record to the specified {@code dbFile}. The record will be have the field values
-   * specified in the elements of the {@code fieldValues} string array. If the specified
-   * {@code fieldValues} argument is null, the record will be filled with blank space ASCII
-   * characters.
+   * Writes a record to the database using the specified {@link RandomAccessFile},where each element
+   * of the specified {@code fieldValues} is a record value. If the specified {@code fieldValues}
+   * argument is {@code null}, the record will be filled with blank space ASCII characters.
+   *
+   * <p>If any value of a field is less that the size specified for that field in the schema
+   * information, the remaining bytes of the field will be padded with blank space ASCII characters.
    *
    * @param raf
-   *          a {@link RandomAccessFile} file for reading and writing to the database file.
+   *          a {@link RandomAccessFile} file used for writing the records to the database file.
    * @param fieldValues
    *          a string array where each element is a record value
    * @throws IOException

@@ -1,35 +1,47 @@
+/*
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.db;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * A factory for retrieving and initializing a database object with the data from the specified
- * database file.
+ * A factory for retrieving and initializing a single instance of a data access object for the
+ * specified database file. Marked final to prevent overriding.
  */
 public final class DatabaseFactory {
 
   /** The databaseManager object. */
-  private static DBMainExtended databaseManager = Data.getInstance();
+  private static DBMainExtended dao = Data.getInstance();
 
   /**
-   * Gets a database manager for the database file at specified location. This method should ensure
-   * there is only one instance of the database manager for the application.
-   *
-   * @param dbFileLocation
-   *          the location of the databaseManager on the file system
-   * @return the databaseManager
-   * @throws DatabaseException
-   *           if a databaseManager instance could not be created
+   * Private constructor to prevent instantiation by other classes.
    */
-  public static DBMainExtended getDatabase(final String dbFileLocation) throws DatabaseException {
-    if (!Files.exists(Paths.get(dbFileLocation))) {
-      throw new DatabaseException("Could not find the specified file: " + dbFileLocation);
-    }
-    databaseManager.initialize(dbFileLocation);
-    return databaseManager;
+  private DatabaseFactory() {
   }
 
-  private DatabaseFactory() {
+  /**
+   * Gets a data access object for the database file with specified file path and initializes it.
+   *
+   * @param dbFilePath
+   *          the file path of the database file.
+   * @return the single instance of the data access object.
+   * @throws DatabaseException
+   *           if a databaseManager instance could not be created or if the specified file does not
+   *           exist.
+   */
+  public static DBMainExtended getDatabase(final String dbFilePath) throws DatabaseException {
+    if (!Files.exists(Paths.get(dbFilePath))) {
+      throw new DatabaseException("Could not find the specified file: " + dbFilePath);
+    }
+    dao.initialize(dbFilePath);
+    return dao;
   }
 }

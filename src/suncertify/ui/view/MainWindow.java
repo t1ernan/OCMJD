@@ -14,6 +14,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -49,13 +50,14 @@ public final class MainWindow extends JFrame {
     final JButton bookButton = new JButton("Book");
     final JButton searchButton = new JButton("Search");
     final ContractorTable table = new ContractorTable(tableModel, bookButton);
+    table.setRowSelectionInterval(0, 0);
     final JScrollPane scrollPane = new JScrollPane(table);
     bookButton.addActionListener(action -> bookButtonAction(table));
     searchButton.addActionListener(action -> searchButtonAction(tableModel));
     final JPanel bookPanel = new JPanel();
-    bookPanel.add(scrollPane, BorderLayout.NORTH);
-    bookPanel.add(bookButton, BorderLayout.SOUTH);
-    getContentPane().add(bookPanel, BorderLayout.NORTH);
+    bookPanel.add(scrollPane, BorderLayout.WEST);
+    bookPanel.add(bookButton, BorderLayout.EAST);
+    getContentPane().add(bookPanel, BorderLayout.SOUTH);
 
     final JPanel searchPanel = new JPanel();
     searchPanel.add(nameLabel, BorderLayout.WEST);
@@ -63,7 +65,7 @@ public final class MainWindow extends JFrame {
     searchPanel.add(locationLabel);
     searchPanel.add(locationField);
     searchPanel.add(searchButton, BorderLayout.EAST);
-    getContentPane().add(searchPanel, BorderLayout.SOUTH);
+    getContentPane().add(searchPanel, BorderLayout.NORTH);
 
     pack();
     setVisible(true);
@@ -77,7 +79,8 @@ public final class MainWindow extends JFrame {
     final int rowIndex = table.getSelectedRows()[0];
     final ContractorTableModel model = (ContractorTableModel) table.getModel();
     final String[] fieldValues = model.getRowFields(rowIndex);
-    final String customerId = JOptionPane.showInputDialog("Please enter the customer ID number.");
+    final String customerId = String
+        .valueOf(JOptionPane.showInputDialog("Please enter the customer ID number."));
     if (isEightDigits(customerId)) {
       try {
         final Contractor contractor = ContractorBuilder.build(fieldValues);
@@ -88,9 +91,6 @@ public final class MainWindow extends JFrame {
         JOptionPane.showMessageDialog(this, e.getMessage(), "System Error",
             JOptionPane.ERROR_MESSAGE);
       }
-    } else {
-      JOptionPane.showMessageDialog(this, "Invalid customer ID: Must be an eight digit number",
-          "Invalid user input", JOptionPane.WARNING_MESSAGE);
     }
   }
 
@@ -109,9 +109,9 @@ public final class MainWindow extends JFrame {
 
   private void searchButtonAction(final ContractorTableModel model) {
     try {
-      final String name = nameField.getText().trim();
-      final String location = locationField.getText().trim();
-      final ContractorPk primaryKey = new ContractorPk(name, location);
+      final Optional<String> name = Optional.ofNullable(nameField.getText().trim());
+      final Optional<String> location = Optional.ofNullable(locationField.getText().trim());
+      final ContractorPk primaryKey = new ContractorPk(name.orElse(""), location.orElse(""));
       final Map<Integer, Contractor> records = service.find(primaryKey);
       updateView(model, records);
     } catch (final Exception e) {

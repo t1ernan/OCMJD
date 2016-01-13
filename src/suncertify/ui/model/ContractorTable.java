@@ -19,6 +19,7 @@ public class ContractorTable extends JTable {
     super(model);
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     setRowSelectionAllowed(true);
+    setColumnSelectionAllowed(false);
     addMouseListener(new MouseListener() {
 
       @Override

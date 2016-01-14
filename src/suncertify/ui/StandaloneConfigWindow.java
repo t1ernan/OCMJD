@@ -1,11 +1,19 @@
-package suncertify.ui.view;
+/*
+ * StandaloneConfigWindow.java  1.0  14-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+package suncertify.ui;
 
 import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorService;
 import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseException;
 import suncertify.db.DatabaseFactory;
-import suncertify.ui.DatabaseFileChooser;
 import suncertify.util.Config;
 
 import java.awt.BorderLayout;
@@ -56,6 +64,12 @@ public final class StandaloneConfigWindow extends AbstractConfigWindow {
   }
 
   @Override
+  public boolean isConfigValid(final String... configValues) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
   public void launch() {
     try {
       final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDBLocation());
@@ -69,11 +83,7 @@ public final class StandaloneConfigWindow extends AbstractConfigWindow {
 
   @Override
   public void saveConfig() {
-    try {
       Config.setAloneDBLocation(dbFileField.getText().trim());
       Config.saveProperties();
-    } catch (final IllegalArgumentException e) {
-      displayWarningException(e,"F");
-    }
   }
 }

@@ -1,5 +1,5 @@
 /*
- * ContractorModel.java  1.0  13-Jan-2016
+ * ContractorModel.java  1.0  14-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -7,7 +7,7 @@
  *
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
-package suncertify.ui.model;
+package suncertify.ui;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -23,12 +23,12 @@ public interface ContractorModel {
    */
   String[] getRowFields(int rowIndex);
 
-  void updateCell(int row, int col, String cell);
-
   /**
    * Update data.
    *
    * @param data the data
    */
   void updateData(String[][] data);
+
+  void updateRow(int row, String[] fieldValues);
 }

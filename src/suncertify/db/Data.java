@@ -1,5 +1,5 @@
 /*
- * Data.java  1.0  12-Jan-2016
+ * Data.java  1.0  14-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -21,8 +21,6 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.OptionalInt;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,10 +98,11 @@ public final class Data implements DBMainExtended {
   public synchronized int create(final String[] data) throws DuplicateKeyException {
     validateFields(data);
     checkForDuplicateKey(data);
-    final Stream<Entry<Integer, String[]>> deletedRecords = recordCache.entrySet().stream()
-        .filter(entry -> entry.getValue() == null);
-    final OptionalInt recNoOptional = deletedRecords.mapToInt(entry -> entry.getKey()).findAny();
-    final int recordNumber = recNoOptional.orElse(recordCache.size());
+    final int recordNumber = recordCache.entrySet().stream()
+                             .filter(entry -> entry.getValue() == null)
+                             .mapToInt(entry -> entry.getKey())
+                             .findAny()
+                             .orElse(recordCache.size());
     recordCache.put(recordNumber, data);
     return recordNumber;
   }
@@ -126,9 +125,11 @@ public final class Data implements DBMainExtended {
       throw new IllegalArgumentException(
           "Search criteria should contain Name and Location values only!");
     }
-    final int[] recordNumbers = getValidEntryStream()
-        .filter(entry -> doesEntryMatchCriteria(entry.getValue(), criteria))
-        .mapToInt(entry -> entry.getKey()).toArray();
+    final int[] recordNumbers = recordCache.entrySet().stream()
+                                .filter(entry -> entry.getValue() != null)
+                                .filter(entry -> doFieldsMatchCriteria(entry.getValue(), criteria))
+                                .mapToInt(entry -> entry.getKey())
+                                .toArray();
     if (recordNumbers.length == 0) {
       throw new RecordNotFoundException("No matching records for selected criteria: Name="
           + criteria[0] + " , Location=" + criteria[1]);
@@ -136,15 +137,9 @@ public final class Data implements DBMainExtended {
     return recordNumbers;
   }
 
-  /**
-   * Get a {@link Stream} of {@link Entry} objects from the record cache for all non-deleted
-   * records.
-   *
-   * @return a stream of valid {@link Entry} objects, with 'record number' as the key and 'field
-   *         values' as the value.
-   */
-  public Stream<Entry<Integer, String[]>> getValidEntryStream() {
-    return recordCache.entrySet().stream().filter(entry -> entry.getValue() != null);
+  public Stream<String[]> getValidEntryStream() {
+    return recordCache.entrySet().stream().map(entry -> entry.getValue())
+        .filter(values -> values != null);
   }
 
   /**
@@ -184,7 +179,9 @@ public final class Data implements DBMainExtended {
    * @return true, if the record is not stored in the database or has been marked as deleted.
    */
   public boolean isInvalidRecord(final int recNo) {
-    return getValidEntryStream().noneMatch(entry -> entry.getKey() == recNo);
+    return recordCache.entrySet().stream()
+           .filter(entry -> entry.getValue() != null)
+           .noneMatch(entry -> entry.getKey() == recNo);
   }
 
   /**
@@ -245,8 +242,8 @@ public final class Data implements DBMainExtended {
   /**
    * {@inheritDoc}.
    *
-   * <p>This method will be called when the application terminates in order to
-   * persist any database changes to the database file.
+   * <p>This method will be called when the application terminates in order to persist any database
+   * changes to the database file.
    */
   @Override
   public synchronized void save() throws IOException {
@@ -318,12 +315,32 @@ public final class Data implements DBMainExtended {
    *           if the primary key of the specified {@code data} already exists in the database.
    */
   private void checkForDuplicateKey(final String[] data) throws DuplicateKeyException {
-    final String newId = retrieveUniqueId(data);
-    final boolean isDuplicate = getValidEntryStream().map(entry -> entry.getValue())
-        .anyMatch(values -> newId.equals(retrieveUniqueId(values)));
+    final boolean isDuplicate = recordCache.entrySet().stream()
+                                .map(entry -> entry.getValue())
+                                .filter(values -> values != null)
+                                .anyMatch(values -> comparePrimaryKeys(values, data));
     if (isDuplicate) {
       throw new DuplicateKeyException("Record already exists");
     }
+  }
+
+  /**
+   * Compares the primary keys, first two elements, of the two string arrays arguments ignoring case
+   * considerations. Returns true if keys are equal.
+   *
+   * <p>Note: Primary keys are case insensitive.
+   *
+   * @param existingData
+   *          the field values of a record already stored in the database.
+   * @param newData
+   *          the field values of a new record not already stored in the database.
+   * @return true, if primary keys values are equal, ignoring case considerations; false otherwise.
+   */
+  private boolean comparePrimaryKeys(final String[] existingData, final String[] newData) {
+    final String existingKey = existingData[0] + existingData[1];
+    final String newKey = newData[0] + newData[1];
+    return existingKey.equalsIgnoreCase(newKey);
+
   }
 
   /**
@@ -341,7 +358,7 @@ public final class Data implements DBMainExtended {
    * @return true, if each element of {@code fieldValues} begins with the corresponding element of
    *         {@code searchValues}.
    */
-  private boolean doesEntryMatchCriteria(final String[] fieldValues, final String[] searchValues) {
+  private boolean doFieldsMatchCriteria(final String[] fieldValues, final String[] searchValues) {
     boolean isMatch = true;
     for (int index = 0; index < searchValues.length; index++) {
       final String fieldValue = fieldValues[index].toUpperCase();
@@ -353,21 +370,6 @@ public final class Data implements DBMainExtended {
     }
     return isMatch;
 
-  }
-
-  /**
-   * Gets a unique id from the specified string array {@code fieldValues}. Returns a string created
-   * by concatenating the first two elements of {@code fieldValues} together, i.e. the name and
-   * location field values combined.
-   *
-   * @param fieldValues
-   *          a string array where each element is a record value
-   * @return the first two elements of fieldValues concatenated together
-   */
-  private String retrieveUniqueId(final String[] fieldValues) {
-    final String name = fieldValues[0].toUpperCase();
-    final String location = fieldValues[1].toUpperCase();
-    return (name + location);
   }
 
   /**

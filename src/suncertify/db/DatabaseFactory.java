@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 public final class DatabaseFactory {
 
   /** The databaseManager object. */
-  private static DBMainExtended dao = Data.getInstance();
+  private static DBMainExtended dao;
 
   /**
    * Private constructor to prevent instantiation by other classes.
@@ -41,7 +41,10 @@ public final class DatabaseFactory {
     if (!Files.exists(Paths.get(dbFilePath))) {
       throw new DatabaseException("Could not find the specified file: " + dbFilePath);
     }
-    dao.initialize(dbFilePath);
+    if (dao == null) {
+      dao = Data.getInstance();
+      dao.initialize(dbFilePath);
+    }
     return dao;
   }
 }

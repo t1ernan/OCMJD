@@ -1,20 +1,16 @@
 /*
- * CliLauncher.java  1.0  13-Jan-2016
- *
+ * CliLauncher.java  1.0  14-Jan-2016
+ * 
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
  * Registration ID 292125773
- *
+ * 
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
 
 package suncertify.ui;
 
 import suncertify.business.ServiceException;
-import suncertify.ui.view.AbstractConfigWindow;
-import suncertify.ui.view.ClientConfigWindow;
-import suncertify.ui.view.ServerConfigWindow;
-import suncertify.ui.view.StandaloneConfigWindow;
 
 import java.rmi.RemoteException;
 
@@ -53,23 +49,23 @@ public final class CliLauncher {
 
     switch (numberOfArgs) {
 
-    case ZERO:
-      runClient();
-      break;
+      case ZERO:
+        runClient();
+        break;
 
-    case ONE:
-      final String mode = args[0];
-      if (isNetworked(mode)) {
-        runServer();
-      } else if (isNonNetworked(mode)) {
-        runStandalone();
-      } else {
-        throw new IllegalArgumentException("Argument " + mode + " is invalid: [server|alone]");
-      }
-      break;
+      case ONE:
+        final String mode = args[0];
+        if (isNetworked(mode)) {
+          runServer();
+        } else if (isNonNetworked(mode)) {
+          runStandalone();
+        } else {
+          throw new IllegalArgumentException("Argument " + mode + " is invalid: [server|alone]");
+        }
+        break;
 
-    default:
-      throw new IllegalArgumentException("Too many arguments, 1 argument maximum");
+      default:
+        throw new IllegalArgumentException("Too many arguments, 1 argument maximum");
     }
 
   }

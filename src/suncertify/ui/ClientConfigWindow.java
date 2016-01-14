@@ -1,4 +1,13 @@
-package suncertify.ui.view;
+/*
+ * ClientConfigWindow.java  1.0  14-Jan-2016
+ * 
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ * 
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+package suncertify.ui;
 
 import suncertify.business.ContractorService;
 import suncertify.business.rmi.RmiClient;
@@ -45,6 +54,12 @@ public final class ClientConfigWindow extends AbstractConfigWindow {
   }
 
   @Override
+  public boolean isConfigValid(final String... configValues) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
   public void launch() {
     try {
       final String ipAddress = Config.getServerIPAddress();
@@ -59,12 +74,10 @@ public final class ClientConfigWindow extends AbstractConfigWindow {
 
   @Override
   public void saveConfig() {
-    try {
-      Config.setServerIPAddress(ipAddressField.getText().trim());
-      Config.setClientPortNumber(portField.getText().trim());
-      Config.saveProperties();
-    } catch (final IllegalArgumentException e) {
-      displayWarningException(e,"F");
-    }
+    final String ipAddress = ipAddressField.getText().trim();
+    final String portNumber = portField.getText().trim();
+    Config.setServerIPAddress(ipAddress);
+    Config.setClientPortNumber(portNumber);
+    Config.saveProperties();
   }
 }

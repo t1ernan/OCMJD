@@ -1,5 +1,5 @@
 /*
- * ContractorTableModel.java  1.0  13-Jan-2016
+ * ContractorTableModel.java  1.0  14-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -7,7 +7,7 @@
  *
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
-package suncertify.ui.model;
+package suncertify.ui;
 
 import java.util.Arrays;
 
@@ -88,12 +88,6 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
     return false;
   }
 
-  @Override
-  public void updateCell(final int row, final int column,final String cellData){
-    values[row][column]= cellData;
-    fireTableCellUpdated(row, column);
-  }
-
   /* (non-Javadoc)
    * @see suncertify.ui.model.ContractorModel#updateData(java.lang.String[][])
    */
@@ -101,6 +95,13 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
   public void updateData(final String[][] data) {
     values = data;
     fireTableDataChanged();
+  }
+
+  @Override
+  public void updateRow(final int row, final String[] fieldValues) {
+    values[row] = fieldValues;
+    fireTableRowsUpdated(row, row);
+
   }
 
 }

@@ -1,4 +1,14 @@
-package suncertify.ui.view;
+/*
+ * AbstractConfigWindow.java  1.0  14-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
+package suncertify.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -6,7 +16,6 @@ import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 public abstract class AbstractConfigWindow extends JFrame implements LaunchManager,DisplayManager {
 
@@ -32,12 +41,16 @@ public abstract class AbstractConfigWindow extends JFrame implements LaunchManag
   }
 
   @Override
-  public void displayWarningException(final Exception exception, final String title) {
-    JOptionPane.showMessageDialog(this, exception.getMessage(), title,
+  public void displayMessage(final String message, final String title) {
+    JOptionPane.showMessageDialog(this, message, title,
         JOptionPane.WARNING_MESSAGE);
   }
 
-  protected abstract JPanel createContentPanel();
+  @Override
+  public void exit() {
+    // TODO Auto-generated method stub
+
+  }
 
   protected JButton getConfirmButton() {
     return confirmButton;

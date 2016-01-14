@@ -1,5 +1,5 @@
 /*
- * ContractorTable.java  1.0  13-Jan-2016
+ * ContractorTable.java  1.0  14-Jan-2016
  * 
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -7,7 +7,7 @@
  * 
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
-package suncertify.ui.model;
+package suncertify.ui;
 
 import suncertify.domain.Contractor;
 import suncertify.util.ContractorBuilder;

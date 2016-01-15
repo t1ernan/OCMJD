@@ -19,13 +19,14 @@ import suncertify.util.ContractorBuilder;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * BasicContractorService is the default implementation of {@link ContractorService}. It has an
  * implementation for booking and finding contractors from a specified data object.
  */
 public class BasicContractorService implements ContractorService {
-
+  Logger log = Logger.getLogger("my.logger");
   /** The data access object used to interact with the database. */
   private final DBMainExtended data;
 
@@ -45,13 +46,16 @@ public class BasicContractorService implements ContractorService {
   @Override
   public void book(final Contractor contractor)
       throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
+    log.fine("booking contractor: "+ contractor.getPrimaryKey().getName());
     int recordNumber = -1;
     try {
       final String[] fieldValues = contractor.toStringArray();
       final String[] uniqueId = contractor.getPrimaryKey().toStringArray();
       recordNumber = data.find(uniqueId)[0];
+      log.fine("locking contractor: "+ contractor.getPrimaryKey().getName());
       data.lock(recordNumber);
       checkContractorIsAvailable(recordNumber);
+      log.fine("updating contractor: "+ contractor.getPrimaryKey().getName());
       data.update(recordNumber, fieldValues);
     } catch (final RecordNotFoundException e) {
       throw new ContractorNotFoundException("Contractor could not be found.", e);

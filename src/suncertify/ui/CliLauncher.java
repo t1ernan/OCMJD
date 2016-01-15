@@ -1,10 +1,10 @@
 /*
  * CliLauncher.java  1.0  14-Jan-2016
- * 
+ *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
  * Registration ID 292125773
- * 
+ *
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
 
@@ -13,6 +13,11 @@ package suncertify.ui;
 import suncertify.business.ServiceException;
 
 import java.rmi.RemoteException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 
 /**
  * The Class CliLauncher.
@@ -45,6 +50,15 @@ public final class CliLauncher {
    * @throws ServiceException the service exception
    */
   public static void main(final String[] args) throws RemoteException, ServiceException {
+    final Logger log = Logger.getLogger("my.logger");
+    log.setLevel(Level.ALL);
+    final ConsoleHandler handler = new ConsoleHandler();
+    handler.setFormatter(new SimpleFormatter());
+    handler.setLevel(Level.ALL);
+    log.addHandler(handler);
+    log.fine("hello world");
+
+
     final int numberOfArgs = args.length;
 
     switch (numberOfArgs) {

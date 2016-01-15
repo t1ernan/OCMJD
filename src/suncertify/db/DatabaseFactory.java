@@ -11,6 +11,7 @@ package suncertify.db;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
 
 /**
  * A factory for retrieving and initializing a single instance of a data access object for the
@@ -20,7 +21,7 @@ public final class DatabaseFactory {
 
   /** The databaseManager object. */
   private static DBMainExtended dao;
-
+  static Logger log = Logger.getLogger("my.logger");
   /**
    * Private constructor to prevent instantiation by other classes.
    */
@@ -42,6 +43,7 @@ public final class DatabaseFactory {
       throw new DatabaseException("Could not find the specified file: " + dbFilePath);
     }
     if (dao == null) {
+     log.fine("Creating dao object");
       dao = Data.getInstance();
       dao.initialize(dbFilePath);
     }

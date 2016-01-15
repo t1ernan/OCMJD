@@ -41,6 +41,7 @@ public final class MainWindow extends JFrame implements DisplayManager {
   private static final long serialVersionUID = 17011991;
 
   private final ContractorService service;
+  private final ContractorTableModel tableModel;
   private final ContractorTable table;
   private final JScrollPane scrollPane;
   private final String[] columnNames = { "Name", "Location", "Specialties", "Size", "Rate",
@@ -57,11 +58,12 @@ public final class MainWindow extends JFrame implements DisplayManager {
     setLayout(new BorderLayout());
     setBackground(Color.LIGHT_GRAY);
     this.service = service;
-    final ContractorTableModel tableModel = new ContractorTableModel(columnNames,
+    tableModel = new ContractorTableModel(columnNames,
         recordsToArrayArray(getAllRecords()));
     final JButton searchButton = new JButton("Search");
-    table = new ContractorTable(tableModel, bookButton);
+    table = new ContractorTable(this);
     table.setRowSelectionInterval(0, 0);
+    hideButtonIfBooked();
     scrollPane = new JScrollPane(table);
     bookButton.addActionListener(action -> bookButtonAction(table));
     searchButton.addActionListener(action -> searchButtonAction(tableModel));
@@ -94,6 +96,29 @@ public final class MainWindow extends JFrame implements DisplayManager {
     JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
   }
 
+  public JButton getBookButton() {
+    return bookButton;
+  }
+
+  public ContractorTableModel getModel(){
+    return tableModel;
+  }
+
+  public ContractorTable getTable() {
+    return table;
+  }
+
+  public void hideButtonIfBooked() {
+    final int rowIndex = table.getSelectedRows()[0];
+    final String[] fieldValues = tableModel.getRowFields(rowIndex);
+    final Contractor contractor = ContractorBuilder.build(fieldValues);
+    if (contractor.isBooked()) {
+      bookButton.setVisible(false);
+    } else {
+      bookButton.setVisible(true);
+    }
+  }
+
   public String[][] recordsToArrayArray(final Map<Integer, Contractor> records) {
     final List<String[]> list = new ArrayList<>();
     for (final Contractor contractor : records.values()) {
@@ -106,7 +131,7 @@ public final class MainWindow extends JFrame implements DisplayManager {
     return array;
   }
 
-  public void updateTable(final ContractorTableModel model, final Map<Integer, Contractor> records) {
+  public void updateTable(final ContractorModel model, final Map<Integer, Contractor> records) {
     model.updateData(recordsToArrayArray(records));
     if(records.isEmpty()){
       bookButton.setVisible(false);
@@ -136,6 +161,9 @@ public final class MainWindow extends JFrame implements DisplayManager {
         } catch (final ContractorNotFoundException e) {
           displayMessage(e.getMessage(), "No results");
         } catch (final AlreadyBookedException e) {
+          updateTable(model, getAllRecords());
+          searchButtonAction(model);
+          table.setRowSelectionInterval(rowIndex, rowIndex);
           displayMessage(e.getMessage(), "Not available");
         }
       } else {
@@ -177,4 +205,5 @@ public final class MainWindow extends JFrame implements DisplayManager {
     model.updateRow(rowIndex, contractor.toStringArray());
 
   }
+
 }

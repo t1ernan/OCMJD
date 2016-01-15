@@ -58,11 +58,10 @@ public final class ClientWindow extends AbstractWindow{
     this.service = service;
     model = new ContractorTableModel(columnNames,
         recordsToArrayArray(getAllRecords()));
-    
     table = new ContractorTable(this,model);
     scrollPane = new JScrollPane(table);
-    bookButton.addActionListener(action -> bookButtonAction());
-    searchButton.addActionListener(action -> searchButtonAction());
+    bookButton.addActionListener(action -> bookSelectedContractor());
+    searchButton.addActionListener(action -> filterTableOnSearchValues());
     
     final JPanel bookPanel = new JPanel();
     bookPanel.add(scrollPane, BorderLayout.WEST);
@@ -79,6 +78,7 @@ public final class ClientWindow extends AbstractWindow{
 
     pack();
     setVisible(true);
+    bookButton.setVisible(false);
   }
 
   public void hideButtonIfBooked() {
@@ -106,10 +106,10 @@ public final class ClientWindow extends AbstractWindow{
 
   public void updateTable(final ContractorModel model, final Map<Integer, Contractor> records) {
     model.updateData(recordsToArrayArray(records));
-    
+    bookButton.setVisible(false);
   }
 
-  private void bookButtonAction() {
+  private void bookSelectedContractor() {
     final int rowIndex = table.getSelectedRows()[0];
     final ContractorTableModel model = (ContractorTableModel) table.getModel();
     final String[] fieldValues = model.getRowFields(rowIndex);
@@ -122,7 +122,6 @@ public final class ClientWindow extends AbstractWindow{
           contractor.setCustomerId(customerId.get());
           service.book(contractor);
           updateRow(model, rowIndex, contractor);
-          bookButton.setVisible(false);
           displayMessage("Contractor has successfully been booked!", "Booking Confirmation",JOptionPane.INFORMATION_MESSAGE);
         } catch (final RemoteException e) {
           displayFatalException(e);
@@ -130,8 +129,7 @@ public final class ClientWindow extends AbstractWindow{
           displayMessage(e.getMessage(), "No results", JOptionPane.WARNING_MESSAGE);
         } catch (final AlreadyBookedException e) {
           updateTable(model, getAllRecords());
-          searchButtonAction();
-          table.setRowSelectionInterval(rowIndex, rowIndex);
+          filterTableOnSearchValues();
           displayMessage(e.getMessage(), "Contractor Not Available",JOptionPane.WARNING_MESSAGE);
         }
       } else {
@@ -151,22 +149,16 @@ public final class ClientWindow extends AbstractWindow{
     return null;
   }
 
-  private void searchButtonAction() {
+  private void filterTableOnSearchValues() {
     try {
       final String name = getNameSearchValue();
       final String location = getLocationSearchValue();
       final ContractorPk primaryKey = new ContractorPk(name, location);
       final Map<Integer, Contractor> records = service.find(primaryKey);
       updateTable(model, records);
-      scrollPane.setVisible(true);
-      bookButton.setVisible(false);
     } catch (final RemoteException e) {
       displayFatalException(e);
     } catch (final ContractorNotFoundException e) {
-      scrollPane.setVisible(false);
-      bookButton.setVisible(false);
-      final Map<Integer, Contractor> allRecords = getAllRecords();
-      updateTable(model, allRecords);
       displayMessage(e.getMessage(), "No results",JOptionPane.WARNING_MESSAGE);
     }
   }
@@ -181,7 +173,7 @@ public final class ClientWindow extends AbstractWindow{
 
   private void updateRow(final ContractorTableModel model, final int rowIndex, final Contractor contractor) {
     model.updateRow(rowIndex, contractor.toStringArray());
-
+    bookButton.setVisible(false);
   }
 
   @Override

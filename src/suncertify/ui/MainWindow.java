@@ -155,7 +155,7 @@ public final class MainWindow extends JFrame implements DisplayManager {
           service.book(contractor);
           updateRow(model, rowIndex, contractor);
           bookButton.setVisible(false);
-          displayMessage("Contractor has successfully been booked!", "Confirmation");
+          displayMessage("Contractor has successfully been booked!", "Booking Confirmation");
         } catch (final RemoteException e) {
           displayFatalException(e);
         } catch (final ContractorNotFoundException e) {
@@ -164,7 +164,7 @@ public final class MainWindow extends JFrame implements DisplayManager {
           updateTable(model, getAllRecords());
           searchButtonAction(model);
           table.setRowSelectionInterval(rowIndex, rowIndex);
-          displayMessage(e.getMessage(), "Not available");
+          displayMessage(e.getMessage(), "Contractot not available");
         }
       } else {
         displayMessage("Customer ID must be an 8 digit number", "Invalid Input");

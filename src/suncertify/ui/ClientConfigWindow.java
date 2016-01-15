@@ -9,18 +9,24 @@
  */
 package suncertify.ui;
 
+import static suncertify.util.Utils.isInvalidPortNumber;
+import static suncertify.util.Utils.log;
+
 import suncertify.business.ContractorService;
 import suncertify.business.rmi.RmiClient;
 import suncertify.util.Config;
 
 import java.awt.BorderLayout;
 import java.rmi.RemoteException;
+import java.util.logging.Level;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public final class ClientConfigWindow extends AbstractConfigWindow {
+public final class ClientConfigWindow extends AbstractWindow implements LaunchManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
@@ -28,14 +34,11 @@ public final class ClientConfigWindow extends AbstractConfigWindow {
   private final JLabel portLabel = new JLabel("Server Port: ");
   private final JTextField ipAddressField = new JTextField(20);
   private final JTextField portField = new JTextField(20);
+  private final JButton confirmButton = new JButton("Confirm");
 
   public ClientConfigWindow() {
     super("Client Configuration Settings");
-    getContentPane().add(createContentPanel(), BorderLayout.NORTH);
-    getConfirmButton().addActionListener(action -> {
-      saveConfig();
-      launch();
-    });
+    getContentPane().add(createContentPanel());
     pack();
   }
 
@@ -43,20 +46,40 @@ public final class ClientConfigWindow extends AbstractConfigWindow {
   public JPanel createContentPanel() {
     final JPanel configPane = new JPanel();
     ipAddressField.setText(Config.getServerIPAddress());
-    ipAddressField.setToolTipText("The IP address of the server you wish to connect to.");
     portField.setText(Config.getClientPortNumber());
+
+    ipAddressField.setToolTipText("The IP address of the server you wish to connect to.");
     portField.setToolTipText("The port number of the server you wish to connect to.");
+    confirmButton.setToolTipText("Click to save configuration settings and start application");
+
+    confirmButton.addActionListener(action -> {
+      if (isConfigValid()) {
+        saveConfig();
+        launch();
+      }
+    });
+
     configPane.add(ipAddressLabel);
     configPane.add(ipAddressField);
     configPane.add(portLabel);
     configPane.add(portField);
+    configPane.add(confirmButton);
     return configPane;
   }
 
   @Override
-  public boolean isConfigValid(final String... configValues) {
-    // TODO Auto-generated method stub
-    return false;
+  public boolean isConfigValid() {
+    boolean isConfigValid = true;
+    if (getIpAddress().isEmpty()) {
+      displayMessage("The database file location field cannot be blank.", "Invalid Input",
+          JOptionPane.WARNING_MESSAGE);
+      isConfigValid = false;
+    } else if (isInvalidPortNumber(getPortNumber())) {
+      displayMessage("The port number field must contain numbers only.", "Invalid Input",
+          JOptionPane.WARNING_MESSAGE);
+      isConfigValid = false;
+    }
+    return isConfigValid;
   }
 
   @Override
@@ -64,8 +87,9 @@ public final class ClientConfigWindow extends AbstractConfigWindow {
     try {
       final String ipAddress = Config.getServerIPAddress();
       final int port = Integer.parseInt(Config.getClientPortNumber());
+      log(Level.INFO, "Starting client...");
       final ContractorService service = new RmiClient(ipAddress, port);
-      new MainWindow(service);
+      new ClientWindow(service);
       dispose();
     } catch (final RemoteException e) {
       displayFatalException(e);
@@ -74,10 +98,16 @@ public final class ClientConfigWindow extends AbstractConfigWindow {
 
   @Override
   public void saveConfig() {
-    final String ipAddress = ipAddressField.getText().trim();
-    final String portNumber = portField.getText().trim();
-    Config.setServerIPAddress(ipAddress);
-    Config.setClientPortNumber(portNumber);
+    Config.setServerIPAddress(getIpAddress());
+    Config.setClientPortNumber(getPortNumber());
     Config.saveProperties();
+  }
+
+  private String getPortNumber() {
+    return portField.getText().trim();
+  }
+
+  private String getIpAddress() {
+    return ipAddressField.getText().trim();
   }
 }

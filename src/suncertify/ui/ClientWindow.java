@@ -1,5 +1,5 @@
 /*
- * MainWindow.java  1.0  14-Jan-2016
+ * ClientWindow.java  1.0  14-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -35,13 +35,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-public final class MainWindow extends JFrame implements DisplayManager {
+public final class ClientWindow extends AbstractWindow{
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
 
   private final ContractorService service;
-  private final ContractorTableModel tableModel;
+  private final ContractorTableModel model;
   private final ContractorTable table;
   private final JScrollPane scrollPane;
   private final String[] columnNames = { "Name", "Location", "Specialties", "Size", "Rate",
@@ -51,22 +51,19 @@ public final class MainWindow extends JFrame implements DisplayManager {
   private final JTextField nameField = new JTextField(20);
   private final JTextField locationField = new JTextField(20);
   private final JButton bookButton = new JButton("Book");
+  private final JButton searchButton = new JButton("Search");
 
-  public MainWindow(final ContractorService service) {
+  public ClientWindow(final ContractorService service) {
     super("Bodgitt & Scarper Booking System");
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
-    setBackground(Color.LIGHT_GRAY);
     this.service = service;
-    tableModel = new ContractorTableModel(columnNames,
+    model = new ContractorTableModel(columnNames,
         recordsToArrayArray(getAllRecords()));
-    final JButton searchButton = new JButton("Search");
-    table = new ContractorTable(this);
-    table.setRowSelectionInterval(0, 0);
-    hideButtonIfBooked();
+    
+    table = new ContractorTable(this,model);
     scrollPane = new JScrollPane(table);
-    bookButton.addActionListener(action -> bookButtonAction(table));
-    searchButton.addActionListener(action -> searchButtonAction(tableModel));
+    bookButton.addActionListener(action -> bookButtonAction());
+    searchButton.addActionListener(action -> searchButtonAction());
+    
     final JPanel bookPanel = new JPanel();
     bookPanel.add(scrollPane, BorderLayout.WEST);
     bookPanel.add(bookButton, BorderLayout.EAST);
@@ -84,33 +81,9 @@ public final class MainWindow extends JFrame implements DisplayManager {
     setVisible(true);
   }
 
-  @Override
-  public void displayFatalException(final Exception exception) {
-    JOptionPane.showMessageDialog(this, exception.getMessage(), "System Error",
-        JOptionPane.ERROR_MESSAGE);
-    dispose();
-  }
-
-  @Override
-  public void displayMessage(final String message, final String title) {
-    JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
-  }
-
-  public JButton getBookButton() {
-    return bookButton;
-  }
-
-  public ContractorTableModel getModel(){
-    return tableModel;
-  }
-
-  public ContractorTable getTable() {
-    return table;
-  }
-
   public void hideButtonIfBooked() {
     final int rowIndex = table.getSelectedRows()[0];
-    final String[] fieldValues = tableModel.getRowFields(rowIndex);
+    final String[] fieldValues = model.getRowFields(rowIndex);
     final Contractor contractor = ContractorBuilder.build(fieldValues);
     if (contractor.isBooked()) {
       bookButton.setVisible(false);
@@ -133,15 +106,10 @@ public final class MainWindow extends JFrame implements DisplayManager {
 
   public void updateTable(final ContractorModel model, final Map<Integer, Contractor> records) {
     model.updateData(recordsToArrayArray(records));
-    if(records.isEmpty()){
-      bookButton.setVisible(false);
-    }else{
-      bookButton.setVisible(true);
-      table.setRowSelectionInterval(0, 0);
-    }
+    
   }
 
-  private void bookButtonAction(final JTable table) {
+  private void bookButtonAction() {
     final int rowIndex = table.getSelectedRows()[0];
     final ContractorTableModel model = (ContractorTableModel) table.getModel();
     final String[] fieldValues = model.getRowFields(rowIndex);
@@ -155,19 +123,19 @@ public final class MainWindow extends JFrame implements DisplayManager {
           service.book(contractor);
           updateRow(model, rowIndex, contractor);
           bookButton.setVisible(false);
-          displayMessage("Contractor has successfully been booked!", "Booking Confirmation");
+          displayMessage("Contractor has successfully been booked!", "Booking Confirmation",JOptionPane.INFORMATION_MESSAGE);
         } catch (final RemoteException e) {
           displayFatalException(e);
         } catch (final ContractorNotFoundException e) {
-          displayMessage(e.getMessage(), "No results");
+          displayMessage(e.getMessage(), "No results", JOptionPane.WARNING_MESSAGE);
         } catch (final AlreadyBookedException e) {
           updateTable(model, getAllRecords());
-          searchButtonAction(model);
+          searchButtonAction();
           table.setRowSelectionInterval(rowIndex, rowIndex);
-          displayMessage(e.getMessage(), "Contractot not available");
+          displayMessage(e.getMessage(), "Contractor Not Available",JOptionPane.WARNING_MESSAGE);
         }
       } else {
-        displayMessage("Customer ID must be an 8 digit number", "Invalid Input");
+        displayMessage("Customer ID must be an 8 digit number", "Invalid Input",JOptionPane.INFORMATION_MESSAGE);
       }
     }
   }
@@ -178,15 +146,15 @@ public final class MainWindow extends JFrame implements DisplayManager {
     } catch (final RemoteException e) {
       displayFatalException(e);
     } catch (final ContractorNotFoundException e) {
-      displayMessage(e.getMessage(), "No results");
+      displayMessage(e.getMessage(), "No results",JOptionPane.WARNING_MESSAGE);
     }
     return null;
   }
 
-  private void searchButtonAction(final ContractorTableModel model) {
+  private void searchButtonAction() {
     try {
-      final String name = nameField.getText().trim();
-      final String location = locationField.getText().trim();
+      final String name = getNameSearchValue();
+      final String location = getLocationSearchValue();
       final ContractorPk primaryKey = new ContractorPk(name, location);
       final Map<Integer, Contractor> records = service.find(primaryKey);
       updateTable(model, records);
@@ -196,14 +164,30 @@ public final class MainWindow extends JFrame implements DisplayManager {
       displayFatalException(e);
     } catch (final ContractorNotFoundException e) {
       scrollPane.setVisible(false);
-      updateTable(model, getAllRecords());
-      displayMessage(e.getMessage(), "No results");
+      bookButton.setVisible(false);
+      final Map<Integer, Contractor> allRecords = getAllRecords();
+      updateTable(model, allRecords);
+      displayMessage(e.getMessage(), "No results",JOptionPane.WARNING_MESSAGE);
     }
+  }
+
+  private String getLocationSearchValue() {
+    return locationField.getText().trim();
+  }
+
+  private String getNameSearchValue() {
+    return nameField.getText().trim();
   }
 
   private void updateRow(final ContractorTableModel model, final int rowIndex, final Contractor contractor) {
     model.updateRow(rowIndex, contractor.toStringArray());
 
+  }
+
+  @Override
+  public JPanel createContentPanel() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

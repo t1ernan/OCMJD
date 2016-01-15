@@ -13,11 +13,7 @@ import javax.swing.JPanel;
 
 public interface LaunchManager {
 
-  JPanel createContentPanel();
-
-  void exit();
-
-  boolean isConfigValid(String... configValues );
+  boolean isConfigValid();
 
   void launch();
 

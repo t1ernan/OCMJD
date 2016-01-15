@@ -1,5 +1,5 @@
 /*
- * DisplayManager.java  1.0  14-Jan-2016
+ * WindowManager.java  1.0  14-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -10,9 +10,14 @@
 
 package suncertify.ui;
 
-public interface DisplayManager {
+import javax.swing.JPanel;
+
+public interface WindowManager {
 
   void displayFatalException(final Exception exception);
 
-  void displayMessage(final String message, final String title);
+  void displayMessage(final String message, final String title, final int messageType);
+  
+  JPanel createContentPanel();
+
 }

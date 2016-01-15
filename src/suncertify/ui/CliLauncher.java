@@ -10,14 +10,13 @@
 
 package suncertify.ui;
 
+import static suncertify.util.Utils.intializeLogger;
+import static suncertify.util.Utils.log;
+
 import suncertify.business.ServiceException;
 
 import java.rmi.RemoteException;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 
 /**
  * The Class CliLauncher.
@@ -45,41 +44,37 @@ public final class CliLauncher {
   /**
    * The main method.
    *
-   * @param args the arguments
-   * @throws RemoteException the remote exception
-   * @throws ServiceException the service exception
+   * @param args
+   *          the arguments
+   * @throws RemoteException
+   *           the remote exception
+   * @throws ServiceException
+   *           the service exception
    */
   public static void main(final String[] args) throws RemoteException, ServiceException {
-    final Logger log = Logger.getLogger("my.logger");
-    log.setLevel(Level.ALL);
-    final ConsoleHandler handler = new ConsoleHandler();
-    handler.setFormatter(new SimpleFormatter());
-    handler.setLevel(Level.ALL);
-    log.addHandler(handler);
-    log.fine("hello world");
-
+    intializeLogger(Level.ALL);
 
     final int numberOfArgs = args.length;
 
     switch (numberOfArgs) {
 
-      case ZERO:
-        runClient();
-        break;
+    case ZERO:
+      runClient();
+      break;
 
-      case ONE:
-        final String mode = args[0];
-        if (isNetworked(mode)) {
-          runServer();
-        } else if (isNonNetworked(mode)) {
-          runStandalone();
-        } else {
-          throw new IllegalArgumentException("Argument " + mode + " is invalid: [server|alone]");
-        }
-        break;
+    case ONE:
+      final String mode = args[0];
+      if (isNetworked(mode)) {
+        runServer();
+      } else if (isNonNetworked(mode)) {
+        runStandalone();
+      } else {
+        throw new IllegalArgumentException("Argument " + mode + " is invalid: [server|alone]");
+      }
+      break;
 
-      default:
-        throw new IllegalArgumentException("Too many arguments, 1 argument maximum");
+    default:
+      throw new IllegalArgumentException("Too many arguments, 1 argument maximum");
     }
 
   }
@@ -87,7 +82,8 @@ public final class CliLauncher {
   /**
    * Checks if is networked.
    *
-   * @param mode the mode
+   * @param mode
+   *          the mode
    * @return true, if is networked
    */
   private static boolean isNetworked(final String mode) {
@@ -97,7 +93,8 @@ public final class CliLauncher {
   /**
    * Checks if is non networked.
    *
-   * @param mode the mode
+   * @param mode
+   *          the mode
    * @return true, if is non networked
    */
   private static boolean isNonNetworked(final String mode) {
@@ -108,7 +105,7 @@ public final class CliLauncher {
    * Run client.
    */
   private static void runClient() {
-    final AbstractConfigWindow clientConfig = new ClientConfigWindow();
+    final AbstractWindow clientConfig = new ClientConfigWindow();
     clientConfig.setVisible(true);
   }
 
@@ -116,15 +113,15 @@ public final class CliLauncher {
    * Run server.
    */
   private static void runServer() {
-    final AbstractConfigWindow clientConfig = new ServerConfigWindow();
-    clientConfig.setVisible(true);
+    final AbstractWindow serverConfig = new ServerConfigWindow();
+    serverConfig.setVisible(true);
   }
 
   /**
    * Run standalone.
    */
   private static void runStandalone() {
-    final AbstractConfigWindow standaloneConfig = new StandaloneConfigWindow();
+    final AbstractWindow standaloneConfig = new StandaloneConfigWindow();
     standaloneConfig.setVisible(true);
   }
 }

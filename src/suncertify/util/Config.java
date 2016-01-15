@@ -1,6 +1,7 @@
 package suncertify.util;
 
 import static suncertify.util.Constants.EMPTY_STRING;
+import static suncertify.util.Utils.isInvalidPortNumber;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -123,9 +124,6 @@ public final class Config {
 		saveProperties();
 	}
 
-	private static boolean isInvalidPortNumber(final String serverPortNumber) {
-		return !serverPortNumber.matches("[0-9]+");
-	}
 
 	private static void loadPropertiesFile() {
 		try (InputStream input = new FileInputStream(PROPERTIES_FILE);) {

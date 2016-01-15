@@ -1,5 +1,5 @@
 /*
- * AbstractConfigWindow.java  1.0  14-Jan-2016
+ * AbstractWindow.java  1.0  14-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -13,24 +13,31 @@ package suncertify.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
-public abstract class AbstractConfigWindow extends JFrame implements LaunchManager,DisplayManager {
+public abstract class AbstractWindow extends JFrame implements WindowManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
+  
+  private final JMenuBar menuBar = new JMenuBar();
+  private final JMenu menu = new JMenu("Options");
+  private final JMenuItem exitMenuItem = new JMenuItem("Exit");
 
-  private final JButton confirmButton = new JButton("Confirm");
-
-  public AbstractConfigWindow(final String title) {
+  public AbstractWindow(final String title) {
     super(title);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setLayout(new BorderLayout());
     setBackground(Color.LIGHT_GRAY);
-    confirmButton.setToolTipText("Click to save configuration settings and start application");
-    getContentPane().add(confirmButton, BorderLayout.SOUTH);
+    exitMenuItem.addActionListener(action -> dispose());
+    menu.add(exitMenuItem);
+    menuBar.add(menu);
+    this.setJMenuBar(menuBar);
   }
 
   @Override
@@ -41,18 +48,9 @@ public abstract class AbstractConfigWindow extends JFrame implements LaunchManag
   }
 
   @Override
-  public void displayMessage(final String message, final String title) {
+  public void displayMessage(final String message, final String title,final int messageType) {
     JOptionPane.showMessageDialog(this, message, title,
-        JOptionPane.WARNING_MESSAGE);
+        messageType);
   }
 
-  @Override
-  public void exit() {
-    // TODO Auto-generated method stub
-
-  }
-
-  protected JButton getConfirmButton() {
-    return confirmButton;
-  }
 }

@@ -12,19 +12,20 @@ package suncertify.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 
 public abstract class AbstractWindow extends JFrame implements WindowManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
-  
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   private final JMenuBar menuBar = new JMenuBar();
   private final JMenu menu = new JMenu("Options");
   private final JMenuItem exitMenuItem = new JMenuItem("Exit");
@@ -37,20 +38,21 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
     exitMenuItem.addActionListener(action -> dispose());
     menu.add(exitMenuItem);
     menuBar.add(menu);
-    this.setJMenuBar(menuBar);
-  }
-
-  @Override
-  public void displayFatalException(final Exception exception) {
-    final String errorMessage = "Failed to launch application: " + exception.getMessage();
-    JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
-    dispose();
+    setJMenuBar(menuBar);
   }
 
   @Override
   public void displayMessage(final String message, final String title,final int messageType) {
+    LOGGER.info(message);
     JOptionPane.showMessageDialog(this, message, title,
         messageType);
+  }
+
+  @Override
+  public void handleFatalException(final String errorMessage, final Exception exception) {
+    LOGGER.log(Level.SEVERE,errorMessage, exception);
+    JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
+    dispose();
   }
 
 }

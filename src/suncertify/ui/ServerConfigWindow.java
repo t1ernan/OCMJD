@@ -10,7 +10,6 @@
 package suncertify.ui;
 
 import static suncertify.util.Utils.isInvalidPortNumber;
-import static suncertify.util.Utils.log;
 
 import suncertify.business.rmi.RmiServer;
 import suncertify.db.DBMainExtended;
@@ -19,7 +18,7 @@ import suncertify.db.DatabaseFactory;
 import suncertify.util.Config;
 
 import java.rmi.RemoteException;
-import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -32,7 +31,7 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
-
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   private final JLabel portLabel = new JLabel("Server Port: ");
   private final JLabel dbFileLabel = new JLabel("Database file location: ");
   private final JTextField portField = new JTextField(20);
@@ -101,11 +100,11 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
     try {
       final DBMainExtended data = DatabaseFactory.getDatabase(Config.getServerDBLocation());
       final int portNumber = Integer.parseInt(Config.getServerPortNumber());
-      log(Level.INFO, "Starting server...");
+      LOGGER.info("Starting server...");
       new RmiServer(data).startServer(portNumber);
       dispose();
     } catch (DatabaseException | RemoteException e) {
-      displayFatalException(e);
+      handleFatalException("Failed to launch application", e);
     }
   }
 

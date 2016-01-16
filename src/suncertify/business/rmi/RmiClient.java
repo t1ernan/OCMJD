@@ -23,12 +23,16 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * An RMI client used to connect and request data from an RMI server through the business methods
  * defined in {@link RmiService}, which it implements.
  */
 public class RmiClient implements ContractorService {
+
+  /** Global Logger. */
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   /** The ContractorService object used to request a service. */
   private final ContractorService service;
@@ -59,6 +63,7 @@ public class RmiClient implements ContractorService {
   @Override
   public void book(final Contractor contractor)
       throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
+    LOGGER.info("Attempting to book contractor: " + contractor.toString());
     service.book(contractor);
   }
 
@@ -68,6 +73,7 @@ public class RmiClient implements ContractorService {
   @Override
   public Map<Integer, Contractor> find(final ContractorPk primaryKey)
       throws ContractorNotFoundException, RemoteException {
+    LOGGER.info("Attempting to find contractors with : " + primaryKey.toString());
     return service.find(primaryKey);
   }
 }

@@ -1,24 +1,22 @@
 /*
  * ClientConfigWindow.java  1.0  14-Jan-2016
- * 
+ *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
  * Registration ID 292125773
- * 
+ *
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
 package suncertify.ui;
 
 import static suncertify.util.Utils.isInvalidPortNumber;
-import static suncertify.util.Utils.log;
 
 import suncertify.business.ContractorService;
 import suncertify.business.rmi.RmiClient;
 import suncertify.util.Config;
 
-import java.awt.BorderLayout;
 import java.rmi.RemoteException;
-import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -30,6 +28,7 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   private final JLabel ipAddressLabel = new JLabel("Server IP address: ");
   private final JLabel portLabel = new JLabel("Server Port: ");
   private final JTextField ipAddressField = new JTextField(20);
@@ -87,12 +86,12 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
     try {
       final String ipAddress = Config.getServerIPAddress();
       final int port = Integer.parseInt(Config.getClientPortNumber());
-      log(Level.INFO, "Starting client...");
+      LOGGER.info("Starting client...");
       final ContractorService service = new RmiClient(ipAddress, port);
       new ClientWindow(service);
       dispose();
     } catch (final RemoteException e) {
-      displayFatalException(e);
+      handleFatalException("Failed to launch application", e);
     }
   }
 
@@ -103,11 +102,11 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
     Config.saveProperties();
   }
 
-  private String getPortNumber() {
-    return portField.getText().trim();
-  }
-
   private String getIpAddress() {
     return ipAddressField.getText().trim();
+  }
+
+  private String getPortNumber() {
+    return portField.getText().trim();
   }
 }

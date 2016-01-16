@@ -19,7 +19,6 @@ import suncertify.domain.ContractorPk;
 import suncertify.util.ContractorBuilder;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +26,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 
 public final class ClientWindow extends AbstractWindow{
@@ -62,7 +59,7 @@ public final class ClientWindow extends AbstractWindow{
     scrollPane = new JScrollPane(table);
     bookButton.addActionListener(action -> bookSelectedContractor());
     searchButton.addActionListener(action -> filterTableOnSearchValues());
-    
+
     final JPanel bookPanel = new JPanel();
     bookPanel.add(scrollPane, BorderLayout.WEST);
     bookPanel.add(bookButton, BorderLayout.EAST);
@@ -79,6 +76,12 @@ public final class ClientWindow extends AbstractWindow{
     pack();
     setVisible(true);
     bookButton.setVisible(false);
+  }
+
+  @Override
+  public JPanel createContentPanel() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   public void hideButtonIfBooked() {
@@ -124,7 +127,7 @@ public final class ClientWindow extends AbstractWindow{
           updateRow(model, rowIndex, contractor);
           displayMessage("Contractor has successfully been booked!", "Booking Confirmation",JOptionPane.INFORMATION_MESSAGE);
         } catch (final RemoteException e) {
-          displayFatalException(e);
+          handleFatalException("", e);
         } catch (final ContractorNotFoundException e) {
           displayMessage(e.getMessage(), "No results", JOptionPane.WARNING_MESSAGE);
         } catch (final AlreadyBookedException e) {
@@ -138,17 +141,6 @@ public final class ClientWindow extends AbstractWindow{
     }
   }
 
-  private Map<Integer, Contractor> getAllRecords() {
-    try {
-      return service.find(new ContractorPk());
-    } catch (final RemoteException e) {
-      displayFatalException(e);
-    } catch (final ContractorNotFoundException e) {
-      displayMessage(e.getMessage(), "No results",JOptionPane.WARNING_MESSAGE);
-    }
-    return null;
-  }
-
   private void filterTableOnSearchValues() {
     try {
       final String name = getNameSearchValue();
@@ -156,11 +148,24 @@ public final class ClientWindow extends AbstractWindow{
       final ContractorPk primaryKey = new ContractorPk(name, location);
       final Map<Integer, Contractor> records = service.find(primaryKey);
       updateTable(model, records);
+      scrollPane.setVisible(true);
     } catch (final RemoteException e) {
-      displayFatalException(e);
+      handleFatalException("", e);
+    } catch (final ContractorNotFoundException e) {
+      scrollPane.setVisible(false);
+      displayMessage(e.getMessage(), "No results",JOptionPane.WARNING_MESSAGE);
+    }
+  }
+
+  private Map<Integer, Contractor> getAllRecords() {
+    try {
+      return service.find(new ContractorPk());
+    } catch (final RemoteException e) {
+      handleFatalException("", e);
     } catch (final ContractorNotFoundException e) {
       displayMessage(e.getMessage(), "No results",JOptionPane.WARNING_MESSAGE);
     }
+    return null;
   }
 
   private String getLocationSearchValue() {
@@ -174,12 +179,6 @@ public final class ClientWindow extends AbstractWindow{
   private void updateRow(final ContractorTableModel model, final int rowIndex, final Contractor contractor) {
     model.updateRow(rowIndex, contractor.toStringArray());
     bookButton.setVisible(false);
-  }
-
-  @Override
-  public JPanel createContentPanel() {
-    // TODO Auto-generated method stub
-    return null;
   }
 
 }

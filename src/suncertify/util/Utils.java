@@ -1,7 +1,5 @@
 package suncertify.util;
 
-import static suncertify.util.Constants.DEBUG_LOGGER;
-
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
@@ -17,7 +15,7 @@ import java.util.logging.SimpleFormatter;
  */
 public final class Utils {
 
-  private static final Logger log = Logger.getLogger(DEBUG_LOGGER);
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   /** The Constant CHARACTER_ENCODING. */
   private static final String ENCODING = "US-ASCII";
@@ -53,10 +51,19 @@ public final class Utils {
     return message.getBytes(Charset.forName(ENCODING));
   }
 
+  public static void intializeLogger(final Level level) {
+    LOGGER.setLevel(level);
+    LOGGER.setUseParentHandlers(false);
+    final ConsoleHandler handler = new ConsoleHandler();
+    handler.setLevel(level);
+    handler.setFormatter(new SimpleFormatter());
+    LOGGER.addHandler(handler);
+  }
+
   public static boolean isEightDigits(final String number) {
     return number.matches("[0-9]{8}");
   }
-  
+
   public static boolean isInvalidPortNumber(final String serverPortNumber) {
     return !serverPortNumber.matches("[0-9]+");
   }
@@ -118,18 +125,5 @@ public final class Utils {
     final byte[] unpaddedBytes = convertStringToBytes(fieldValue);
     final byte[] paddedBytes = addPadding(unpaddedBytes, fieldSize);
     dbFile.write(paddedBytes);
-  }
-
-  public static void intializeLogger(Level level) {
-    log.setLevel(level);
-    log.setUseParentHandlers(false);
-    final ConsoleHandler handler = new ConsoleHandler();
-    handler.setLevel(level);
-    log.addHandler(handler);
-  }
-
-  public static void log(Level level, String message) {
-    log.log(level, message);
-
   }
 }

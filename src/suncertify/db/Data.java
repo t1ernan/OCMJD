@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -52,8 +51,8 @@ public final class Data implements DBMainExtended {
   /** The 2 byte value which denotes a deleted record, specified in schema information. */
   private static final int DELETED_FLAG = 0x8000;
 
-  /** Logger used for Data class. */
-  private static final Logger LOGGER = Logger.getLogger(Data.class.getName());
+  /** Global Logger. */
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   /**
    * The in-memory cache which stores record numbers and fields values of the corresponding record.
@@ -159,9 +158,7 @@ public final class Data implements DBMainExtended {
         try {
           save();
         } catch (final IOException e) {
-          if (LOGGER.isLoggable(Level.SEVERE)) {
             LOGGER.severe("Could not save data: " + e.getMessage());
-          }
         }
       }));
     } catch (final IOException e) {

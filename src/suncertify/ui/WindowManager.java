@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 public interface WindowManager {
 
-  void displayFatalException(final Exception exception);
+  void handleFatalException(String errorMessage, final Exception exception);
 
   void displayMessage(final String message, final String title, final int messageType);
   

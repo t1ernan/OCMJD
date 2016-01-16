@@ -9,8 +9,6 @@
  */
 package suncertify.ui;
 
-import static suncertify.util.Utils.log;
-
 import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorService;
 import suncertify.db.DBMainExtended;
@@ -18,8 +16,7 @@ import suncertify.db.DatabaseException;
 import suncertify.db.DatabaseFactory;
 import suncertify.util.Config;
 
-import java.awt.BorderLayout;
-import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -32,7 +29,7 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
-
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   private final JLabel dbFileLabel = new JLabel("Database file location: ");
   private final JTextField dbFileField = new JTextField(20);
   private final JButton browseButton = new JButton("Browse");
@@ -91,12 +88,12 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
   public void launch() {
     try {
       final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDBLocation());
-      log(Level.INFO, "Starting standalone...");
+      LOGGER.info("Starting standalone...");
       final ContractorService service = new BasicContractorService(data);
       new ClientWindow(service);
       dispose();
     } catch (final DatabaseException e) {
-      displayFatalException(e);
+      handleFatalException("Failed to launch application", e);
     }
   }
 

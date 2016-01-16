@@ -1,5 +1,5 @@
 /*
- * BasicContractorService.java  1.0  12-Jan-2016
+ * BasicContractorService.java  1.0  15-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -26,7 +26,10 @@ import java.util.logging.Logger;
  * implementation for booking and finding contractors from a specified data object.
  */
 public class BasicContractorService implements ContractorService {
-  Logger log = Logger.getLogger("my.logger");
+
+  /** Global Logger. */
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
   /** The data access object used to interact with the database. */
   private final DBMainExtended data;
 
@@ -46,16 +49,14 @@ public class BasicContractorService implements ContractorService {
   @Override
   public void book(final Contractor contractor)
       throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
-    log.fine("booking contractor: "+ contractor.getPrimaryKey().getName());
+    LOGGER.info("Attempting to book contractor: " + contractor.toString());
     int recordNumber = -1;
     try {
       final String[] fieldValues = contractor.toStringArray();
       final String[] uniqueId = contractor.getPrimaryKey().toStringArray();
       recordNumber = data.find(uniqueId)[0];
-      log.fine("locking contractor: "+ contractor.getPrimaryKey().getName());
       data.lock(recordNumber);
       checkContractorIsAvailable(recordNumber);
-      log.fine("updating contractor: "+ contractor.getPrimaryKey().getName());
       data.update(recordNumber, fieldValues);
     } catch (final RecordNotFoundException e) {
       throw new ContractorNotFoundException("Contractor could not be found.", e);
@@ -68,11 +69,12 @@ public class BasicContractorService implements ContractorService {
    * {@inheritDoc}.
    */
   @Override
-  public Map<Integer, Contractor> find(final ContractorPk contractorPk)
+  public Map<Integer, Contractor> find(final ContractorPk primaryKey)
       throws ContractorNotFoundException, RemoteException {
+    LOGGER.info("Attempting to find contractors with : " + primaryKey.toString());
     final Map<Integer, Contractor> matchingRecords = new HashMap<>();
     try {
-      final String[] searchCriteria = contractorPk.toStringArray();
+      final String[] searchCriteria = primaryKey.toStringArray();
       final int[] recordNumbers = data.find(searchCriteria);
       for (final int recordNumber : recordNumbers) {
         final String[] fieldValues = data.read(recordNumber);

@@ -1,5 +1,5 @@
 /*
- * Contractor.java  1.0  13-Jan-2016
+ * Contractor.java  1.0  15-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -158,6 +158,15 @@ public class Contractor implements Serializable {
   }
 
   /**
+   * {@inheritDoc}.
+   */
+  @Override
+  public String toString() {
+    return "Contractor [primaryKey=" + primaryKey + ", specialties=" + specialties + ", rate="
+        + rate + ", customerId=" + customerId + ", size=" + size + "]";
+  }
+
+  /**
    * Converts the fields of the contractor object to a string array.
    *
    * @return the string[]
@@ -167,4 +176,6 @@ public class Contractor implements Serializable {
     final String location = primaryKey.getLocation();
     return new String[] { name, location, specialties, size, rate, customerId };
   }
+
+
 }

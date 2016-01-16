@@ -9,11 +9,8 @@
 
 package suncertify.db;
 
-import static suncertify.util.Utils.log;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.logging.Level;
 
 /**
  * A factory for retrieving and initializing a single instance of a data access object for the
@@ -44,7 +41,6 @@ public final class DatabaseFactory {
     if (!Files.exists(Paths.get(dbFilePath))) {
       throw new DatabaseException("Could not find the specified file: " + dbFilePath);
     }
-    log(Level.INFO, "Intializing database");
     dao.initialize(dbFilePath);
     return dao;
   }

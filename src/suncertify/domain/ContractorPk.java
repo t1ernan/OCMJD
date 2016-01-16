@@ -88,6 +88,14 @@ public class ContractorPk implements Serializable {
   }
 
   /**
+   * {@inheritDoc}.
+   */
+  @Override
+  public String toString() {
+    return "ContractorPk [name=" + name + ", location=" + location + "]";
+  }
+
+  /**
    * Converts the fields of the ContractorPk object to a string array.
    *
    * @return the string[]
@@ -95,4 +103,6 @@ public class ContractorPk implements Serializable {
   public String[] toStringArray() {
     return new String[] { name, location };
   }
+
+
 }

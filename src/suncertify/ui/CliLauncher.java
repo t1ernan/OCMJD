@@ -11,7 +11,6 @@
 package suncertify.ui;
 
 import static suncertify.util.Utils.intializeLogger;
-import static suncertify.util.Utils.log;
 
 import suncertify.business.ServiceException;
 
@@ -58,23 +57,23 @@ public final class CliLauncher {
 
     switch (numberOfArgs) {
 
-    case ZERO:
-      runClient();
-      break;
+      case ZERO:
+        runClient();
+        break;
 
-    case ONE:
-      final String mode = args[0];
-      if (isNetworked(mode)) {
-        runServer();
-      } else if (isNonNetworked(mode)) {
-        runStandalone();
-      } else {
-        throw new IllegalArgumentException("Argument " + mode + " is invalid: [server|alone]");
-      }
-      break;
+      case ONE:
+        final String mode = args[0];
+        if (isNetworked(mode)) {
+          runServer();
+        } else if (isNonNetworked(mode)) {
+          runStandalone();
+        } else {
+          throw new IllegalArgumentException("Argument " + mode + " is invalid: [server|alone]");
+        }
+        break;
 
-    default:
-      throw new IllegalArgumentException("Too many arguments, 1 argument maximum");
+      default:
+        throw new IllegalArgumentException("Too many arguments, 1 argument maximum");
     }
 
   }

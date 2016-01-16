@@ -11,11 +11,11 @@
 package suncertify.db;
 
 /**
- * The class DuplicateKeyException is a direct subclass of {@link DatabaseException}. It's thrown
- * when attempting to add a new entry to the database if the database already contains an
- * entry, which hasn't been marked as deleted, with the same primary key.
+ * The class DuplicateKeyException is thrown when attempting to add a new entry to the database if
+ * the database already contains an entry, which hasn't been marked as deleted, with the same
+ * primary key.
  */
-public class DuplicateKeyException extends DatabaseException {
+public class DuplicateKeyException extends Exception {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;

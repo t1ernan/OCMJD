@@ -15,7 +15,7 @@ package suncertify.business;
  * thrown when querying the database for a contractor which does not exist or has been marked as
  * deleted.
  */
-public class ContractorNotFoundException extends ServiceException {
+public class ContractorNotFoundException extends Exception {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
@@ -25,6 +25,16 @@ public class ContractorNotFoundException extends ServiceException {
    */
   public ContractorNotFoundException() {
     super();
+  }
+
+  /**
+   * Constructs a new ContractorNotFoundException with the specified detail message.
+   *
+   * @param message
+   *          the detail message.
+   */
+  public ContractorNotFoundException(final String message) {
+    super(message);
   }
 
   /**

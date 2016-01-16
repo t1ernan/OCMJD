@@ -29,9 +29,13 @@ public interface DBMainExtended extends DBMain {
    * @throws DuplicateKeyException
    *           If an existing record in the database, which has not been marked as deleted, contains
    *           the same key specified in the given data.
+   * @throws IllegalArgumentException
+   *           If {@code data} is {@code null}, number of elements in {@code data} exceeds
+   *           record fields or number of characters used in a field exceeds the max number of
+   *           characters permitted for that field.
    */
   @Override
-  int create(String[] data) throws DuplicateKeyException;
+  int create(String[] data) throws DuplicateKeyException, IllegalArgumentException;
 
   /**
    * Deletes a record, making the record number and associated disk storage available for reuse.
@@ -53,9 +57,13 @@ public interface DBMainExtended extends DBMain {
    * @return an array of record numbers that match the specified criteria.
    * @throws RecordNotFoundException
    *           If the specified record does not exist or is marked as deleted in the database.
+   * @throws IllegalArgumentException
+   *           If {@code criteria} is {@code null}, number of elements in {@code data} exceeds
+   *           record fields or number of characters used in a field exceeds the max number of
+   *           characters permitted for that field.
    */
   @Override
-  int[] find(String[] criteria) throws RecordNotFoundException;
+  int[] find(String[] criteria) throws RecordNotFoundException, IllegalArgumentException;
 
   /**
    * This method is responsible for initializing field variables, loading the contents of the
@@ -65,11 +73,13 @@ public interface DBMainExtended extends DBMain {
    *
    * @param dbFilePath
    *          the filePath of the database file.
-   * @throws DatabaseException
+   * @throws DatabaseAccessException
    *           If the specified database file does not contain the expected magic cookie value or
    *           some I/O related exception occurred when attempting to read the file.
+   * @throws IllegalArgumentException
+   *           If {@code dbFilePath} is {@code null}
    */
-  void initialize(String dbFilePath) throws DatabaseException;
+  void initialize(String dbFilePath) throws DatabaseAccessException, IllegalArgumentException;
 
   /**
    * Determines if a record is currently locked. Returns true if the record is locked, false
@@ -134,8 +144,12 @@ public interface DBMainExtended extends DBMain {
    *          the record number
    * @param data
    *          a string array where each element is a record value
+   * @throws IllegalArgumentException
+   *           If {@code data} is {@code null}, number of elements in {@code data} exceeds
+   *           record fields or number of characters used in a field exceeds the max number of
+   *           characters permitted for that field.
    */
   @Override
-  void update(int recNo, String[] data);
+  void update(int recNo, String[] data) throws IllegalArgumentException;
 
 }

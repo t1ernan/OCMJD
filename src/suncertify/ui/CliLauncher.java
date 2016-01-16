@@ -12,9 +12,6 @@ package suncertify.ui;
 
 import static suncertify.util.Utils.intializeLogger;
 
-import suncertify.business.ServiceException;
-
-import java.rmi.RemoteException;
 import java.util.logging.Level;
 
 /**
@@ -45,12 +42,8 @@ public final class CliLauncher {
    *
    * @param args
    *          the arguments
-   * @throws RemoteException
-   *           the remote exception
-   * @throws ServiceException
-   *           the service exception
    */
-  public static void main(final String[] args) throws RemoteException, ServiceException {
+  public static void main(final String[] args) throws IllegalArgumentException {
     intializeLogger(Level.ALL);
 
     final int numberOfArgs = args.length;

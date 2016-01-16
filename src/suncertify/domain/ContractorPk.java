@@ -13,9 +13,8 @@ package suncertify.domain;
 import java.io.Serializable;
 
 /**
- * The primary key used to uniquely identify different contractors comprised of a
- * contractor's name and location. A component of the {@link Contractor} class. Implements
- * {@link Serializable}.
+ * The primary key used to uniquely identify different contractors comprised of a contractor's name
+ * and location. A component of the {@link Contractor} class. Implements {@link Serializable}.
  */
 public class ContractorPk implements Serializable {
 
@@ -103,6 +102,5 @@ public class ContractorPk implements Serializable {
   public String[] toStringArray() {
     return new String[] { name, location };
   }
-
 
 }

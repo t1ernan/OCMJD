@@ -42,16 +42,16 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
   }
 
   @Override
-  public void displayMessage(final String message, final String title,final int messageType) {
+  public void displayMessage(final String message, final String title, final int messageType) {
     LOGGER.info(message);
-    JOptionPane.showMessageDialog(this, message, title,
-        messageType);
+    JOptionPane.showMessageDialog(this, message, title, messageType);
   }
 
   @Override
   public void handleFatalException(final String errorMessage, final Exception exception) {
-    LOGGER.log(Level.SEVERE,errorMessage, exception);
-    JOptionPane.showMessageDialog(this, errorMessage, "System Error", JOptionPane.ERROR_MESSAGE);
+    LOGGER.log(Level.SEVERE, errorMessage, exception);
+    JOptionPane.showMessageDialog(this, errorMessage, "Unexpected System Error",
+        JOptionPane.ERROR_MESSAGE);
     dispose();
   }
 

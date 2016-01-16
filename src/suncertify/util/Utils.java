@@ -43,6 +43,7 @@ public final class Utils {
     return paddedBytes;
   }
 
+
   public static String convertBytesToString(final byte[] valueBytes) throws IOException {
     return new String(valueBytes, Charset.forName(ENCODING));
   }

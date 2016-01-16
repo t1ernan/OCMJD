@@ -41,15 +41,15 @@ public class RmiClient implements ContractorService {
    * Constructs a new RMI client which will request services from the RMI server with the specified
    * IP address and port number.
    *
-   * @param serverIpAddress
-   *          the IP address of the RMI server.
+   * @param host
+   *          the host name or IP address of the RMI server.
    * @param portNumber
    *          the port number of the RMI server.
    * @throws RemoteException
    *           if an RMI communication-related exception occurs.
    */
-  public RmiClient(final String serverIpAddress, final int portNumber) throws RemoteException {
-    final Registry registry = LocateRegistry.getRegistry(serverIpAddress, portNumber);
+  public RmiClient(final String host, final int portNumber) throws RemoteException {
+    final Registry registry = LocateRegistry.getRegistry(host, portNumber);
     try {
       service = (ContractorService) registry.lookup(RMI_ID);
     } catch (final NotBoundException e) {
@@ -61,9 +61,12 @@ public class RmiClient implements ContractorService {
    * {@inheritDoc}.
    */
   @Override
-  public void book(final Contractor contractor)
-      throws ContractorNotFoundException, AlreadyBookedException, RemoteException {
-    LOGGER.info("Attempting to book contractor: " + contractor.toString());
+  public void book(final Contractor contractor) throws ContractorNotFoundException,
+      AlreadyBookedException, RemoteException, IllegalArgumentException {
+    if (contractor == null) {
+      throw new IllegalArgumentException("Contractor cannot be null");
+    }
+    LOGGER.info(this.getClass().getSimpleName() + ": Attempting to book contractor: " + contractor.toString());
     service.book(contractor);
   }
 
@@ -72,8 +75,11 @@ public class RmiClient implements ContractorService {
    */
   @Override
   public Map<Integer, Contractor> find(final ContractorPk primaryKey)
-      throws ContractorNotFoundException, RemoteException {
-    LOGGER.info("Attempting to find contractors with : " + primaryKey.toString());
+      throws ContractorNotFoundException, RemoteException, IllegalArgumentException {
+    if (primaryKey == null) {
+      throw new IllegalArgumentException("ContractorPk cannot be null");
+    }
+    LOGGER.info(this.getClass().getSimpleName() + ": Attempting to find contractors with : " + primaryKey.toString());
     return service.find(primaryKey);
   }
 }

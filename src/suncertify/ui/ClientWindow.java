@@ -10,6 +10,7 @@
 package suncertify.ui;
 
 import static suncertify.util.Utils.isEightDigits;
+import static suncertify.util.Constants.EMPTY_STRING;
 
 import suncertify.business.AlreadyBookedException;
 import suncertify.business.ContractorNotFoundException;
@@ -32,7 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-public final class ClientWindow extends AbstractWindow{
+public final class ClientWindow extends AbstractWindow {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
@@ -49,17 +50,22 @@ public final class ClientWindow extends AbstractWindow{
   private final JTextField locationField = new JTextField(20);
   private final JButton bookButton = new JButton("Book");
   private final JButton searchButton = new JButton("Search");
+  private final JButton clearButton = new JButton("Clear");
 
   public ClientWindow(final ContractorService service) {
     super("Bodgitt & Scarper Booking System");
     this.service = service;
-    model = new ContractorTableModel(columnNames,
-        recordsToArrayArray(getAllRecords()));
-    table = new ContractorTable(this,model);
+    model = new ContractorTableModel(columnNames, recordsToArrayArray(getAllRecords()));
+    table = new ContractorTable(this, model);
     scrollPane = new JScrollPane(table);
     bookButton.addActionListener(action -> bookSelectedContractor());
     searchButton.addActionListener(action -> filterTableOnSearchValues());
-
+    clearButton.addActionListener(action -> {
+      updateTable(model, getAllRecords());
+      nameField.setText(EMPTY_STRING);
+      locationField.setText(EMPTY_STRING);
+      scrollPane.setVisible(true);
+    });
     final JPanel bookPanel = new JPanel();
     bookPanel.add(scrollPane, BorderLayout.WEST);
     bookPanel.add(bookButton, BorderLayout.EAST);
@@ -71,6 +77,7 @@ public final class ClientWindow extends AbstractWindow{
     searchPanel.add(locationLabel);
     searchPanel.add(locationField);
     searchPanel.add(searchButton, BorderLayout.EAST);
+    searchPanel.add(clearButton, BorderLayout.EAST);
     getContentPane().add(searchPanel, BorderLayout.NORTH);
 
     pack();
@@ -125,35 +132,39 @@ public final class ClientWindow extends AbstractWindow{
           contractor.setCustomerId(customerId.get());
           service.book(contractor);
           updateRow(model, rowIndex, contractor);
-          displayMessage("Contractor has successfully been booked!", "Booking Confirmation",JOptionPane.INFORMATION_MESSAGE);
+          displayMessage("Contractor has been successfully booked!", "Booking Confirmation",
+              JOptionPane.INFORMATION_MESSAGE);
         } catch (final RemoteException e) {
-          handleFatalException("", e);
+          handleFatalException("Could not connect to server. Closing application.", e);
         } catch (final ContractorNotFoundException e) {
-          displayMessage(e.getMessage(), "No results", JOptionPane.WARNING_MESSAGE);
+          displayMessage("The selected contractor no longer exists.", "No Records Available",
+              JOptionPane.WARNING_MESSAGE);
         } catch (final AlreadyBookedException e) {
           updateTable(model, getAllRecords());
           filterTableOnSearchValues();
-          displayMessage(e.getMessage(), "Contractor Not Available",JOptionPane.WARNING_MESSAGE);
+          displayMessage("The selected contractor has already been booked.",
+              "Contractor Not Available", JOptionPane.WARNING_MESSAGE);
         }
       } else {
-        displayMessage("Customer ID must be an 8 digit number", "Invalid Input",JOptionPane.INFORMATION_MESSAGE);
+        displayMessage("Customer ID must be an 8 digit number", "Invalid Input",
+            JOptionPane.INFORMATION_MESSAGE);
       }
     }
   }
 
   private void filterTableOnSearchValues() {
+    final String name = getNameSearchValue();
+    final String location = getLocationSearchValue();
     try {
-      final String name = getNameSearchValue();
-      final String location = getLocationSearchValue();
       final ContractorPk primaryKey = new ContractorPk(name, location);
       final Map<Integer, Contractor> records = service.find(primaryKey);
       updateTable(model, records);
       scrollPane.setVisible(true);
     } catch (final RemoteException e) {
-      handleFatalException("", e);
+      handleFatalException("Could not connect to server. Closing application.", e);
     } catch (final ContractorNotFoundException e) {
       scrollPane.setVisible(false);
-      displayMessage(e.getMessage(), "No results",JOptionPane.WARNING_MESSAGE);
+      displayMessage("Could not find contractor", "No Records Available", JOptionPane.WARNING_MESSAGE);
     }
   }
 
@@ -161,9 +172,10 @@ public final class ClientWindow extends AbstractWindow{
     try {
       return service.find(new ContractorPk());
     } catch (final RemoteException e) {
-      handleFatalException("", e);
+      handleFatalException("Could not connect to server. Closing application.", e);
     } catch (final ContractorNotFoundException e) {
-      displayMessage(e.getMessage(), "No results",JOptionPane.WARNING_MESSAGE);
+      displayMessage("The selected contractor no longer exists.", "No Records Available",
+          JOptionPane.WARNING_MESSAGE);
     }
     return null;
   }
@@ -176,7 +188,8 @@ public final class ClientWindow extends AbstractWindow{
     return nameField.getText().trim();
   }
 
-  private void updateRow(final ContractorTableModel model, final int rowIndex, final Contractor contractor) {
+  private void updateRow(final ContractorTableModel model, final int rowIndex,
+      final Contractor contractor) {
     model.updateRow(rowIndex, contractor.toStringArray());
     bookButton.setVisible(false);
   }

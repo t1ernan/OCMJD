@@ -33,13 +33,16 @@ public final class DatabaseFactory {
    * @param dbFilePath
    *          the file path of the database file.
    * @return the single instance of the data access object.
-   * @throws DatabaseException
+   * @throws DatabaseAccessException
    *           if a databaseManager instance could not be created or if the specified file does not
    *           exist.
    */
-  public static DBMainExtended getDatabase(final String dbFilePath) throws DatabaseException {
+  public static DBMainExtended getDatabase(final String dbFilePath) throws DatabaseAccessException {
+    if (dbFilePath == null) {
+      throw new IllegalArgumentException("The file path to the database cannot be null");
+    }
     if (!Files.exists(Paths.get(dbFilePath))) {
-      throw new DatabaseException("Could not find the specified file: " + dbFilePath);
+      throw new DatabaseAccessException("Could not find the specified file: " + dbFilePath);
     }
     dao.initialize(dbFilePath);
     return dao;

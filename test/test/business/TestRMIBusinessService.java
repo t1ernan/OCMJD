@@ -17,7 +17,7 @@ import suncertify.business.rmi.RmiClient;
 import suncertify.business.rmi.RmiServer;
 import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMainExtended;
-import suncertify.db.DatabaseException;
+import suncertify.db.DatabaseAccessException;
 import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
 import suncertify.util.ContractorBuilder;
@@ -76,14 +76,14 @@ public class TestRMIBusinessService {
 
 	private static DBMainExtended data;
 
-	public static void main(final String[] args) throws RemoteException, DatabaseException {
+	public static void main(final String[] args) throws RemoteException, DatabaseAccessException {
 		// start your RMI-server
 		final ContractorService service = new RmiServer(DatabaseFactory.getDatabase(DEFAULT_DB_LOCATION_SERVER));
 		((RmiServer) service).startServer(DEFAULT_PORT_NUMBER);
 		new TestRMIBusinessService(data).startTests();
 	}
 
-	public TestRMIBusinessService(final DBMainExtended data) throws DatabaseException {
+	public TestRMIBusinessService(final DBMainExtended data) throws DatabaseAccessException {
 		TestRMIBusinessService.data = DatabaseFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 

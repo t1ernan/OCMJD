@@ -12,12 +12,12 @@ package suncertify.db;
 
 import static suncertify.util.Constants.EMPTY_STRING;
 import static suncertify.util.Constants.RECORD_FIELDS;
-import static suncertify.util.Constants.SEARCH_FIELDS;
 import static suncertify.util.Utils.readString;
 import static suncertify.util.Utils.writeString;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -63,7 +63,7 @@ public final class Data implements DBMainExtended {
   private final Set<Integer> lockedRecords = new HashSet<>();
 
   /** The file path of the database file. */
-  private String dbFilePath;
+  private String dbFilePath = EMPTY_STRING;
 
   /** The record offset, specified in the schema information. */
   private int recordOffset;
@@ -84,6 +84,23 @@ public final class Data implements DBMainExtended {
   }
 
   /**
+   * Compares the primary keys, first two elements, of the two string arrays arguments. Returns true
+   * if respective elements are equal.
+   *
+   *
+   * @param existingData
+   *          the field values of a record already stored in the database.
+   * @param newData
+   *          the field values of a new record not already stored in the database.
+   * @return true, if primary keys values are equal, ignoring case considerations; false otherwise.
+   */
+  private static boolean comparePrimaryKeys(final String[] existingData, final String[] newData) {
+    final String existingKey = existingData[0] + existingData[1];
+    final String newKey = newData[0] + newData[1];
+    return existingKey.equals(newKey);
+  }
+
+  /**
    * Clear.
    */
   public void clear() {
@@ -94,14 +111,13 @@ public final class Data implements DBMainExtended {
    * {@inheritDoc}.
    */
   @Override
-  public synchronized int create(final String[] data) throws DuplicateKeyException {
+  public synchronized int create(final String[] data)
+      throws DuplicateKeyException, IllegalArgumentException {
     validateFields(data);
     checkForDuplicateKey(data);
     final int recordNumber = recordCache.entrySet().stream()
-                             .filter(entry -> entry.getValue() == null)
-                             .mapToInt(entry -> entry.getKey())
-                             .findAny()
-                             .orElse(recordCache.size());
+        .filter(entry -> entry.getValue() == null).mapToInt(entry -> entry.getKey()).findAny()
+        .orElse(recordCache.size());
     recordCache.put(recordNumber, data);
     return recordNumber;
   }
@@ -118,20 +134,16 @@ public final class Data implements DBMainExtended {
    * {@inheritDoc}.
    */
   @Override
-  public synchronized int[] find(final String[] criteria) throws RecordNotFoundException {
+  public synchronized int[] find(final String[] criteria)
+      throws RecordNotFoundException, IllegalArgumentException {
     validateFields(criteria);
-    if (criteria.length != SEARCH_FIELDS) {
-      throw new IllegalArgumentException(
-          "Search criteria should contain Name and Location values only!");
-    }
     final int[] recordNumbers = recordCache.entrySet().stream()
-                                .filter(entry -> entry.getValue() != null)
-                                .filter(entry -> doFieldsMatchCriteria(entry.getValue(), criteria))
-                                .mapToInt(entry -> entry.getKey())
-                                .toArray();
+        .filter(entry -> entry.getValue() != null)
+        .filter(entry -> doFieldsMatchCriteria(entry.getValue(), criteria))
+        .mapToInt(entry -> entry.getKey()).toArray();
     if (recordNumbers.length == 0) {
-      throw new RecordNotFoundException("No matching records for selected criteria: Name="
-          + criteria[0] + " , Location=" + criteria[1]);
+      throw new RecordNotFoundException(
+          "No matching records for selected criteria: " + Arrays.toString(criteria));
     }
     return recordNumbers;
   }
@@ -145,11 +157,12 @@ public final class Data implements DBMainExtended {
    * {@inheritDoc}.
    */
   @Override
-  public synchronized void initialize(final String dbFileLocation) throws DatabaseException {
+  public synchronized void initialize(final String dbFileLocation)
+      throws DatabaseAccessException, IllegalArgumentException {
     try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
       if (raf.readInt() != MAGIC_COOKIE) {
-        throw new DatabaseException("Could not read data from the specified file: " + dbFileLocation
-            + ". Invalid magic cookie value");
+        throw new DatabaseAccessException("Could not read data from the specified file: "
+            + dbFileLocation + ". Invalid magic cookie value");
       }
       dbFilePath = dbFileLocation;
       recordOffset = raf.readInt();
@@ -158,12 +171,12 @@ public final class Data implements DBMainExtended {
         try {
           save();
         } catch (final IOException e) {
-            LOGGER.severe("Could not save data: " + e.getMessage());
+          LOGGER.severe("Could not save data: " + e.getMessage());
         }
       }));
     } catch (final IOException e) {
-      throw new DatabaseException("Could not read data from the specified file: " + dbFileLocation,
-          e);
+      throw new DatabaseAccessException(
+          "Could not read data from the specified file: " + dbFileLocation, e);
     }
   }
 
@@ -176,9 +189,8 @@ public final class Data implements DBMainExtended {
    * @return true, if the record is not stored in the database or has been marked as deleted.
    */
   public boolean isInvalidRecord(final int recNo) {
-    return recordCache.entrySet().stream()
-           .filter(entry -> entry.getValue() != null)
-           .noneMatch(entry -> entry.getKey() == recNo);
+    return recordCache.entrySet().stream().filter(entry -> entry.getValue() != null)
+        .noneMatch(entry -> entry.getKey() == recNo);
   }
 
   /**
@@ -239,7 +251,8 @@ public final class Data implements DBMainExtended {
   /**
    * {@inheritDoc}.
    *
-   * <p>This method will be called when the application terminates in order to persist any database
+   * <p>
+   * This method will be called when the application terminates in order to persist any database
    * changes to the database file.
    */
   @Override
@@ -312,40 +325,18 @@ public final class Data implements DBMainExtended {
    *           if the primary key of the specified {@code data} already exists in the database.
    */
   private void checkForDuplicateKey(final String[] data) throws DuplicateKeyException {
-    final boolean isDuplicate = recordCache.entrySet().stream()
-                                .map(entry -> entry.getValue())
-                                .filter(values -> values != null)
-                                .anyMatch(values -> comparePrimaryKeys(values, data));
+    final boolean isDuplicate = recordCache.entrySet().stream().map(entry -> entry.getValue())
+        .filter(values -> values != null).anyMatch(values -> comparePrimaryKeys(values, data));
     if (isDuplicate) {
       throw new DuplicateKeyException("Record already exists");
     }
   }
 
   /**
-   * Compares the primary keys, first two elements, of the two string arrays arguments ignoring case
-   * considerations. Returns true if keys are equal.
-   *
-   * <p>Note: Primary keys are case insensitive.
-   *
-   * @param existingData
-   *          the field values of a record already stored in the database.
-   * @param newData
-   *          the field values of a new record not already stored in the database.
-   * @return true, if primary keys values are equal, ignoring case considerations; false otherwise.
-   */
-  private boolean comparePrimaryKeys(final String[] existingData, final String[] newData) {
-    final String existingKey = existingData[0] + existingData[1];
-    final String newKey = newData[0] + newData[1];
-    return existingKey.equalsIgnoreCase(newKey);
-
-  }
-
-  /**
    * Checks if each element of the specified {@code fieldValues} begins with the corresponding
-   * element of the specified {@code searchValues}. If the two specified arrays differ in length,
-   * the search will terminate after the last element of {@code searchValues} is evaluated. This is
-   * a case insensitive search. Returns true if each element of {@code fieldValues} begins with the
-   * corresponding element of {@code searchValues}.
+   * element of the specified {@code searchValues}. This is a case insensitive search. Returns true
+   * if each element of {@code fieldValues} begins with the corresponding element of
+   * {@code searchValues}.
    *
    *
    * @param fieldValues
@@ -353,7 +344,7 @@ public final class Data implements DBMainExtended {
    * @param searchValues
    *          a string array where each element is a search value
    * @return true, if each element of {@code fieldValues} begins with the corresponding element of
-   *         {@code searchValues}.
+   *         {@code searchValues} ignoring case considerations.
    */
   private boolean doFieldsMatchCriteria(final String[] fieldValues, final String[] searchValues) {
     boolean isMatch = true;
@@ -378,10 +369,18 @@ public final class Data implements DBMainExtended {
    * @param fieldValues
    *          a string array where each element is a record value.
    * @throws IllegalArgumentException
-   *           if the number of characters used in a field exceeds the max number of characters
-   *           permitted for that field
+   *           if the {@code fieldValues} is null, number of elements exceeds record fields or
+   *           number of characters used in a field exceeds the max number of characters permitted
+   *           for that field
    */
   private void validateFields(final String[] fieldValues) {
+    if (fieldValues == null) {
+      throw new IllegalArgumentException("Record values cannot be null");
+    }
+    if (fieldValues.length > RECORD_FIELDS) {
+      throw new IllegalArgumentException("Number of elements exceed number of record fields");
+    }
+
     for (int index = 0; index < fieldValues.length; index++) {
       final int fieldSize = fieldValues[index].length();
       final int maxFieldSize = MAX_FIELD_SIZES[index];
@@ -398,7 +397,8 @@ public final class Data implements DBMainExtended {
    * of the specified {@code fieldValues} is a record value. If the specified {@code fieldValues}
    * argument is {@code null}, the record will be filled with blank space ASCII characters.
    *
-   * <p>If any value of a field is less that the size specified for that field in the schema
+   * <p>
+   * If any value of a field is less that the size specified for that field in the schema
    * information, the remaining bytes of the field will be padded with blank space ASCII characters.
    *
    * @param raf

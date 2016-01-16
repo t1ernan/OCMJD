@@ -11,11 +11,10 @@
 package suncertify.db;
 
 /**
- * The class RecordNotFoundException is a direct subclass of {@link DatabaseException}. It's thrown
- * when querying the database for a record which does not exist or has been marked as deleted in the
- * database.
+ * The class RecordNotFoundException is thrown when querying the database for a record which does
+ * not exist or has been marked as deleted in the database.
  */
-public class RecordNotFoundException extends DatabaseException {
+public class RecordNotFoundException extends Exception {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;

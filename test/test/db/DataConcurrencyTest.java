@@ -8,7 +8,7 @@ import java.util.List;
 
 import suncertify.db.DatabaseFactory;
 import suncertify.db.DBMain;
-import suncertify.db.DatabaseException;
+import suncertify.db.DatabaseAccessException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPk;
 
@@ -212,11 +212,11 @@ public class DataConcurrencyTest {
 
 	}
 
-	public static void main(final String[] args) throws DatabaseException {
+	public static void main(final String[] args) throws DatabaseAccessException {
 		new DataConcurrencyTest(data).startTests();
 	}
 
-	public DataConcurrencyTest(final DBMain data) throws DatabaseException {
+	public DataConcurrencyTest(final DBMain data) throws DatabaseAccessException {
 		DataConcurrencyTest.data = DatabaseFactory.getDatabase(DEFAULT_DB_LOCATION_STANDALONE);
 	}
 

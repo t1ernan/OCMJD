@@ -12,7 +12,7 @@ package suncertify.ui;
 import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorService;
 import suncertify.db.DBMainExtended;
-import suncertify.db.DatabaseException;
+import suncertify.db.DatabaseAccessException;
 import suncertify.db.DatabaseFactory;
 import suncertify.util.Config;
 
@@ -92,7 +92,7 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
       final ContractorService service = new BasicContractorService(data);
       new ClientWindow(service);
       dispose();
-    } catch (final DatabaseException e) {
+    } catch (final DatabaseAccessException e) {
       handleFatalException("Failed to launch application", e);
     }
   }

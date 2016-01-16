@@ -13,7 +13,7 @@ import static suncertify.util.Utils.isInvalidPortNumber;
 
 import suncertify.business.rmi.RmiServer;
 import suncertify.db.DBMainExtended;
-import suncertify.db.DatabaseException;
+import suncertify.db.DatabaseAccessException;
 import suncertify.db.DatabaseFactory;
 import suncertify.util.Config;
 
@@ -103,8 +103,10 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
       LOGGER.info("Starting server...");
       new RmiServer(data).startServer(portNumber);
       dispose();
-    } catch (DatabaseException | RemoteException e) {
-      handleFatalException("Failed to launch application", e);
+    } catch (final RemoteException e) {
+      handleFatalException("Failed to launch application: Could not connect to server", e);
+    } catch (final DatabaseAccessException e) {
+      handleFatalException("Failed to launch application: Could not access database", e);
     }
   }
 

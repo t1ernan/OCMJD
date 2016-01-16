@@ -11,11 +11,10 @@
 package suncertify.business;
 
 /**
- * The class AlreadyBookedException is a direct subclass of {@link ServiceException}. It's thrown
- * when attempting to book a contractor which has been marked as booked in the database, i.e. the
- * contractor's customer ID field is not empty.
+ * The class AlreadyBookedException is thrown when attempting to book a contractor which has been
+ * marked as booked in the database, i.e. the contractor's customer ID field is not empty.
  */
-public class AlreadyBookedException extends ServiceException {
+public class AlreadyBookedException extends Exception {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;

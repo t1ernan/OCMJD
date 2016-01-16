@@ -21,7 +21,8 @@ import java.util.Map;
  * query the database. The business methods defined in this interface will be exposed to the
  * presentation layer, which will allow users of the application to query the database indirectly.
  *
- * <p>The presentation layer should <i>never</i> have direct access to the database layer under any
+ * <p>
+ * The presentation layer should <i>never</i> have direct access to the database layer under any
  * circumstances. The presentation layer should call the methods defined in the services layer to
  * retrieve data from the database.
  */
@@ -29,8 +30,8 @@ public interface ContractorService {
 
   /**
    * Book the specified {@code contractor}. Updates the contractor record in the database with the
-   * new contractor data. The contractor record updated will have the same {@code primaryKey}
-   * value as the specified contractor's {@code primaryKey} field.
+   * new contractor data. The contractor record updated will have the same {@code primaryKey} value
+   * as the specified contractor's {@code primaryKey} field.
    *
    * @param contractor
    *          the contractor to book.
@@ -40,25 +41,28 @@ public interface ContractorService {
    *           if the specified {@code contractor} has already been booked.
    * @throws RemoteException
    *           if an RMI communication-related exception occurs.
+   * @throws IllegalArgumentException
+   *           if {@code contractor} is null.
    */
-  void book(final Contractor contractor)
-      throws ContractorNotFoundException, AlreadyBookedException, RemoteException;
+  void book(final Contractor contractor) throws ContractorNotFoundException, AlreadyBookedException,
+      RemoteException, IllegalArgumentException;
 
   /**
    * Find all contractor records with the specified {@code primaryKey}. This method uses the
    * {@code name} and {@code location} fields in the {@code primaryKey} to find all contractors with
    * a specific name and/or location. Returns all matching contractors in a map, with the record
-   * number of the contractor as the key and the contractor record as the value.<br>
+   * number of the contractor as the key and the contractor record as the value. This is a case
+   * sensitive search.<br>
    * <br>
    * <b>Example 1:</b> A {@code primaryKey} with {@code name}="Fred" and {@code location}="Paris"
-   * will return all non-deleted records of contractors who's name begins with "Fred", and location
-   * begins with "Paris".<br>
+   * will return all non-deleted records of contractors who's name is "Fred", and location is
+   * "Paris".<br>
    * <br>
    * <b>Example 2:</b> A {@code primaryKey} with {@code name}="Fred" and {@code location}="" will
-   * return all non-deleted records of contractors who's name begins with "Fred". <br>
+   * return all non-deleted records of contractors who's name is "Fred". <br>
    * <br>
    * <b>Example 3:</b> A {@code primaryKey} with {@code name}="" and {@code location}="Paris" will
-   * return all non-deleted records of contractors who's location begins with "Paris".<br>
+   * return all non-deleted records of contractors who's location is "Paris".<br>
    * <br>
    * <b>Example 4:</b> A {@code primaryKey} with {@code name}="" and {@code location}="" will return
    * all non-deleted contractor records available.
@@ -71,7 +75,9 @@ public interface ContractorService {
    *           if no contractor with the specified {@code primaryKey} could be found.
    * @throws RemoteException
    *           if an RMI communication-related exception occurs.
+   * @throws IllegalArgumentException
+   *           if {@code ContractorPk} is null.
    */
   Map<Integer, Contractor> find(final ContractorPk primaryKey)
-      throws ContractorNotFoundException, RemoteException;
+      throws ContractorNotFoundException, RemoteException, IllegalArgumentException;
 }

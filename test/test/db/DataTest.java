@@ -6,9 +6,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static test.util.Constants.DB_FILE_NAME;
 
-import suncertify.db.DBMain;
+import suncertify.db.DBMainExtended;
 import suncertify.db.Data;
-import suncertify.db.DatabaseException;
+import suncertify.db.DatabaseAccessException;
 import suncertify.db.DatabaseFactory;
 import suncertify.db.DuplicateKeyException;
 import suncertify.db.RecordNotFoundException;
@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public class DataTest {
 
-  private DBMain data;
+  private DBMainExtended data;
 
   private final String[] oldValues = new String[] { "Dogs With Tools", "Smallville", "Roofing", "7",
       "$35.00", "" };
@@ -43,13 +43,13 @@ public class DataTest {
       "Smack my Itch up", "Gotham" };
   private final String[] searchCriteria_InvalidName_NoLocation = new String[] { "Smack my Itch up",
       "" };
-  private final String[] searchCriteria_TooManyFields = new String[] { "Smack my Itch up", "", "" };
+  private final String[] searchCriteria_TooManyFields = new String[] { "Smack my Itch up", "", "", "", "", "", "" };
 
   private final int VALID_RECORD_NUMBER = 0;
   private final int INVALID_RECORD_NUMBER = 50;
 
   @Before
-  public void setup() throws DatabaseException {
+  public void setup() throws DatabaseAccessException {
     data = DatabaseFactory.getDatabase(DB_FILE_NAME);
   }
 
@@ -60,7 +60,7 @@ public class DataTest {
   }
 
   @Test
-  public void testCreate_DeletedKey_DeletedRecordsInCache() throws DatabaseException {
+  public void testCreate_DeletedKey_DeletedRecordsInCache() throws DuplicateKeyException, RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     assertEquals(27, ((Data) data).getValidEntryStream().count());
     assertEquals(VALID_RECORD_NUMBER, data.create(oldValues));
@@ -69,18 +69,18 @@ public class DataTest {
   }
 
   @Test(expected = DuplicateKeyException.class)
-  public void testCreate_ExistingKey_DeletedRecordsInCache() throws DatabaseException {
+  public void testCreate_ExistingKey_DeletedRecordsInCache() throws DuplicateKeyException {
     data.delete(4);
     data.create(oldValues);
   }
 
   @Test(expected = DuplicateKeyException.class)
-  public void testCreate_ExistingKey_NoDeletedRecordsInCache() throws DatabaseException {
+  public void testCreate_ExistingKey_NoDeletedRecordsInCache() throws DuplicateKeyException {
     data.create(oldValues);
   }
 
   @Test
-  public void testCreate_NewKey_DeletedRecordsInCache() throws DatabaseException {
+  public void testCreate_NewKey_DeletedRecordsInCache() throws DuplicateKeyException, RecordNotFoundException {
     data.delete(4);
     assertEquals(27, ((Data) data).getValidEntryStream().count());
     assertEquals(4, data.create(newValues));
@@ -89,7 +89,7 @@ public class DataTest {
   }
 
   @Test
-  public void testCreate_NewKey_NoDeletedRecordsInCache() throws DatabaseException {
+  public void testCreate_NewKey_NoDeletedRecordsInCache() throws DuplicateKeyException, RecordNotFoundException {
     final int newRecordNumber = (int) ((Data) data).getValidEntryStream().count();
     assertEquals(28, newRecordNumber);
     assertEquals(28, data.create(newValues));
@@ -98,137 +98,137 @@ public class DataTest {
   }
 
   @Test
-  public void testDelete_ValidRecord() throws DatabaseException {
+  public void testDelete_ValidRecord() throws DatabaseAccessException {
     data.delete(VALID_RECORD_NUMBER);
     assertEquals(27, ((Data) data).getValidEntryStream().count());
     assertTrue(((Data) data).isInvalidRecord(VALID_RECORD_NUMBER));
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_InvalidName_InvalidLocation() throws DatabaseException {
+  public void testFind_InvalidName_InvalidLocation() throws RecordNotFoundException {
     data.find(searchCriteria_InvalidName_InvalidLocation);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_InvalidName_InvalidLocation_Deleted() throws DatabaseException {
+  public void testFind_InvalidName_InvalidLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     data.find(searchCriteria_InvalidName_InvalidLocation);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_InvalidName_NoLocation() throws DatabaseException {
+  public void testFind_InvalidName_NoLocation() throws RecordNotFoundException {
     data.find(searchCriteria_InvalidName_NoLocation);
 
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_InvalidName_NoLocation_Deleted() throws DatabaseException {
+  public void testFind_InvalidName_NoLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     data.find(searchCriteria_InvalidName_NoLocation);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_InvalidName_ValidLocation() throws DatabaseException {
+  public void testFind_InvalidName_ValidLocation() throws RecordNotFoundException {
     data.find(searchCriteria_InvalidName_ValidLocation);
 
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_InvalidName_ValidLocation_Deleted() throws DatabaseException {
+  public void testFind_InvalidName_ValidLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     data.find(searchCriteria_InvalidName_ValidLocation);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testFind_InvalidNumberOFFields() throws DatabaseException {
+  public void testFind_InvalidNumberOFFields() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     data.find(searchCriteria_TooManyFields);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_NoName_InvalidLocation() throws DatabaseException {
+  public void testFind_NoName_InvalidLocation() throws RecordNotFoundException {
     data.find(searchCriteria_NoName_InvalidLocation);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_NoName_InvalidLocation_Deleted() throws DatabaseException {
+  public void testFind_NoName_InvalidLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     data.find(searchCriteria_NoName_InvalidLocation);
   }
 
   @Test
-  public void testFind_NoName_NoLocation() throws DatabaseException {
+  public void testFind_NoName_NoLocation() throws RecordNotFoundException {
     final int[] matchingRecords = data.find(searchCriteria_NoName_NoLocation);
     assertEquals(28, matchingRecords.length);
     assertEquals(0, matchingRecords[0]);
   }
 
   @Test
-  public void testFind_NoName_NoLocation_Deleted() throws DatabaseException {
+  public void testFind_NoName_NoLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     final int[] matchingRecords = data.find(searchCriteria_NoName_NoLocation);
     assertEquals(27, matchingRecords.length);
   }
 
   @Test
-  public void testFind_NoName_ValidLocation() throws DatabaseException {
+  public void testFind_NoName_ValidLocation() throws RecordNotFoundException {
     final int[] matchingRecords = data.find(searchCriteria_NoName_ValidLocation);
     assertEquals(2, matchingRecords.length);
     assertEquals(0, matchingRecords[0]);
   }
 
   @Test
-  public void testFind_NoName_ValidLocation_Deleted() throws DatabaseException {
+  public void testFind_NoName_ValidLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     final int[] matchingRecords = data.find(searchCriteria_NoName_ValidLocation);
     assertEquals(1, matchingRecords.length);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_ValidName_InvalidLocation() throws DatabaseException {
+  public void testFind_ValidName_InvalidLocation() throws RecordNotFoundException {
     data.find(searchCriteria_ValidName_InvalidLocation);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_ValidName_InvalidLocation_Deleted() throws DatabaseException {
+  public void testFind_ValidName_InvalidLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     data.find(searchCriteria_ValidName_InvalidLocation);
   }
 
   @Test
-  public void testFind_ValidName_NoLocation() throws DatabaseException {
+  public void testFind_ValidName_NoLocation() throws RecordNotFoundException {
     final int[] matchingRecords = data.find(searchCriteria_ValidName_NoLocation);
     assertEquals(6, matchingRecords.length);
     assertEquals(0, matchingRecords[0]);
   }
 
   @Test
-  public void testFind_ValidName_NoLocation_Deleted() throws DatabaseException {
+  public void testFind_ValidName_NoLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     final int[] matchingRecords = data.find(searchCriteria_ValidName_NoLocation);
     assertEquals(5, matchingRecords.length);
   }
 
   @Test
-  public void testFind_ValidName_ValidLocation() throws DatabaseException {
+  public void testFind_ValidName_ValidLocation() throws RecordNotFoundException {
     final int[] matchingRecords = data.find(searchCriteria_ValidName_ValidLocation);
     assertEquals(1, matchingRecords.length);
     assertEquals(0, matchingRecords[0]);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testFind_ValidName_ValidLocation_Deleted() throws DatabaseException {
+  public void testFind_ValidName_ValidLocation_Deleted() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     data.find(searchCriteria_ValidName_ValidLocation);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testIsLocked_Invalid() throws DatabaseException {
+  public void testIsLocked_Invalid() throws RecordNotFoundException {
     data.isLocked(INVALID_RECORD_NUMBER);
   }
 
   @Test
-  public void testIsLocked_UnLocked() throws DatabaseException {
+  public void testIsLocked_UnLocked() throws RecordNotFoundException {
     assertFalse(data.isLocked(VALID_RECORD_NUMBER));
   }
 
@@ -238,42 +238,42 @@ public class DataTest {
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testRead_DeletedRecord() throws DatabaseException {
+  public void testRead_DeletedRecord() throws RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
     data.read(VALID_RECORD_NUMBER);
   }
 
   @Test(expected = RecordNotFoundException.class)
-  public void testRead_InvalidRecord() throws DatabaseException {
+  public void testRead_InvalidRecord() throws RecordNotFoundException {
     data.read(INVALID_RECORD_NUMBER);
   }
 
   @Test
-  public void testRead_ValidRecord() throws DatabaseException {
+  public void testRead_ValidRecord() throws RecordNotFoundException {
     final String[] fieldValues = data.read(VALID_RECORD_NUMBER);
     assertArrayEquals(oldValues, fieldValues);
   }
 
   @Test
-  public void testSaveData() throws DatabaseException, IOException {
+  public void testSaveData() throws IOException {
     ((Data) data).save();
     assertEquals(28, ((Data) data).getValidEntryStream().count());
   }
 
   @Test
-  public void testUnlock_Invalid() throws DatabaseException {
+  public void testUnlock_Invalid() {
     data.unlock(INVALID_RECORD_NUMBER);
   }
 
   @Test
-  public void testUnlock_Valid() throws DatabaseException {
+  public void testUnlock_Valid() throws RecordNotFoundException {
     data.lock(VALID_RECORD_NUMBER);
     data.unlock(VALID_RECORD_NUMBER);
     assertFalse(data.isLocked(VALID_RECORD_NUMBER));
   }
 
   @Test
-  public void testUpdate_ValidRecord() throws DatabaseException {
+  public void testUpdate_ValidRecord() throws RecordNotFoundException {
     data.update(VALID_RECORD_NUMBER, newValues);
     final String[] fieldValues = data.read(VALID_RECORD_NUMBER);
     assertArrayEquals(newValues, fieldValues);

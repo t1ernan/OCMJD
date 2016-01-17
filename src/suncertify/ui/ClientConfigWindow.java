@@ -106,7 +106,7 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
       clientWindow.setVisible(true);
       dispose();
     } catch (final RemoteException e) {
-      handleFatalException("Failed to launch application", e);
+      handleFatalException("Failed to launch application, cannot contact server", e);
     }
   }
 

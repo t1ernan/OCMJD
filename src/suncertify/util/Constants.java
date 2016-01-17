@@ -16,8 +16,6 @@ public final class Constants {
 
 	/** The Constant PRIMARY_KEY_FIELDS. */
 	public static final int SEARCH_FIELDS = 2;
-	
-  public static final String DEBUG_LOGGER = "debug.logger";
 
 	private Constants(){
 

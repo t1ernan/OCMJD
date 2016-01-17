@@ -101,7 +101,6 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
   public void updateRow(final int row, final String[] fieldValues) {
     values[row] = fieldValues;
     fireTableRowsUpdated(row, row);
-
   }
 
 }

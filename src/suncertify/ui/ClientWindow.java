@@ -62,7 +62,7 @@ public final class ClientWindow extends AbstractWindow {
     this.service = service;
     initializeComponents();
     setPreferredSize(new Dimension(775, 650));
-    setMinimumSize(new Dimension(650, 200));
+    setMinimumSize(new Dimension(650, 220));
     getContentPane().add(contentPanel);
     pack();
   }
@@ -70,23 +70,23 @@ public final class ClientWindow extends AbstractWindow {
   @Override
   public JPanel createContentPanel() {
     final JPanel panel = new JPanel(new BorderLayout());
-    panel.add(createSearchPanel(),BorderLayout.NORTH);
-    panel.add(createActionsPanel(),BorderLayout.WEST);
-    panel.add(createResultsPanel(),BorderLayout.CENTER);
+    panel.add(createSearchPanel(), BorderLayout.NORTH);
+    panel.add(createActionsPanel(), BorderLayout.WEST);
+    panel.add(createResultsPanel(), BorderLayout.CENTER);
     return panel;
   }
-  
-  private JPanel createActionsPanel(){
+
+  private JPanel createActionsPanel() {
     final JPanel actionPanel = new JPanel();
     actionPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
     actionPanel.add(bookButton);
     return actionPanel;
   }
-  
-  private JPanel createResultsPanel(){
+
+  private JPanel createResultsPanel() {
     final JPanel resultsPanel = new JPanel(new BorderLayout());
     resultsPanel.setBorder(BorderFactory.createTitledBorder("Results"));
-    resultsPanel.add(scrollPane,BorderLayout.CENTER);
+    resultsPanel.add(scrollPane, BorderLayout.CENTER);
     return resultsPanel;
   }
 
@@ -125,14 +125,17 @@ public final class ClientWindow extends AbstractWindow {
     return searchPanel;
   }
 
-  public void enableOrDisableButton() {
-    final int rowIndex = table.getSelectedRows()[0];
-    final String[] fieldValues = model.getRowFields(rowIndex);
-    final Contractor contractor = ContractorBuilder.build(fieldValues);
-    if (contractor.isBooked()) {
+  public void enableOrDisableBookButton(final int rowIndex) {
+    if (rowIndex == -1) {
       bookButton.setEnabled(false);
     } else {
-      bookButton.setEnabled(true);
+      final String[] fieldValues = model.getRowFields(rowIndex);
+      final Contractor contractor = ContractorBuilder.build(fieldValues);
+      if (contractor.isBooked()) {
+        bookButton.setEnabled(false);
+      } else {
+        bookButton.setEnabled(true);
+      }
     }
   }
 
@@ -198,7 +201,8 @@ public final class ClientWindow extends AbstractWindow {
       handleFatalException("Could not connect to server. Closing application.", e);
     } catch (final ContractorNotFoundException e) {
       scrollPane.setVisible(false);
-      displayMessage("Could not find contractor", "No Records Available", JOptionPane.WARNING_MESSAGE);
+      displayMessage("Could not find contractor", "No Records Available",
+          JOptionPane.WARNING_MESSAGE);
     }
   }
 
@@ -233,12 +237,13 @@ public final class ClientWindow extends AbstractWindow {
     model = new ContractorTableModel(columnNames, recordsToArrayArray(getAllRecords()));
     table = new ContractorTable(this, model);
     scrollPane = new JScrollPane(table);
+    bookButton.setToolTipText("Click to book the currently selected contractor.");
     bookButton.addActionListener(action -> bookSelectedContractor());
     bookButton.setEnabled(false);
+    searchButton.setToolTipText("Click to display all contractors with the specified name and/or location.");
     searchButton.addActionListener(action -> filterTableOnSearchValues());
+    clearButton.setToolTipText("Click to clear search results and display all contractors.");
     clearButton.addActionListener(action -> {
-      System.out.println(ClientWindow.this.getWidth());
-      System.out.println(ClientWindow.this.getHeight());
       updateTable(model, getAllRecords());
       nameField.setText(EMPTY_STRING);
       locationField.setText(EMPTY_STRING);

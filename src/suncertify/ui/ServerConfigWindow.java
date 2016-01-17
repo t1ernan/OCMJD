@@ -17,9 +17,13 @@ import suncertify.db.DatabaseAccessException;
 import suncertify.db.DatabaseFactory;
 import suncertify.util.Config;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.rmi.RemoteException;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -39,45 +43,14 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
   private final JButton browseButton = new JButton("Browse");
   private final JButton confirmButton = new JButton("Confirm");
   private final JFileChooser dbFileChooser = new DatabaseFileChooser();
+  private JPanel contentPanel;
 
   public ServerConfigWindow() {
     super("Server Configuration Settings");
-    getContentPane().add(createContentPanel());
-    pack();
-  }
-
-  @Override
-  public JPanel createContentPanel() {
-    final JPanel configPane = new JPanel();
-    dbFileField.setText(Config.getServerDBLocation());
-    portField.setText(Config.getServerPortNumber());
-
-    dbFileField.setToolTipText("The location of the database file on the file system.");
-    portField.setToolTipText("The port number that the server will run on.");
-    browseButton.setToolTipText("Click to browseButton file system for database file.");
-    confirmButton.setToolTipText("Click to save configuration settings and start application");
-
-    browseButton.addActionListener(action -> {
-      final int state = dbFileChooser.showOpenDialog(configPane);
-      if (state == JFileChooser.APPROVE_OPTION) {
-        final String fileName = dbFileChooser.getSelectedFile().getAbsolutePath();
-        dbFileField.setText(fileName);
-      }
-    });
-    confirmButton.addActionListener(action -> {
-      if (isConfigValid()) {
-        saveConfig();
-        launch();
-      }
-    });
-
-    configPane.add(portLabel);
-    configPane.add(portField);
-    configPane.add(dbFileLabel);
-    configPane.add(dbFileField);
-    configPane.add(browseButton);
-    configPane.add(confirmButton);
-    return configPane;
+    setSize(new Dimension(460, 192));
+    setMinimumSize(new Dimension(460, 192));
+    initializeComponents();
+    getContentPane().add(contentPanel);
   }
 
   @Override
@@ -123,5 +96,67 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
 
   private String getPortNumber() {
     return portField.getText().trim();
+  }
+
+  @Override
+  public void initializeComponents() {
+    contentPanel = createContentPanel();
+    contentPanel.setBorder(BorderFactory.createTitledBorder("Config Panel"));
+    dbFileField.setText(Config.getServerDBLocation());
+    portField.setText(Config.getServerPortNumber());
+    dbFileField.setToolTipText("The location of the database file on the file system.");
+    portField.setToolTipText("The port number that the server will run on.");
+    browseButton.setToolTipText("Click to browseButton file system for database file.");
+    confirmButton.setToolTipText("Click to save configuration settings and start application");
+    browseButton.addActionListener(action -> {
+      final int state = dbFileChooser.showOpenDialog(contentPanel);
+      if (state == JFileChooser.APPROVE_OPTION) {
+        final String fileName = dbFileChooser.getSelectedFile().getAbsolutePath();
+        dbFileField.setText(fileName);
+      }
+    });
+    confirmButton.addActionListener(action -> {
+      if (isConfigValid()) {
+        saveConfig();
+        launch();
+      }
+    });
+  }
+  
+  @Override
+  public JPanel createContentPanel() {
+    final JPanel panel = new JPanel(new GridBagLayout());
+    final GridBagConstraints constraints = new GridBagConstraints();
+    constraints.gridx = 0;
+    constraints.gridy = 0;
+    constraints.ipady = 7;
+    constraints.weighty = 0.1;
+    constraints.anchor = GridBagConstraints.LINE_END;
+    panel.add(dbFileLabel, constraints);
+    constraints.gridx = 1;
+    constraints.gridy = 0;
+    constraints.anchor = GridBagConstraints.LINE_START;
+    panel.add(dbFileField, constraints);
+    constraints.gridx = 2;
+    constraints.gridy = 0;
+    constraints.ipady = 0;
+    constraints.anchor = GridBagConstraints.LINE_START;
+    panel.add(browseButton, constraints);
+    constraints.gridx = 0;
+    constraints.gridy = 1;
+    constraints.ipady = 7;
+    constraints.anchor = GridBagConstraints.LINE_END;
+    panel.add(portLabel, constraints);
+    constraints.gridx = 1;
+    constraints.gridy = 1;
+    constraints.anchor = GridBagConstraints.LINE_START;
+    panel.add(portField, constraints);
+    constraints.gridx = 2;
+    constraints.gridy = 2;
+    constraints.weighty = 0.8;
+    constraints.ipady = 0;
+    constraints.anchor = GridBagConstraints.LAST_LINE_END;
+    panel.add(confirmButton, constraints);
+    return panel;
   }
 }

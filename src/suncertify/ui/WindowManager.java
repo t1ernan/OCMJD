@@ -19,5 +19,7 @@ public interface WindowManager {
   void displayMessage(final String message, final String title, final int messageType);
   
   JPanel createContentPanel();
+  
+  void initializeComponents();
 
 }

@@ -256,7 +256,7 @@ public class DataTest {
 
   @Test
   public void testSaveData() throws IOException {
-    ((Data) data).save();
+    ((Data) data).saveRecords();
     assertEquals(28, ((Data) data).getValidEntryStream().count());
   }
 

@@ -63,10 +63,10 @@ public final class Data implements DBMainExtended {
   private final Set<Integer> lockedRecords = new HashSet<>();
 
   /** The file path of the database file. */
-  private String dbFilePath = EMPTY_STRING;
+  private String dbFilePath;
 
   /** The record offset, specified in the schema information. */
-  private int recordOffset;
+  private static final int RECORD_OFFSET = 70;
 
   /**
    * Constructs a new Data instance.
@@ -159,17 +159,19 @@ public final class Data implements DBMainExtended {
   @Override
   public synchronized void initialize(final String dbFileLocation)
       throws DatabaseAccessException, IllegalArgumentException {
+    if (dbFileLocation == null) {
+      throw new IllegalArgumentException("File path of database file cannot be null");
+    }
     try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
       if (raf.readInt() != MAGIC_COOKIE) {
         throw new DatabaseAccessException("Could not read data from the specified file: "
             + dbFileLocation + ". Invalid magic cookie value");
       }
       dbFilePath = dbFileLocation;
-      recordOffset = raf.readInt();
       loadCache();
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {
         try {
-          save();
+          saveRecords();
         } catch (final IOException e) {
           LOGGER.severe("Could not save data: " + e.getMessage());
         }
@@ -214,7 +216,7 @@ public final class Data implements DBMainExtended {
   public void loadCache() throws IOException {
     try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
       int recordNumber = 0;
-      raf.seek(recordOffset);
+      raf.seek(RECORD_OFFSET);
       while (raf.getFilePointer() < raf.length()) {
         addRecordToCache(raf, recordNumber);
         recordNumber++;
@@ -250,16 +252,17 @@ public final class Data implements DBMainExtended {
 
   /**
    * {@inheritDoc}.
-   *
-   * <p>
-   * This method will be called when the application terminates in order to persist any database
-   * changes to the database file.
    */
   @Override
-  public synchronized void save() throws IOException {
+  public synchronized void saveRecords() throws IOException, IllegalStateException {
+    if (dbFilePath == null) {
+      throw new IllegalStateException(
+          "The saveRecords method cannot be invoked before " + this.getClass().getSimpleName()
+              + " has been initialized through invoking the initialize method.");
+    }
     try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
-      raf.seek(recordOffset);
-      raf.setLength(recordOffset);
+      raf.seek(RECORD_OFFSET);
+      raf.setLength(RECORD_OFFSET);
       for (final String[] fieldValues : recordCache.values()) {
         writeRecord(raf, fieldValues);
       }
@@ -357,7 +360,6 @@ public final class Data implements DBMainExtended {
       }
     }
     return isMatch;
-
   }
 
   /**

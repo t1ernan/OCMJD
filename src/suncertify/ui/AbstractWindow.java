@@ -12,6 +12,9 @@ package suncertify.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

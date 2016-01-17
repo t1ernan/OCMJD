@@ -30,9 +30,9 @@ public interface DBMainExtended extends DBMain {
    *           If an existing record in the database, which has not been marked as deleted, contains
    *           the same key specified in the given data.
    * @throws IllegalArgumentException
-   *           If {@code data} is {@code null}, number of elements in {@code data} exceeds
-   *           record fields or number of characters used in a field exceeds the max number of
-   *           characters permitted for that field.
+   *           If {@code data} is {@code null}, number of elements in {@code data} exceeds record
+   *           fields or number of characters used in a field exceeds the max number of characters
+   *           permitted for that field.
    */
   @Override
   int create(String[] data) throws DuplicateKeyException, IllegalArgumentException;
@@ -121,12 +121,17 @@ public interface DBMainExtended extends DBMain {
 
   /**
    * Writes the record cache to the database file, overwriting the existing record data stored in
-   * the database file.
+   * the database file. This method should be called when the application terminates in order to
+   * persist any database changes to the database file, i.e. sometime after the method
+   * {@code initialize} has been invoked.
    *
    * @throws IOException
    *           Signals that an I/O exception has occurred when writing the records to disk.
+   * @throws IllegalStateException
+   *           If this method has been invoked before the method {@code initialize} has been invoked
+   *           to initialize the database access object.
    */
-  void save() throws IOException;
+  void saveRecords() throws IOException, IllegalStateException;
 
   /**
    * Releases the lock on a record.
@@ -145,9 +150,9 @@ public interface DBMainExtended extends DBMain {
    * @param data
    *          a string array where each element is a record value
    * @throws IllegalArgumentException
-   *           If {@code data} is {@code null}, number of elements in {@code data} exceeds
-   *           record fields or number of characters used in a field exceeds the max number of
-   *           characters permitted for that field.
+   *           If {@code data} is {@code null}, number of elements in {@code data} exceeds record
+   *           fields or number of characters used in a field exceeds the max number of characters
+   *           permitted for that field.
    */
   @Override
   void update(int recNo, String[] data) throws IllegalArgumentException;

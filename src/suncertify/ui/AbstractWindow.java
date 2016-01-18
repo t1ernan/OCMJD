@@ -26,15 +26,31 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+/**
+ * AbstractWindow is the common superclass of all {@link JFrame} objects in the application. It .
+ */
 public abstract class AbstractWindow extends JFrame implements WindowManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
+  
+  /** The Constant LOGGER. */
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+  
+  /** The menu bar. */
   private final JMenuBar menuBar = new JMenuBar();
+  
+  /** The menu. */
   private final JMenu menu = new JMenu(OPTIONS_MENU_TEXT);
+  
+  /** The exit menu item. */
   private final JMenuItem exitMenuItem = new JMenuItem(EXIT_MENU_ITEM_TEXT);
 
+  /**
+   * Instantiates a new abstract window.
+   *
+   * @param title the title
+   */
   public AbstractWindow(final String title) {
     super(title);
     setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -46,11 +62,17 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
     setJMenuBar(menuBar);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public void displayMessage(final String message, final String title) {
     JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public void handleException(final String errorMessage, final String title,
       final Exception exception) {
@@ -58,6 +80,9 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
     JOptionPane.showMessageDialog(this, errorMessage, title, JOptionPane.WARNING_MESSAGE);
   }
 
+  /**
+   * {@inheritDoc}.
+   */
   @Override
   public void handleFatalException(final String errorMessage, final Exception exception) {
     LOGGER.log(Level.SEVERE, errorMessage, exception);

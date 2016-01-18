@@ -18,8 +18,8 @@ public final class Constants {
   /** The Constant RECORD_FIELDS. */
   public static final int RECORD_FIELDS = 6;
 
-  /** The Constant PRIMARY_KEY_FIELDS. */
-  public static final int SEARCH_FIELDS = 2;
+  /** The Constant SEARCH_KEY_FIELDS. */
+  public static final int SEARCH_KEY_FIELDS = 2;
 
   public static final int DEFAULT_TEXTFIELD_SIZE = 20;
 

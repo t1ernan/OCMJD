@@ -21,16 +21,13 @@ import suncertify.util.ContractorBuilder;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * BasicContractorService is the default implementation of {@link ContractorService}. It has an
- * implementation for booking and finding contractors from a specified data object.
+ * implementation for booking and finding contractors which satisfy certain search criteria from a
+ * specified data access object.
  */
 public class BasicContractorService implements ContractorService {
-
-  /** Global Logger. */
-  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   /** The data access object used to interact with the database. */
   private final DBMainExtended data;
@@ -45,7 +42,7 @@ public class BasicContractorService implements ContractorService {
    */
   public BasicContractorService(final DBMainExtended data) {
     if (data == null) {
-      throw new IllegalArgumentException("DBMainExtended object cannot be null");
+      throw new IllegalArgumentException("Database object cannot be null.");
     }
     this.data = data;
   }
@@ -57,10 +54,8 @@ public class BasicContractorService implements ContractorService {
   public void book(final Contractor contractor) throws ContractorNotFoundException,
       AlreadyBookedException, RemoteException, IllegalArgumentException {
     if (contractor == null) {
-      throw new IllegalArgumentException("Contractor cannot be null");
+      throw new IllegalArgumentException("Contractor cannot be null.");
     }
-    LOGGER.info(this.getClass().getSimpleName() + ": Attempting to book contractor: "
-        + contractor.toString());
     int recordNumber = -1;
     try {
       final String[] fieldValues = contractor.toStringArray();
@@ -83,10 +78,8 @@ public class BasicContractorService implements ContractorService {
   public Map<Integer, Contractor> find(final ContractorPk searchKey)
       throws ContractorNotFoundException, RemoteException, IllegalArgumentException {
     if (searchKey == null) {
-      throw new IllegalArgumentException("ContractorPk cannot be null");
+      throw new IllegalArgumentException("ContractorPk cannot be null.");
     }
-    LOGGER.info(this.getClass().getSimpleName() + ": Attempting to find contractors with : "
-        + searchKey.toString());
     final Map<Integer, Contractor> matchingRecords = new HashMap<>();
     try {
       final String[] searchCriteria = searchKey.toStringArray();
@@ -99,9 +92,11 @@ public class BasicContractorService implements ContractorService {
           matchingRecords.put(recordNumber, contractor);
         }
       }
+
       if (matchingRecords.isEmpty()) {
         throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE);
       }
+
     } catch (final RecordNotFoundException e) {
       throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE, e);
     }
@@ -113,13 +108,13 @@ public class BasicContractorService implements ContractorService {
    * {@link AlreadyBookedException} if the contractor is booked.
    *
    * @param recordNumber
-   *          the number of the contractor record
+   *          the number of the contractor record.
    * @throws AlreadyBookedException
-   *           if the contractor with the specified record number has already been booked
+   *           if the contractor with the specified record number has already been booked.
    * @throws RemoteException
-   *           if an RMI communication-related exception occurs
+   *           if an RMI communication-related exception occurs.
    * @throws RecordNotFoundException
-   *           if the record does not exist or has been marked as deleted in the database
+   *           if the record does not exist or has been marked as deleted in the database.
    */
   private void checkContractorIsAvailable(final int recordNumber)
       throws RecordNotFoundException, AlreadyBookedException, RemoteException {
@@ -132,8 +127,8 @@ public class BasicContractorService implements ContractorService {
 
   /**
    * Compares the two specified {@link ContractorPk} arguments and returns true if their fields,
-   * {@code name} and {@code location} are equal. Note: It will only compare fields that are not
-   * left empty in the {@code searchKey}. <br>
+   * {@code name} and {@code location}, are equal. Note: It will only compare fields that are not
+   * empty in the {@code searchKey}. <br>
    * <br>
    * <b>Example 1:</b> If a {@code searchKey} with {@code name}="Fred" and {@code location}="Paris"
    * is specified, this method will only return true if the {@code name} and {@code location} fields
@@ -148,9 +143,9 @@ public class BasicContractorService implements ContractorService {
    * {@code primaryKey} is equal to "Paris".<br>
    * <br>
    * <b>Example 4:</b> If a {@code searchKey} with {@code name}="" and {@code location}="" is
-   * specified, this method will return true;<br>
+   * specified, this method will return true.<br>
    *
-   * @return true, if the non blank fields of the specified {@code searchKey} match the
+   * @return true, if the non-blank fields of the specified {@code searchKey} match the
    *         corresponding fields of the specified {@code primaryKey}.
    */
   private boolean doesMatchExactly(final ContractorPk primaryKey, final ContractorPk searchKey) {
@@ -158,12 +153,12 @@ public class BasicContractorService implements ContractorService {
     final String[] fieldValues = primaryKey.toStringArray();
     final String[] searchValues = searchKey.toStringArray();
     for (int index = 0; index < searchValues.length; index++) {
-      final String fieldValue = fieldValues[index];
       final String searchValue = searchValues[index];
+
       if (searchValue.isEmpty()) {
         break;
       }
-      if (!fieldValue.equals(searchValue)) {
+      if (!searchValue.equals(fieldValues[index])) {
         isMatch = false;
         break;
       }

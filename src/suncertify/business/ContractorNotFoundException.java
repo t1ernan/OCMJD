@@ -11,9 +11,8 @@
 package suncertify.business;
 
 /**
- * The class ContractorNotFoundException is a direct subclass of {@link ServiceException}. It's
- * thrown when querying the database for a contractor which does not exist or has been marked as
- * deleted.
+ * The class ContractorNotFoundException is thrown when querying the database for contractors, which
+ * satisfy certain search criteria, but do not exist or have been marked as deleted in the database.
  */
 public class ContractorNotFoundException extends Exception {
 

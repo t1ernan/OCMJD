@@ -21,8 +21,7 @@ import java.util.Map;
  * query the database. The business methods defined in this interface will be exposed to the
  * presentation layer, which will allow users of the application to query the database indirectly.
  *
- * <p>
- * The presentation layer should <i>never</i> have direct access to the database layer under any
+ * <p>The presentation layer should <i>never</i> have direct access to the database layer under any
  * circumstances. The presentation layer should call the methods defined in the services layer to
  * retrieve data from the database.
  */

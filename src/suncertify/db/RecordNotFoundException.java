@@ -11,8 +11,8 @@
 package suncertify.db;
 
 /**
- * The class RecordNotFoundException is thrown when querying the database for a record which does
- * not exist or has been marked as deleted in the database.
+ * The class RecordNotFoundException is thrown when trying to perform a database operation a record
+ * which does not exist or has been marked as deleted in the database.
  */
 public class RecordNotFoundException extends Exception {
 

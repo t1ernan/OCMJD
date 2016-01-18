@@ -9,6 +9,7 @@
  */
 package suncertify.ui;
 
+
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
@@ -21,20 +22,12 @@ public class ContractorTable extends JTable {
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
 
-  /**
-   * Instantiates a new contractor table.
-   *
-   * @param model
-   *          the model
-   * @param bookButton
-   *          the book button
-   */
   public ContractorTable(final ClientWindow window) {
     super(window.getTableModel());
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     setRowSelectionAllowed(true);
     setColumnSelectionAllowed(false);
-    getSelectionModel().addListSelectionListener(
-        change -> window.enableOrDisableBookButton(ContractorTable.this.getSelectedRow()));
+    getSelectionModel()
+        .addListSelectionListener(change -> window.enableOrDisableBookButton(getSelectedRow()));
   }
 }

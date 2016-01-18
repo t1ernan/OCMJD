@@ -28,6 +28,7 @@ import static suncertify.ui.Messages.NAME_TOOLTIP_TEXT;
 import static suncertify.ui.Messages.REMOTE_EXCEPTION_MESSAGE_TEXT;
 import static suncertify.ui.Messages.SEARCH_BUTTON_TEXT;
 import static suncertify.ui.Messages.SEARCH_BUTTON_TOOLTIP_TEXT;
+import static suncertify.ui.Messages.SYSTEM_NAME;
 import static suncertify.util.Constants.DEFAULT_TEXTFIELD_SIZE;
 import static suncertify.util.Constants.EMPTY_STRING;
 import static suncertify.util.Utils.isEightDigits;
@@ -45,6 +46,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -80,7 +82,7 @@ public final class ClientWindow extends AbstractWindow {
   private JPanel contentPanel;
 
   public ClientWindow(final ContractorService service) {
-    super("Bodgitt & Scarper Booking System");
+    super(SYSTEM_NAME);
     this.service = service;
     initializeComponents();
     setPreferredSize(new Dimension(775, 650));
@@ -98,18 +100,17 @@ public final class ClientWindow extends AbstractWindow {
     return panel;
   }
 
-  public void enableOrDisableBookButton(final int rowIndex) {
+  private boolean shouldBookingBeEnabled(final int rowIndex) {
     if (rowIndex == -1) {
-      bookButton.setEnabled(false);
-    } else {
-      final String[] fieldValues = model.getRowFields(rowIndex);
-      final Contractor contractor = ContractorBuilder.build(fieldValues);
-      if (contractor.isBooked()) {
-        bookButton.setEnabled(false);
-      } else {
-        bookButton.setEnabled(true);
-      }
+      return false;
     }
+    final String[] fieldValues = model.getRowFields(rowIndex);
+    final Contractor contractor = ContractorBuilder.build(fieldValues);
+    return !contractor.isBooked();
+  }
+
+  public void enableOrDisableBookButton(final int rowIndex) {
+    bookButton.setEnabled(shouldBookingBeEnabled(rowIndex));
   }
 
   public TableModel getTableModel() {
@@ -175,6 +176,7 @@ public final class ClientWindow extends AbstractWindow {
         } catch (final RemoteException exception) {
           handleFatalException(REMOTE_EXCEPTION_MESSAGE_TEXT, exception);
         } catch (final ContractorNotFoundException exception) {
+          refreshTable();
           handleException(exception.getMessage(), CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE_TITLE,
               exception);
         } catch (final AlreadyBookedException exception) {
@@ -255,15 +257,17 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   private Map<Integer, Contractor> getAllRecords() {
+    final Map<Integer, Contractor> allRecords = new HashMap<>();
     try {
-      return service.find(new ContractorPk());
+      allRecords.putAll(service.find(new ContractorPk()));
     } catch (final RemoteException exception) {
       handleFatalException(REMOTE_EXCEPTION_MESSAGE_TEXT, exception);
     } catch (final ContractorNotFoundException exception) {
+      scrollPane.setVisible(false);
       handleException(exception.getMessage(), CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE_TITLE,
           exception);
     }
-    return null;
+    return allRecords;
   }
 
   private String getLocationSearchValue() {

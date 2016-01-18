@@ -123,13 +123,12 @@ public interface DBMainExtended extends DBMain {
    * Writes the record cache to the database file, overwriting the existing record data stored in
    * the database file. This method should be called when the application terminates in order to
    * persist any database changes to the database file, i.e. sometime after the method
-   * {@code initialize} has been invoked.
+   * {@code initialize} has been called to initialize the data access object.
    *
    * @throws IOException
    *           Signals that an I/O exception has occurred when writing the records to disk.
    * @throws IllegalStateException
-   *           If this method has been invoked before the method {@code initialize} has been invoked
-   *           to initialize the database access object.
+   *           If this method has been invoked before the method {@code initialize}.
    */
   void saveRecords() throws IOException, IllegalStateException;
 

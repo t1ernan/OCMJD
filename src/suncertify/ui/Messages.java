@@ -1,3 +1,12 @@
+/*
+ * AlreadyBookedException.java  1.0  12-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
 package suncertify.ui;
 
 public class Messages {
@@ -85,5 +94,7 @@ public class Messages {
   public static final String STANDALONE_CONFIG_FRAME_TITLE_TEXT = "Standalone Configuration Settings";
 
   public static final String START_FAILURE_MESSAGE = "Failed to launch application: ";
+  
+  public static final String SYSTEM_NAME = "Bodgitt & Scarper Booking System";
 
 }

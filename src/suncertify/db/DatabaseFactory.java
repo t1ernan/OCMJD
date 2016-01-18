@@ -18,7 +18,7 @@ import java.nio.file.Paths;
  */
 public final class DatabaseFactory {
 
-  /** The databaseManager object. */
+  /** The data access object. */
   private static DBMainExtended dao = Data.getInstance();
 
   /**

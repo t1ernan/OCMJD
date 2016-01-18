@@ -27,29 +27,32 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 /**
- * AbstractWindow is the common superclass of all {@link JFrame} objects in the application. It .
+ * AbstractWindow is the common superclass of all {@link JFrame} objects used in the application. It
+ * ensures that all UI windows that extends it have the same common behavior and style, ensuring the
+ * application's UI feels consistent to the user and making the code more maintainable and reusable.
  */
 public abstract class AbstractWindow extends JFrame implements WindowManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
-  
-  /** The Constant LOGGER. */
+
+  /** The Global Logger used to log exceptions to the console.*/
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-  
+
   /** The menu bar. */
   private final JMenuBar menuBar = new JMenuBar();
-  
+
   /** The menu. */
   private final JMenu menu = new JMenu(OPTIONS_MENU_TEXT);
-  
+
   /** The exit menu item. */
   private final JMenuItem exitMenuItem = new JMenuItem(EXIT_MENU_ITEM_TEXT);
 
   /**
    * Instantiates a new abstract window.
    *
-   * @param title the title
+   * @param title
+   *          the title
    */
   public AbstractWindow(final String title) {
     super(title);

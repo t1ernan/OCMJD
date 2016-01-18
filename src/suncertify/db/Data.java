@@ -113,8 +113,10 @@ public final class Data implements DBMainExtended {
     validateFields(data);
     checkForDuplicateKey(data);
     final int recordNumber = recordCache.entrySet().stream()
-        .filter(entry -> entry.getValue() == null).mapToInt(entry -> entry.getKey()).findAny()
-        .orElse(recordCache.size());
+                             .filter(entry -> entry.getValue() == null)
+                             .mapToInt(entry -> entry.getKey())
+                             .findAny()
+                             .orElse(recordCache.size());
     recordCache.put(recordNumber, data);
     return recordNumber;
   }
@@ -135,9 +137,10 @@ public final class Data implements DBMainExtended {
       throws RecordNotFoundException, IllegalArgumentException {
     validateFields(criteria);
     final int[] recordNumbers = recordCache.entrySet().stream()
-        .filter(entry -> entry.getValue() != null)
-        .filter(entry -> doFieldsMatchCriteria(entry.getValue(), criteria))
-        .mapToInt(entry -> entry.getKey()).toArray();
+                                .filter(entry -> entry.getValue() != null)
+                                .filter(entry -> doFieldsMatchCriteria(entry.getValue(), criteria))
+                                .mapToInt(entry -> entry.getKey())
+                                .toArray();
     if (recordNumbers.length == 0) {
       throw new RecordNotFoundException(
           "No matching records for selected criteria: " + Arrays.toString(criteria));
@@ -146,8 +149,9 @@ public final class Data implements DBMainExtended {
   }
 
   public Stream<String[]> getValidEntryStream() {
-    return recordCache.entrySet().stream().map(entry -> entry.getValue())
-        .filter(values -> values != null);
+    return recordCache.entrySet().stream()
+           .map(entry -> entry.getValue())
+           .filter(values -> values != null);
   }
 
   /**
@@ -184,8 +188,9 @@ public final class Data implements DBMainExtended {
    * @return true, if the record is not stored in the database or has been marked as deleted.
    */
   public boolean isInvalidRecord(final int recNo) {
-    return recordCache.entrySet().stream().filter(entry -> entry.getValue() != null)
-        .noneMatch(entry -> entry.getKey() == recNo);
+    return recordCache.entrySet().stream()
+           .filter(entry -> entry.getValue() != null)
+           .noneMatch(entry -> entry.getKey() == recNo);
   }
 
   /**
@@ -321,8 +326,10 @@ public final class Data implements DBMainExtended {
    *           if the primary key of the specified {@code data} already exists in the database.
    */
   private void checkForDuplicateKey(final String[] data) throws DuplicateKeyException {
-    final boolean isDuplicate = recordCache.entrySet().stream().map(entry -> entry.getValue())
-        .filter(values -> values != null).anyMatch(values -> comparePrimaryKeys(values, data));
+    final boolean isDuplicate = recordCache.entrySet().stream()
+                                .map(entry -> entry.getValue())
+                                .filter(values -> values != null)
+                                .anyMatch(values -> comparePrimaryKeys(values, data));
     if (isDuplicate) {
       throw new DuplicateKeyException("Record already exists");
     }

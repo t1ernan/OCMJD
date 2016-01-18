@@ -40,67 +40,61 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
     this.values = values;
   }
 
-  /* (non-Javadoc)
-   * @see javax.swing.table.TableModel#getColumnCount()
+  /**
+   * {@inheritDoc}.
    */
   @Override
   public int getColumnCount() {
     return columns.length;
   }
 
-  /* (non-Javadoc)
-   * @see javax.swing.table.AbstractTableModel#getColumnName(int)
+  /**
+   * {@inheritDoc}.
    */
   @Override
   public String getColumnName(final int columnIndex) {
     return columns[columnIndex];
   }
 
-  /* (non-Javadoc)
-   * @see javax.swing.table.TableModel#getRowCount()
+  /**
+   * {@inheritDoc}.
    */
   @Override
   public int getRowCount() {
     return values.length;
   }
 
-  /* (non-Javadoc)
-   * @see suncertify.ui.model.ContractorModel#getRowFields(int)
+  /**
+   * {@inheritDoc}.
    */
   @Override
   public String[] getRowFields(final int rowIndex) {
     return values[rowIndex];
   }
 
-  /* (non-Javadoc)
-   * @see javax.swing.table.TableModel#getValueAt(int, int)
+  /**
+   * {@inheritDoc}.
    */
   @Override
   public Object getValueAt(final int rowIndex, final int columnIndex) {
     return values[rowIndex][columnIndex];
   }
 
-  /* (non-Javadoc)
-   * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+  /**
+   * {@inheritDoc}.
    */
   @Override
   public boolean isCellEditable(final int rowIndex, final int columnIndex) {
     return false;
   }
 
-  /* (non-Javadoc)
-   * @see suncertify.ui.model.ContractorModel#updateData(java.lang.String[][])
+  /**
+   * {@inheritDoc}.
    */
   @Override
   public void updateData(final String[][] data) {
     values = data;
     fireTableDataChanged();
-  }
-
-  @Override
-  public void updateRow(final int row, final String[] fieldValues) {
-    values[row] = fieldValues;
-    fireTableRowsUpdated(row, row);
   }
 
 }

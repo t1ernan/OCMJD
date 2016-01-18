@@ -100,17 +100,8 @@ public final class ClientWindow extends AbstractWindow {
     return panel;
   }
 
-  private boolean shouldBookingBeEnabled(final int rowIndex) {
-    if (rowIndex == -1) {
-      return false;
-    }
-    final String[] fieldValues = model.getRowFields(rowIndex);
-    final Contractor contractor = ContractorBuilder.build(fieldValues);
-    return !contractor.isBooked();
-  }
-
   public void enableOrDisableBookButton(final int rowIndex) {
-    bookButton.setEnabled(shouldBookingBeEnabled(rowIndex));
+    bookButton.setEnabled(shouldBookButtonBeEnabled(rowIndex));
   }
 
   public TableModel getTableModel() {
@@ -133,7 +124,9 @@ public final class ClientWindow extends AbstractWindow {
       locationField.setText(EMPTY_STRING);
       refreshTable();
     });
+    nameField.addActionListener(action -> filterTableOnSearchValues());
     nameField.setToolTipText(NAME_TOOLTIP_TEXT);
+    locationField.addActionListener(action -> filterTableOnSearchValues());
     locationField.setToolTipText(LOCATION_TOOLTIP_TEXT);
     contentPanel = createContentPanel();
   }
@@ -276,6 +269,15 @@ public final class ClientWindow extends AbstractWindow {
 
   private String getNameSearchValue() {
     return nameField.getText().trim();
+  }
+
+  private boolean shouldBookButtonBeEnabled(final int rowIndex) {
+    if (rowIndex == -1) {
+      return false;
+    }
+    final String[] fieldValues = model.getRowFields(rowIndex);
+    final Contractor contractor = ContractorBuilder.build(fieldValues);
+    return !contractor.isBooked();
   }
 
 }

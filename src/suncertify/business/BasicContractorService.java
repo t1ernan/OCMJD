@@ -10,6 +10,8 @@
 
 package suncertify.business;
 
+import static suncertify.util.Constants.CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE;
+
 import suncertify.db.DBMainExtended;
 import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
@@ -68,7 +70,7 @@ public class BasicContractorService implements ContractorService {
       checkContractorIsAvailable(recordNumber);
       data.update(recordNumber, fieldValues);
     } catch (final RecordNotFoundException e) {
-      throw new ContractorNotFoundException("Contractor could not be found.", e);
+      throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE, e);
     } finally {
       data.unlock(recordNumber);
     }
@@ -83,7 +85,8 @@ public class BasicContractorService implements ContractorService {
     if (searchKey == null) {
       throw new IllegalArgumentException("ContractorPk cannot be null");
     }
-    LOGGER.info(this.getClass().getSimpleName() + ": Attempting to find contractors with : " + searchKey.toString());
+    LOGGER.info(this.getClass().getSimpleName() + ": Attempting to find contractors with : "
+        + searchKey.toString());
     final Map<Integer, Contractor> matchingRecords = new HashMap<>();
     try {
       final String[] searchCriteria = searchKey.toStringArray();
@@ -97,10 +100,10 @@ public class BasicContractorService implements ContractorService {
         }
       }
       if (matchingRecords.isEmpty()) {
-        throw new ContractorNotFoundException("Contractor could not be found");
+        throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE);
       }
     } catch (final RecordNotFoundException e) {
-      throw new ContractorNotFoundException("Contractor could not be found.", e);
+      throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE, e);
     }
     return matchingRecords;
   }

@@ -9,6 +9,19 @@
  */
 package suncertify.ui;
 
+import static suncertify.ui.Messages.BROWSE_BUTTON_TEXT;
+import static suncertify.ui.Messages.BROWSE_BUTTON_TOOLTIP_TEXT;
+import static suncertify.ui.Messages.CONFIG_PANEL_BORDER_TITLE;
+import static suncertify.ui.Messages.CONFIRM_BUTTON_TEXT;
+import static suncertify.ui.Messages.CONFIRM_BUTTON_TOOLTIP_TEXT;
+import static suncertify.ui.Messages.DATABASE_FILE_LOCATION_LABEL_TEXT;
+import static suncertify.ui.Messages.DATABASE_FILE_LOCATION_TOOLTIP_TEXT;
+import static suncertify.ui.Messages.INVALID_DATABASE_LOCATION_MESSAGE_TEXT;
+import static suncertify.ui.Messages.INVALID_INPUT_MESSAGE_TITLE;
+import static suncertify.ui.Messages.STANDALONE_CONFIG_FRAME_TITLE_TEXT;
+import static suncertify.ui.Messages.START_FAILURE_MESSAGE;
+import static suncertify.util.Constants.DEFAULT_TEXTFIELD_SIZE;
+
 import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorService;
 import suncertify.db.DBMainExtended;
@@ -26,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -35,77 +47,19 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-  private final JLabel dbFileLabel = new JLabel("Database file location: ");
-  private final JTextField dbFileField = new JTextField(20);
-  private final JButton browseButton = new JButton("Browse");
-  private final JButton confirmButton = new JButton("Confirm");
+  private final JLabel dbFileLabel = new JLabel(DATABASE_FILE_LOCATION_LABEL_TEXT);
+  private final JTextField dbFileField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
+  private final JButton browseButton = new JButton(BROWSE_BUTTON_TEXT);
+  private final JButton confirmButton = new JButton(CONFIRM_BUTTON_TEXT);
   private final JFileChooser dbFileChooser = new DatabaseFileChooser();
   private JPanel contentPanel;
 
   public StandaloneConfigWindow() {
-    super("Standalone Configuration Settings");
+    super(STANDALONE_CONFIG_FRAME_TITLE_TEXT);
     setSize(new Dimension(460, 175));
     setMinimumSize(new Dimension(460, 175));
     initializeComponents();
     getContentPane().add(contentPanel);
-  }
-
-  @Override
-  public boolean isConfigValid() {
-    boolean isConfigValid = true;
-    if (getDbFilePath().isEmpty()) {
-      displayMessage("The database file location field cannot be blank", "Invalid Input",
-          JOptionPane.WARNING_MESSAGE);
-      isConfigValid = false;
-    }
-    return isConfigValid;
-  }
-
-  @Override
-  public void launch() {
-    try {
-      final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDBLocation());
-      LOGGER.info("Starting standalone...");
-      final ContractorService service = new BasicContractorService(data);
-      final JFrame clientWindow = new ClientWindow(service);
-      clientWindow.setVisible(true);
-      dispose();
-    } catch (final DatabaseAccessException e) {
-      handleFatalException("Failed to launch application", e);
-    }
-  }
-
-  @Override
-  public void saveConfig() {
-    Config.setAloneDBLocation(getDbFilePath());
-    Config.saveProperties();
-  }
-
-  private String getDbFilePath() {
-    return dbFileField.getText().trim();
-  }
-
-  @Override
-  public void initializeComponents() {
-    contentPanel = createContentPanel();
-    contentPanel.setBorder(BorderFactory.createTitledBorder("Config Panel"));
-    dbFileField.setText(Config.getAloneDBLocation());
-    dbFileField.setToolTipText("The location of the database file on the file system.");
-    browseButton.setToolTipText("Click to browseButton file system for database file.");
-    confirmButton.setToolTipText("Click to save configuration settings and start application");
-    browseButton.addActionListener(action -> {
-      final int state = dbFileChooser.showOpenDialog(contentPanel);
-      if (state == JFileChooser.APPROVE_OPTION) {
-        final String fileName = dbFileChooser.getSelectedFile().getAbsolutePath();
-        dbFileField.setText(fileName);
-      }
-    });
-    confirmButton.addActionListener(action -> {
-      if (isConfigValid()) {
-        saveConfig();
-        launch();
-      }
-    });
   }
 
   @Override
@@ -133,5 +87,62 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
     constraints.anchor = GridBagConstraints.LAST_LINE_END;
     panel.add(confirmButton, constraints);
     return panel;
+  }
+
+  @Override
+  public void initializeComponents() {
+    contentPanel = createContentPanel();
+    contentPanel.setBorder(BorderFactory.createTitledBorder(CONFIG_PANEL_BORDER_TITLE));
+    dbFileField.setText(Config.getAloneDBLocation());
+    dbFileField.setToolTipText(DATABASE_FILE_LOCATION_TOOLTIP_TEXT);
+    browseButton.setToolTipText(BROWSE_BUTTON_TOOLTIP_TEXT);
+    confirmButton.setToolTipText(CONFIRM_BUTTON_TOOLTIP_TEXT);
+    browseButton.addActionListener(action -> {
+      final int state = dbFileChooser.showOpenDialog(contentPanel);
+      if (state == JFileChooser.APPROVE_OPTION) {
+        final String fileName = dbFileChooser.getSelectedFile().getAbsolutePath();
+        dbFileField.setText(fileName);
+      }
+    });
+    confirmButton.addActionListener(action -> {
+      if (isConfigValid()) {
+        saveConfig();
+        launch();
+      }
+    });
+  }
+
+  @Override
+  public boolean isConfigValid() {
+    boolean isConfigValid = true;
+    if (getDbFilePath().isEmpty()) {
+      displayMessage(INVALID_DATABASE_LOCATION_MESSAGE_TEXT, INVALID_INPUT_MESSAGE_TITLE);
+      isConfigValid = false;
+    }
+    return isConfigValid;
+  }
+
+  @Override
+  public void launch() {
+    try {
+      final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDBLocation());
+      LOGGER.info("Starting standalone...");
+      final ContractorService service = new BasicContractorService(data);
+      final JFrame clientWindow = new ClientWindow(service);
+      clientWindow.setVisible(true);
+      dispose();
+    } catch (final DatabaseAccessException exception) {
+      handleFatalException(START_FAILURE_MESSAGE + exception.getMessage(), exception);
+    }
+  }
+
+  @Override
+  public void saveConfig() {
+    Config.setAloneDBLocation(getDbFilePath());
+    Config.saveProperties();
+  }
+
+  private String getDbFilePath() {
+    return dbFileField.getText().trim();
   }
 }

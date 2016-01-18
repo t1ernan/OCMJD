@@ -11,7 +11,6 @@ package suncertify.ui;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.TableModel;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -30,8 +29,8 @@ public class ContractorTable extends JTable {
    * @param bookButton
    *          the book button
    */
-  public ContractorTable(final ClientWindow window, TableModel model) {
-    super(model);
+  public ContractorTable(final ClientWindow window) {
+    super(window.getTableModel());
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     setRowSelectionAllowed(true);
     setColumnSelectionAllowed(false);

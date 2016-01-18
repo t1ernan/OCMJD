@@ -10,11 +10,13 @@
 
 package suncertify.ui;
 
+import static suncertify.ui.Messages.CLOSING_APPLICATION_MESSAGE;
+import static suncertify.ui.Messages.EXIT_MENU_ITEM_TEXT;
+import static suncertify.ui.Messages.FATAL_EXCEPTION_MESSAGE_TITLE;
+import static suncertify.ui.Messages.OPTIONS_MENU_TEXT;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,8 +32,8 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
   private static final long serialVersionUID = 17011991;
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   private final JMenuBar menuBar = new JMenuBar();
-  private final JMenu menu = new JMenu("Options");
-  private final JMenuItem exitMenuItem = new JMenuItem("Exit");
+  private final JMenu menu = new JMenu(OPTIONS_MENU_TEXT);
+  private final JMenuItem exitMenuItem = new JMenuItem(EXIT_MENU_ITEM_TEXT);
 
   public AbstractWindow(final String title) {
     super(title);
@@ -45,16 +47,22 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
   }
 
   @Override
-  public void displayMessage(final String message, final String title, final int messageType) {
-    LOGGER.info(message);
-    JOptionPane.showMessageDialog(this, message, title, messageType);
+  public void displayMessage(final String message, final String title) {
+    JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  @Override
+  public void handleException(final String errorMessage, final String title,
+      final Exception exception) {
+    LOGGER.log(Level.WARNING, errorMessage, exception);
+    JOptionPane.showMessageDialog(this, errorMessage, title, JOptionPane.WARNING_MESSAGE);
   }
 
   @Override
   public void handleFatalException(final String errorMessage, final Exception exception) {
     LOGGER.log(Level.SEVERE, errorMessage, exception);
-    JOptionPane.showMessageDialog(this, errorMessage, "Unexpected System Error",
-        JOptionPane.ERROR_MESSAGE);
+    JOptionPane.showMessageDialog(this, errorMessage + CLOSING_APPLICATION_MESSAGE,
+        FATAL_EXCEPTION_MESSAGE_TITLE, JOptionPane.ERROR_MESSAGE);
     dispose();
   }
 

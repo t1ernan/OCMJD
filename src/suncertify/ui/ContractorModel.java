@@ -9,25 +9,16 @@
  */
 package suncertify.ui;
 
+import javax.swing.table.TableModel;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ContractorModel.
  */
-public interface ContractorModel {
+public interface ContractorModel extends TableModel {
 
-  /**
-   * Gets the row fields.
-   *
-   * @param rowIndex the row index
-   * @return the row fields
-   */
   String[] getRowFields(int rowIndex);
 
-  /**
-   * Update data.
-   *
-   * @param data the data
-   */
   void updateData(String[][] data);
 
   void updateRow(int row, String[] fieldValues);

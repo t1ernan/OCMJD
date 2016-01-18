@@ -14,12 +14,14 @@ import javax.swing.JPanel;
 
 public interface WindowManager {
 
-  void handleFatalException(String errorMessage, final Exception exception);
-
-  void displayMessage(final String message, final String title, final int messageType);
-  
   JPanel createContentPanel();
-  
+
+  void displayMessage(final String message, final String title);
+
+  void handleException(final String message, final String title, final Exception exception);
+
+  void handleFatalException(final String errorMessage, final Exception exception);
+
   void initializeComponents();
 
 }

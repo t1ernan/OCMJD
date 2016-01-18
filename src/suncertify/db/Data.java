@@ -35,9 +35,6 @@ public final class Data implements DBMainExtended {
   /** The single instance of Data. */
   private static final Data INSTANCE = new Data();
 
-  /** The magic cookie value, specified in schema information. */
-  private static final int MAGIC_COOKIE = 514;
-
   /** The names of the record fields, specified in schema information. */
   private static final String[] FIELD_NAMES = { "name", "location", "specialties", "size", "rate",
       "owner" };
@@ -54,6 +51,9 @@ public final class Data implements DBMainExtended {
   /** Global Logger. */
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+  /** The record offset, specified in the schema information. */
+  private static final int RECORD_OFFSET = 70;
+
   /**
    * The in-memory cache which stores record numbers and fields values of the corresponding record.
    */
@@ -64,9 +64,6 @@ public final class Data implements DBMainExtended {
 
   /** The file path of the database file. */
   private String dbFilePath;
-
-  /** The record offset, specified in the schema information. */
-  private static final int RECORD_OFFSET = 70;
 
   /**
    * Constructs a new Data instance.
@@ -157,17 +154,13 @@ public final class Data implements DBMainExtended {
    * {@inheritDoc}.
    */
   @Override
-  public synchronized void initialize(final String dbFileLocation)
+  public synchronized void initialize(final String dbFilePath)
       throws DatabaseAccessException, IllegalArgumentException {
-    if (dbFileLocation == null) {
+    if (dbFilePath == null) {
       throw new IllegalArgumentException("File path of database file cannot be null");
     }
-    try (RandomAccessFile raf = new RandomAccessFile(dbFileLocation, "rwd")) {
-      if (raf.readInt() != MAGIC_COOKIE) {
-        throw new DatabaseAccessException("Could not read data from the specified file: "
-            + dbFileLocation + ". Invalid magic cookie value");
-      }
-      dbFilePath = dbFileLocation;
+    this.dbFilePath = dbFilePath;
+    try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
       loadCache();
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {
         try {
@@ -178,7 +171,7 @@ public final class Data implements DBMainExtended {
       }));
     } catch (final IOException e) {
       throw new DatabaseAccessException(
-          "Could not read data from the specified file: " + dbFileLocation, e);
+          "Could not read data from the specified file: " + dbFilePath, e);
     }
   }
 

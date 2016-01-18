@@ -39,10 +39,11 @@ public final class DatabaseFactory {
    */
   public static DBMainExtended getDatabase(final String dbFilePath) throws DatabaseAccessException {
     if (dbFilePath == null) {
-      throw new IllegalArgumentException("The file path to the database cannot be null");
+      throw new IllegalArgumentException("The file path to the database cannot be null.");
     }
     if (!Files.exists(Paths.get(dbFilePath))) {
-      throw new DatabaseAccessException("Could not find the specified file: " + dbFilePath);
+      throw new DatabaseAccessException(
+          "The specified database file does not exist: " + dbFilePath + ".");
     }
     dao.initialize(dbFilePath);
     return dao;

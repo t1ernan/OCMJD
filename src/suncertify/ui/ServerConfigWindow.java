@@ -144,7 +144,7 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
   public void initializeComponents() {
     contentPanel = createContentPanel();
     contentPanel.setBorder(BorderFactory.createTitledBorder(CONFIG_PANEL_BORDER_TITLE));
-    dbFileField.setText(Config.getServerDBLocation());
+    dbFileField.setText(Config.getServerDbLocation());
     dbFileField.setToolTipText(DATABASE_FILE_LOCATION_TOOLTIP_TEXT);
     dbFileField.addActionListener(action -> saveAndLaunch());
     portField.setText(Config.getServerPortNumber());
@@ -185,7 +185,7 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
   @Override
   public void launch() {
     try {
-      final DBMainExtended data = DatabaseFactory.getDatabase(Config.getServerDBLocation());
+      final DBMainExtended data = DatabaseFactory.getDatabase(Config.getServerDbLocation());
       final int portNumber = Integer.parseInt(Config.getServerPortNumber());
       LOGGER.info("Starting server...");
       new RmiServer(data).startServer(portNumber);
@@ -213,7 +213,7 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
    */
   @Override
   public void saveConfig() {
-    Config.setServerDBLocation(getDbFilePath());
+    Config.setServerDbFileLocation(getDbFilePath());
     Config.setServerPortNumber(getPortNumber());
     Config.saveProperties();
   }

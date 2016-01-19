@@ -1,3 +1,13 @@
+/*
+ * Utils.java  1.0  19-Jan-2016
+ *
+ * Candidate: Tiernan Scully
+ * Oracle Testing ID: OC1539331
+ * Registration ID 292125773
+ *
+ * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
+ */
+
 package suncertify.util;
 
 import java.io.IOException;
@@ -11,17 +21,22 @@ import java.util.logging.SimpleFormatter;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class Converter.
+ * The Class Utils.
  */
 public final class Utils {
 
+  /** The Global logger. */
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
   /** The Constant CHARACTER_ENCODING. */
   private static final String ENCODING = "US-ASCII";
 
+  /** The Constant BLANK_SPACE_HEX. */
   private static final int BLANK_SPACE_HEX = 0x20;
 
+  /**
+   * Instantiates a new utils.
+   */
   private Utils() {
 
   }
@@ -44,14 +59,32 @@ public final class Utils {
   }
 
 
+  /**
+   * Convert bytes to string.
+   *
+   * @param valueBytes the value bytes
+   * @return the string
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
   public static String convertBytesToString(final byte[] valueBytes) throws IOException {
     return new String(valueBytes, Charset.forName(ENCODING));
   }
 
+  /**
+   * Convert string to bytes.
+   *
+   * @param message the message
+   * @return the byte[]
+   */
   public static byte[] convertStringToBytes(final String message) {
     return message.getBytes(Charset.forName(ENCODING));
   }
 
+  /**
+   * Intialize logger.
+   *
+   * @param level the level
+   */
   public static void intializeLogger(final Level level) {
     LOGGER.setLevel(level);
     LOGGER.setUseParentHandlers(false);
@@ -61,10 +94,22 @@ public final class Utils {
     LOGGER.addHandler(handler);
   }
 
+  /**
+   * Checks if is eight digits.
+   *
+   * @param number the number
+   * @return true, if is eight digits
+   */
   public static boolean isEightDigits(final String number) {
     return number.matches("[0-9]{8}");
   }
 
+  /**
+   * Checks if is invalid port number.
+   *
+   * @param serverPortNumber the server port number
+   * @return true, if is invalid port number
+   */
   public static boolean isInvalidPortNumber(final String serverPortNumber) {
     return !serverPortNumber.matches("[0-9]+");
   }

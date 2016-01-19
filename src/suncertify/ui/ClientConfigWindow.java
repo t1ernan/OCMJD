@@ -128,7 +128,7 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
   public void initializeComponents() {
     contentPanel = createContentPanel();
     contentPanel.setBorder(BorderFactory.createTitledBorder(CONFIG_PANEL_BORDER_TITLE));
-    ipAddressField.setText(Config.getServerIPAddress());
+    ipAddressField.setText(Config.getServerIpAddress());
     ipAddressField.addActionListener(action -> saveAndLaunch());
     portField.setText(Config.getClientPortNumber());
     portField.addActionListener(action -> saveAndLaunch());
@@ -161,7 +161,7 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
   @Override
   public void launch() {
     try {
-      final String ipAddress = Config.getServerIPAddress();
+      final String ipAddress = Config.getServerIpAddress();
       final int port = Integer.parseInt(Config.getClientPortNumber());
       LOGGER.info("Starting client...");
       final ContractorService service = new RmiClient(ipAddress, port);
@@ -189,7 +189,7 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
    */
   @Override
   public void saveConfig() {
-    Config.setServerIPAddress(getIpAddress());
+    Config.setServerIpAddress(getIpAddress());
     Config.setClientPortNumber(getPortNumber());
     Config.saveProperties();
   }

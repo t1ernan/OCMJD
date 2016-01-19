@@ -17,7 +17,7 @@ import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseAccessException;
 import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
-import suncertify.util.ContractorBuilder;
+import suncertify.util.ContractorConverter;
 
 public class TestBusinessService {
 
@@ -40,7 +40,7 @@ public class TestBusinessService {
 			while (!endRun) {
 				try {
 					try {
-						final Contractor contractor = ContractorBuilder.build(data.read(recNo));
+						final Contractor contractor = ContractorConverter.toContractor(data.read(recNo));
 						contractor.setCustomerId(customer);
 						service.book(contractor);
 						endRun = true;

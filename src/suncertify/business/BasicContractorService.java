@@ -10,13 +10,11 @@
 
 package suncertify.business;
 
-import static suncertify.util.Constants.CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE;
-
 import suncertify.db.DBMainExtended;
 import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPk;
-import suncertify.util.ContractorBuilder;
+import suncertify.util.ContractorConverter;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -28,6 +26,11 @@ import java.util.Map;
  * specified data access object.
  */
 public class BasicContractorService implements ContractorService {
+
+  /**
+   * The default message prefix for {@link ContractorNotFoundException} messages.
+   */
+  private static final String MESSAGE_PREFIX = "Could not find any contractors with: ";
 
   /** The data access object used to interact with the database. */
   private final DBMainExtended data;
@@ -65,8 +68,7 @@ public class BasicContractorService implements ContractorService {
       checkContractorIsAvailable(recordNumber);
       data.update(recordNumber, fieldValues);
     } catch (final RecordNotFoundException e) {
-      throw new ContractorNotFoundException(
-          CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE + contractor.getPrimaryKey(), e);
+      throw new ContractorNotFoundException(MESSAGE_PREFIX + contractor.getPrimaryKey(), e);
     } finally {
       data.unlock(recordNumber);
     }
@@ -87,7 +89,7 @@ public class BasicContractorService implements ContractorService {
       final int[] recordNumbers = data.find(searchCriteria);
       for (final int recordNumber : recordNumbers) {
         final String[] fieldValues = data.read(recordNumber);
-        final Contractor contractor = ContractorBuilder.build(fieldValues);
+        final Contractor contractor = ContractorConverter.toContractor(fieldValues);
         final ContractorPk primaryKey = contractor.getPrimaryKey();
         if (doesMatchExactly(primaryKey, searchKey)) {
           matchingRecords.put(recordNumber, contractor);
@@ -95,11 +97,11 @@ public class BasicContractorService implements ContractorService {
       }
 
       if (matchingRecords.isEmpty()) {
-        throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE + searchKey);
+        throw new ContractorNotFoundException(MESSAGE_PREFIX + searchKey);
       }
 
     } catch (final RecordNotFoundException e) {
-      throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE + searchKey, e);
+      throw new ContractorNotFoundException(MESSAGE_PREFIX + searchKey, e);
     }
     return matchingRecords;
   }
@@ -120,7 +122,7 @@ public class BasicContractorService implements ContractorService {
   private void checkContractorIsAvailable(final int recordNumber)
       throws RecordNotFoundException, AlreadyBookedException, RemoteException {
     final String[] fieldValues = data.read(recordNumber);
-    final Contractor contractor = ContractorBuilder.build(fieldValues);
+    final Contractor contractor = ContractorConverter.toContractor(fieldValues);
     if (contractor.isBooked()) {
       throw new AlreadyBookedException(
           "Contractor with :" + contractor.getPrimaryKey() + " has already been booked.");

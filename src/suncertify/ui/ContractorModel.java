@@ -13,7 +13,6 @@ package suncertify.ui;
 import suncertify.domain.Contractor;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.table.TableModel;
 

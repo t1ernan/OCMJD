@@ -124,7 +124,7 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
   public void initializeComponents() {
     contentPanel = createContentPanel();
     contentPanel.setBorder(BorderFactory.createTitledBorder(CONFIG_PANEL_BORDER_TITLE));
-    dbFileField.setText(Config.getAloneDBLocation());
+    dbFileField.setText(Config.getAloneDbLocation());
     dbFileField.setToolTipText(DATABASE_FILE_LOCATION_TOOLTIP_TEXT);
     dbFileField.addActionListener(action -> saveAndLaunch());
     confirmButton.setToolTipText(CONFIRM_BUTTON_TOOLTIP_TEXT);
@@ -159,7 +159,7 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
   @Override
   public void launch() {
     try {
-      final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDBLocation());
+      final DBMainExtended data = DatabaseFactory.getDatabase(Config.getAloneDbLocation());
       LOGGER.info("Starting standalone...");
       final ContractorService service = new BasicContractorService(data);
       final JFrame clientWindow = new ClientWindow(service);
@@ -186,7 +186,7 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
    */
   @Override
   public void saveConfig() {
-    Config.setAloneDBLocation(getDbFilePath());
+    Config.setStandaloneDbLocation(getDbFilePath());
     Config.saveProperties();
   }
 

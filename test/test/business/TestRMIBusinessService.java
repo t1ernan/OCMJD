@@ -20,7 +20,7 @@ import suncertify.db.DBMainExtended;
 import suncertify.db.DatabaseAccessException;
 import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
-import suncertify.util.ContractorBuilder;
+import suncertify.util.ContractorConverter;
 
 public class TestRMIBusinessService {
 
@@ -43,7 +43,7 @@ public class TestRMIBusinessService {
 			while (!endRun) {
 				try {
 					try {
-						final Contractor contractor = ContractorBuilder.build(data.read(recNo));
+						final Contractor contractor = ContractorConverter.toContractor(data.read(recNo));
 						contractor.setCustomerId(customer);
 						final ContractorService service = new RmiClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
 						service.book(contractor);

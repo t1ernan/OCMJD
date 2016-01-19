@@ -19,7 +19,7 @@ import suncertify.db.DatabaseFactory;
 import suncertify.db.RecordNotFoundException;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPk;
-import suncertify.util.ContractorBuilder;
+import suncertify.util.ContractorConverter;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -41,8 +41,8 @@ public class RMIServiceTest {
   private final String[] firstContractorSearchCriteria = new String[] { "Dogs With Tools",
       "Smallville" };
 
-  private final Contractor firstContractor_Booked = ContractorBuilder
-      .build(firstContractorValues_Booked);
+  private final Contractor firstContractor_Booked = ContractorConverter
+      .toContractor(firstContractorValues_Booked);
 
   private final ContractorPk NO_SEARCH_CRITERIA = new ContractorPk("", "");
   private final ContractorPk FIRST_CONTRACTOR_SEARCH_CRITERIA = new ContractorPk("Dogs With Tools",

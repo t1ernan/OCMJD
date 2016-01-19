@@ -39,7 +39,7 @@ import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
 import suncertify.domain.Contractor;
 import suncertify.domain.ContractorPk;
-import suncertify.util.ContractorBuilder;
+import suncertify.util.ContractorConverter;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -73,19 +73,19 @@ public final class ClientWindow extends AbstractWindow {
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
 
-  /** The service. */
+  /** The service object used to interact with the database. */
   private final ContractorService service;
 
-  /** The model. */
+  /** The table model used by the table to interrogate the data model. */
   private ContractorModel model;
 
   /** The table. */
   private JTable table;
 
-  /** The scroll pane. */
+  /** The scroll pane which contains the table. */
   private JScrollPane scrollPane;
 
-  /** The column names. */
+  /** The column names for the rows in the table. */
   private final String[] columnNames = { "Name", "Location", "Specialties", "Size", "Rate",
       "Customer ID" };
 
@@ -95,10 +95,10 @@ public final class ClientWindow extends AbstractWindow {
   /** The location label. */
   private final JLabel locationLabel = new JLabel(LOCATION_LABEL_TEXT);
 
-  /** The name field. */
+  /** The name field, where the name search value is entered. */
   private final JTextField nameField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
 
-  /** The location field. */
+  /** The location textfield, where the location search value is entered. */
   private final JTextField locationField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
 
   /** The book button. */
@@ -110,14 +110,16 @@ public final class ClientWindow extends AbstractWindow {
   /** The clear button. */
   private final JButton clearButton = new JButton(CLEAR_BUTTON_TEXT);
 
-  /** The content panel. */
+  /** The main content panel. */
   private JPanel contentPanel;
 
   /**
-   * Instantiates a new client window.
+   * Constructs a new client window with the specified {@code service}. The {@code service} object
+   * is then used to invoke the business methods defined in {@link ContractorService} in the service
+   * layer in order to retrieve and update data in the database.
    *
    * @param service
-   *          the service
+   *          the ContractorService object used to interact with the services layer.
    */
   public ClientWindow(final ContractorService service) {
     super(SYSTEM_NAME);
@@ -142,10 +144,12 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Enable or disable book button.
+   * Enable or disable 'Book' button, depending on the specified {@code rowIndex}. Enables the
+   * 'Book' button if {@link #shouldBookButtonBeEnabled(rowIndex)} returns true; otherwise disables
+   * the button.
    *
    * @param rowIndex
-   *          the row index
+   *          the row index of the currently selected row in the JTable.
    */
   public void enableOrDisableBookButton(final int rowIndex) {
     bookButton.setEnabled(shouldBookButtonBeEnabled(rowIndex));
@@ -178,18 +182,18 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Book selected contractor.
+   * Book the selected contractor.
    */
   private void bookSelectedContractor() {
-    final Optional<String> optionalCustomerId = Optional
+    final Optional<String> customerId = Optional
         .ofNullable(JOptionPane.showInputDialog(CUSTOMER_ID_PROMPT_TEXT));
-    if (optionalCustomerId.isPresent()) {
-      if (isEightDigits(optionalCustomerId.get())) {
+    if (customerId.isPresent()) {
+      if (isEightDigits(customerId.get())) {
         try {
           final int rowIndex = table.getSelectedRow();
           final String[] fieldValues = model.getRowFields(rowIndex);
-          final Contractor contractor = ContractorBuilder.build(fieldValues);
-          contractor.setCustomerId(optionalCustomerId.get());
+          final Contractor contractor = ContractorConverter.toContractor(fieldValues);
+          contractor.setCustomerId(customerId.get());
           service.book(contractor);
           refreshTable();
           displayMessage(CONTRACTOR_BOOKED_MESSAGE_TEXT, CONTRACTOR_BOOKED_MESSAGE_TITLE);
@@ -364,7 +368,7 @@ public final class ClientWindow extends AbstractWindow {
       shouldEnable = false;
     } else {
       final String[] fieldValues = model.getRowFields(rowIndex);
-      final Contractor contractor = ContractorBuilder.build(fieldValues);
+      final Contractor contractor = ContractorConverter.toContractor(fieldValues);
       shouldEnable = !contractor.isBooked();
     }
     return shouldEnable;

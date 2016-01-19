@@ -54,7 +54,7 @@ public class RmiClient implements ContractorService {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public void book(final Contractor contractor) throws ContractorNotFoundException,
@@ -66,7 +66,7 @@ public class RmiClient implements ContractorService {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public Map<Integer, Contractor> find(final ContractorPk primaryKey)

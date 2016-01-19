@@ -29,6 +29,12 @@ public interface LaunchManager {
   void launch();
 
   /**
+   * Saves configuration properties and launches the main application window if the configuration
+   * values entered are valid.
+   */
+  void saveAndLaunch();
+
+  /**
    * Saves the specified configuration values to the suncertify.properties file.
    */
   void saveConfig();

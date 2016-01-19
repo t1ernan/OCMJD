@@ -67,7 +67,7 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public void displayMessage(final String message, final String title) {
@@ -75,17 +75,17 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public void handleException(final String errorMessage, final String title,
       final Exception exception) {
-    LOGGER.log(Level.WARNING, errorMessage, exception);
+    LOGGER.log(Level.INFO, errorMessage, exception);
     JOptionPane.showMessageDialog(this, errorMessage, title, JOptionPane.WARNING_MESSAGE);
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public void handleFatalException(final String errorMessage, final Exception exception) {

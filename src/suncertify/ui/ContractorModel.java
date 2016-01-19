@@ -10,6 +10,10 @@
 
 package suncertify.ui;
 
+import suncertify.domain.Contractor;
+
+import java.util.Map;
+
 import javax.swing.table.TableModel;
 
 /**
@@ -22,17 +26,17 @@ public interface ContractorModel extends TableModel {
    * Gets the row fields.
    *
    * @param rowIndex
-   *          the row index
+   *          the row index.
    * @return the row fields
    */
   String[] getRowFields(int rowIndex);
 
   /**
-   * Updates the ContractorTable with the current state of the data model.
+   * Updates the ContractorTable with the current state of the data model using the specified
+   * {@code data}.
    *
    * @param data
-   *          the data
+   *          the current state of the data model.
    */
-  void updateData(String[][] data);
-
+  void updateData(Map<Integer, Contractor> data);
 }

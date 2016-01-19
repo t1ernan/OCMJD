@@ -1,5 +1,5 @@
 /*
- * ContractorTableModel.java  1.0  14-Jan-2016
+ * ContractorTableModel.java  1.0  18-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -7,37 +7,48 @@
  *
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
+
 package suncertify.ui;
 
+import suncertify.domain.Contractor;
+
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ContractorTableModel.
+ * The class ContractorTableModel is subclass of {@link AbstractTableModel} responsible for
+ * providing the {@link ContractorTable} with the method implementations necessary to interrogate
+ * the tabular data model provided, in this case, a map of {@link Contractor} records. It also
+ * implements the {@link ContractorModel}, which provides extra method definitions for updating the
+ * data model with new records and retrieving contractor values given a row number.
  */
 public class ContractorTableModel extends AbstractTableModel implements ContractorModel {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
 
-  /** The columns. */
-  private final String[] columns;
+  /** The column names. */
+  private final String[] columnNames;
 
-  /** The values. */
-  private String[][] values;
+  /** The map containing the contractor records. */
+  private Map<Integer, Contractor> recordMap;
 
   /**
-   * Instantiates a new contractor table model.
+   * Instantiates a new contractor table model with the specified {@code columnNames} and
+   * {@code recordMap}.
    *
-   * @param columns the columns
-   * @param values the values
+   * @param columnNames
+   *          the columns
+   * @param recordMap
+   *          the values
    */
-  public ContractorTableModel(final String[] columns, final String[][] values) {
+  public ContractorTableModel(final String[] columnNames,
+      final Map<Integer, Contractor> recordMap) {
     super();
-    this.columns = Arrays.copyOf(columns, columns.length);
-    this.values = values;
+    this.columnNames = Arrays.copyOf(columnNames, columnNames.length);
+    this.recordMap = recordMap;
   }
 
   /**
@@ -45,7 +56,7 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    */
   @Override
   public int getColumnCount() {
-    return columns.length;
+    return columnNames.length;
   }
 
   /**
@@ -53,7 +64,7 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    */
   @Override
   public String getColumnName(final int columnIndex) {
-    return columns[columnIndex];
+    return columnNames[columnIndex];
   }
 
   /**
@@ -61,7 +72,7 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    */
   @Override
   public int getRowCount() {
-    return values.length;
+    return recordMap.size();
   }
 
   /**
@@ -69,7 +80,7 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    */
   @Override
   public String[] getRowFields(final int rowIndex) {
-    return values[rowIndex];
+    return getContractor(rowIndex).toStringArray();
   }
 
   /**
@@ -77,7 +88,7 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    */
   @Override
   public Object getValueAt(final int rowIndex, final int columnIndex) {
-    return values[rowIndex][columnIndex];
+    return getRowFields(rowIndex)[columnIndex];
   }
 
   /**
@@ -92,9 +103,21 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    * {@inheritDoc}.
    */
   @Override
-  public void updateData(final String[][] data) {
-    values = data;
+  public void updateData(final Map<Integer, Contractor> data) {
+    recordMap = data;
     fireTableDataChanged();
+
+  }
+
+  /**
+   * Gets the contractor for the specified {@code rowIndex}.
+   *
+   * @param rowIndex
+   *          the row index of the contractor.
+   * @return the contractor represented by the given row index.
+   */
+  private Contractor getContractor(final int rowIndex) {
+    return (Contractor) recordMap.values().toArray()[rowIndex];
   }
 
 }

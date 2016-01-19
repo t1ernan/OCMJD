@@ -11,7 +11,7 @@ public final class Constants {
   /** The Constant RMI_ID. */
   public static final String RMI_ID = "Remote Server";
 
-  public static final String CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE = "Could not find any contractors.";
+  public static final String CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE = "Could not find any contractors with: ";
 
   public static final String CONTRACTOR_ALREADY_BOOKED_EXCEPTION_MESSAGE = "The selected contractor has already been booked.";
 

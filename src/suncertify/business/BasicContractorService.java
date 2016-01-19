@@ -48,7 +48,7 @@ public class BasicContractorService implements ContractorService {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public void book(final Contractor contractor) throws ContractorNotFoundException,
@@ -65,14 +65,15 @@ public class BasicContractorService implements ContractorService {
       checkContractorIsAvailable(recordNumber);
       data.update(recordNumber, fieldValues);
     } catch (final RecordNotFoundException e) {
-      throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE, e);
+      throw new ContractorNotFoundException(
+          CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE + contractor.getPrimaryKey(), e);
     } finally {
       data.unlock(recordNumber);
     }
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public Map<Integer, Contractor> find(final ContractorPk searchKey)
@@ -94,11 +95,11 @@ public class BasicContractorService implements ContractorService {
       }
 
       if (matchingRecords.isEmpty()) {
-        throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE);
+        throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE + searchKey);
       }
 
     } catch (final RecordNotFoundException e) {
-      throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE, e);
+      throw new ContractorNotFoundException(CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE + searchKey, e);
     }
     return matchingRecords;
   }
@@ -121,7 +122,8 @@ public class BasicContractorService implements ContractorService {
     final String[] fieldValues = data.read(recordNumber);
     final Contractor contractor = ContractorBuilder.build(fieldValues);
     if (contractor.isBooked()) {
-      throw new AlreadyBookedException("Contractor has already been booked.");
+      throw new AlreadyBookedException(
+          "Contractor with :" + contractor.getPrimaryKey() + " has already been booked.");
     }
   }
 

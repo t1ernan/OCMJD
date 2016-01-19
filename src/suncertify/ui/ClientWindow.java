@@ -7,6 +7,7 @@
  *
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
+
 package suncertify.ui;
 
 import static suncertify.ui.Messages.ACTIONS_BORDER_TITLE;
@@ -45,9 +46,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,7 +58,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.TableModel;
 
 public final class ClientWindow extends AbstractWindow {
 
@@ -104,14 +102,10 @@ public final class ClientWindow extends AbstractWindow {
     bookButton.setEnabled(shouldBookButtonBeEnabled(rowIndex));
   }
 
-  public TableModel getTableModel() {
-    return model;
-  }
-
   @Override
   public void initializeComponents() {
-    model = new ContractorTableModel(columnNames, recordsToArrayArray(getAllRecords()));
-    table = new ContractorTable(this);
+    model = new ContractorTableModel(columnNames, getAllRecords());
+    table = new ContractorTable(this, model);
     scrollPane = new JScrollPane(table);
     bookButton.setToolTipText(BOOK_BUTTON_TOOLTIP_TEXT);
     bookButton.addActionListener(action -> bookSelectedContractor());
@@ -129,28 +123,6 @@ public final class ClientWindow extends AbstractWindow {
     locationField.addActionListener(action -> filterTableOnSearchValues());
     locationField.setToolTipText(LOCATION_TOOLTIP_TEXT);
     contentPanel = createContentPanel();
-  }
-
-  public String[][] recordsToArrayArray(final Map<Integer, Contractor> records) {
-    final List<String[]> list = new ArrayList<>();
-    for (final Contractor contractor : records.values()) {
-      list.add(contractor.toStringArray());
-    }
-    final String[][] array = new String[list.size()][];
-    for (int i = 0; i < list.size(); i++) {
-      array[i] = list.get(i);
-    }
-    return array;
-  }
-
-  public void refreshTable() {
-    updateTable(getAllRecords());
-    filterTableOnSearchValues();
-  }
-
-  public void updateTable(final Map<Integer, Contractor> records) {
-    model.updateData(recordsToArrayArray(records));
-    bookButton.setEnabled(false);
   }
 
   private void bookSelectedContractor() {
@@ -238,7 +210,8 @@ public final class ClientWindow extends AbstractWindow {
     try {
       final ContractorPk primaryKey = new ContractorPk(name, location);
       final Map<Integer, Contractor> records = service.find(primaryKey);
-      updateTable(records);
+      model.updateData(records);
+      bookButton.setEnabled(false);
       scrollPane.setVisible(true);
     } catch (final RemoteException exception) {
       handleFatalException(REMOTE_EXCEPTION_MESSAGE_TEXT, exception);
@@ -271,13 +244,21 @@ public final class ClientWindow extends AbstractWindow {
     return nameField.getText().trim();
   }
 
-  private boolean shouldBookButtonBeEnabled(final int rowIndex) {
-    if (rowIndex == -1) {
-      return false;
-    }
-    final String[] fieldValues = model.getRowFields(rowIndex);
-    final Contractor contractor = ContractorBuilder.build(fieldValues);
-    return !contractor.isBooked();
+  private void refreshTable() {
+    model.updateData(getAllRecords());
+    bookButton.setEnabled(false);
+    filterTableOnSearchValues();
   }
 
+  private boolean shouldBookButtonBeEnabled(final int rowIndex) {
+    boolean shouldEnable = false;
+    if (rowIndex == -1) {
+      shouldEnable = false;
+    } else {
+      final String[] fieldValues = model.getRowFields(rowIndex);
+      final Contractor contractor = ContractorBuilder.build(fieldValues);
+      shouldEnable = !contractor.isBooked();
+    }
+    return shouldEnable;
+  }
 }

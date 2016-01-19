@@ -39,7 +39,7 @@ public class RmiServer extends BasicContractorService implements RmiService {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public void startServer(final int port) throws RemoteException {

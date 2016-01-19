@@ -105,7 +105,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized int create(final String[] data)
@@ -122,7 +122,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized void delete(final int recNo) {
@@ -130,7 +130,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized int[] find(final String[] criteria)
@@ -155,7 +155,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized void initialize(final String dbFilePath)
@@ -194,7 +194,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized boolean isLocked(final int recNo) throws RecordNotFoundException {
@@ -223,7 +223,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized void lock(final int recNo) throws RecordNotFoundException {
@@ -238,7 +238,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized String[] read(final int recNo) throws RecordNotFoundException {
@@ -249,7 +249,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized void saveRecords() throws IOException, IllegalStateException {
@@ -268,7 +268,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized void unlock(final int recNo) {
@@ -279,7 +279,7 @@ public final class Data implements DBMainExtended {
   }
 
   /**
-   * {@inheritDoc}.
+   * {@inheritDoc}
    */
   @Override
   public synchronized void update(final int recNo, final String[] data) {
@@ -399,8 +399,7 @@ public final class Data implements DBMainExtended {
    * of the specified {@code fieldValues} is a record value. If the specified {@code fieldValues}
    * argument is {@code null}, the record will be filled with blank space ASCII characters.
    *
-   * <p>
-   * If any value of a field is less that the size specified for that field in the schema
+   * <p>If any value of a field is less that the size specified for that field in the schema
    * information, the remaining bytes of the field will be padded with blank space ASCII characters.
    *
    * @param raf

@@ -91,7 +91,7 @@ public class ContractorPk implements Serializable {
    */
   @Override
   public String toString() {
-    return "ContractorPk [name=" + name + ", location=" + location + "]";
+    return "[name=" + name + ", location=" + location + "]";
   }
 
   /**

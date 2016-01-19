@@ -1,5 +1,5 @@
 /*
- * ClientConfigWindow.java  1.0  14-Jan-2016
+ * ClientConfigWindow.java  1.0  18-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -7,6 +7,7 @@
  *
  * 1Z0-855 - Java SE 6 Developer Certified Master Assignment - English (ENU)
  */
+
 package suncertify.ui;
 
 import static suncertify.ui.Messages.CLIENT_CONFIG_FRAME_TITLE_TEXT;
@@ -42,18 +43,42 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * The class ClientConfigWindow is responsible for configuring and launching the main application
+ * window, the {@link ClientWindow}, when the system is run in Networked Mode. It acts as a
+ * configuration JFrame where the client's configuration values, details of the RMI server it wishes
+ * to connect to, are entered and verified before attempting to launch the main application. It
+ * extends {@link AbstractWindow} and implements {@link LaunchManager}.
+ */
 public final class ClientConfigWindow extends AbstractWindow implements LaunchManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
+
+  /** The Global logger. */
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+  /** The ip address label. */
   private final JLabel ipAddressLabel = new JLabel(IP_ADDRESS_LABEL_TEXT);
+
+  /** The port number label. */
   private final JLabel portLabel = new JLabel(PORT_NUMBER_LABEL_TEXT);
+
+  /** The ip address field. */
   private final JTextField ipAddressField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
+
+  /** The port number field. */
   private final JTextField portField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
+
+  /** The confirm button. */
   private final JButton confirmButton = new JButton(CONFIRM_BUTTON_TEXT);
+
+  /** The content panel. */
   private JPanel contentPanel;
 
+  /**
+   * Constructs a new client configuration window.
+   */
   public ClientConfigWindow() {
     super(CLIENT_CONFIG_FRAME_TITLE_TEXT);
     setSize(new Dimension(437, 175));
@@ -62,6 +87,9 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
     getContentPane().add(contentPanel);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public JPanel createContentPanel() {
     final JPanel panel = new JPanel(new GridBagLayout());
@@ -93,24 +121,27 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
     return panel;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void initializeComponents() {
     contentPanel = createContentPanel();
     contentPanel.setBorder(BorderFactory.createTitledBorder(CONFIG_PANEL_BORDER_TITLE));
     ipAddressField.setText(Config.getServerIPAddress());
+    ipAddressField.addActionListener(action -> saveAndLaunch());
     portField.setText(Config.getClientPortNumber());
+    portField.addActionListener(action -> saveAndLaunch());
     ipAddressField.setToolTipText(IP_ADDRESS_TOOLTIP_TEXT);
     portField.setToolTipText(PORT_NUMBER_TOOLTIP_TEXT);
     confirmButton.setToolTipText(CONFIRM_BUTTON_TOOLTIP_TEXT);
-    confirmButton.addActionListener(action -> {
-      if (isConfigValid()) {
-        saveConfig();
-        launch();
-      }
-    });
+    confirmButton.addActionListener(action -> saveAndLaunch());
 
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public boolean isConfigValid() {
     boolean isConfigValid = true;
@@ -124,6 +155,9 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
     return isConfigValid;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void launch() {
     try {
@@ -139,6 +173,20 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void saveAndLaunch() {
+    if (isConfigValid()) {
+      saveConfig();
+      launch();
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void saveConfig() {
     Config.setServerIPAddress(getIpAddress());
@@ -146,10 +194,20 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
     Config.saveProperties();
   }
 
+  /**
+   * Gets the ip address.
+   *
+   * @return the ip address
+   */
   private String getIpAddress() {
     return ipAddressField.getText().trim();
   }
 
+  /**
+   * Gets the port number.
+   *
+   * @return the port number
+   */
   private String getPortNumber() {
     return portField.getText().trim();
   }

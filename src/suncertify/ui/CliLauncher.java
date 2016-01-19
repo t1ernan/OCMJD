@@ -15,33 +15,44 @@ import static suncertify.util.Utils.intializeLogger;
 import java.util.logging.Level;
 
 /**
- * The Class CliLauncher.
+ * The class CliLauncher is responsible for launching the application using a command line
+ * interface. It contains the only main method in the application which will launch the application
+ * in a specific mode depending on the command line argument specified, if it is not left out
+ * entirely. Class marked as final to prevent overriding.
  */
 public final class CliLauncher {
 
-  /** The Constant NETWORKED. */
+  /** The mode flag value which indicates the server program should run. */
   private static final String NETWORKED = "server";
 
-  /** The Constant STANDALONE. */
+  /** The mode flag value which indicates the standalone client and GUI should run. */
   private static final String STANDALONE = "alone";
 
-  /** The Constant ZERO. */
+  /** The constant ZERO. */
   private static final int ZERO = 0;
 
-  /** The Constant ONE. */
+  /** The constant ONE. */
   private static final int ONE = 1;
 
   /**
-   * Instantiates a new cli launcher.
+   * Private constructor to prevent instantiation by other classes.
    */
   private CliLauncher() {
   }
 
   /**
-   * The main method.
+   * The application's only main method. It takes either one argument, the mode flag, or no
+   * arguments.
+   * <li>If no argument is specified, the network client and GUI will run.</li>
+   * <li>If the argument "server" is specified, the server program will run.</li>
+   * <li>If the argument "alone" is specified, the client and GUI will run in
+   * standalone/non-networked mode.</li>
    *
    * @param args
    *          the arguments
+   * @throws IllegalArgumentException
+   *           if more than one argument is specified or if the argument specified does not equal
+   *           "alone" or "server".
    */
   public static void main(final String[] args) throws IllegalArgumentException {
     intializeLogger(Level.ALL);
@@ -72,29 +83,31 @@ public final class CliLauncher {
   }
 
   /**
-   * Checks if is networked.
+   * Returns true if is specified {@code modeFlag} equals "server", the argument used to run the
+   * application's RMI server in Networked mode.
    *
-   * @param mode
-   *          the mode
-   * @return true, if is networked
+   * @param modeFlag
+   *          the mode the application should run in.
+   * @return true, if specified {@code modeFlag} equals "alone"
    */
-  private static boolean isNetworked(final String mode) {
-    return mode.equals(NETWORKED);
+  private static boolean isNetworked(final String modeFlag) {
+    return modeFlag.equals(NETWORKED);
   }
 
   /**
-   * Checks if is non networked.
+   * Returns true if is specified {@code modeFlag} equals "alone", the argument used to run the
+   * application client in non-Networked mode.
    *
-   * @param mode
-   *          the mode
-   * @return true, if is non networked
+   * @param modeFlag
+   *          the mode the application should run in.
+   * @return true, if specified {@code modeFlag} equals "alone"
    */
-  private static boolean isNonNetworked(final String mode) {
-    return mode.equals(STANDALONE);
+  private static boolean isNonNetworked(final String modeFlag) {
+    return modeFlag.equals(STANDALONE);
   }
 
   /**
-   * Run client.
+   * Launches the application configuration window for the client in Networked Mode.
    */
   private static void runClient() {
     final AbstractWindow clientConfig = new ClientConfigWindow();
@@ -102,7 +115,7 @@ public final class CliLauncher {
   }
 
   /**
-   * Run server.
+   * Launches the application configuration window for the server in Networked Mode.
    */
   private static void runServer() {
     final AbstractWindow serverConfig = new ServerConfigWindow();
@@ -110,7 +123,7 @@ public final class CliLauncher {
   }
 
   /**
-   * Run standalone.
+   * Launches the application configuration window for the client in non-Networked Mode.
    */
   private static void runStandalone() {
     final AbstractWindow standaloneConfig = new StandaloneConfigWindow();

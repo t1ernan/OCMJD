@@ -59,26 +59,59 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+/**
+ * The Class ClientWindow.
+ */
 public final class ClientWindow extends AbstractWindow {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
 
+  /** The service. */
   private final ContractorService service;
+  
+  /** The model. */
   private ContractorModel model;
+  
+  /** The table. */
   private JTable table;
+  
+  /** The scroll pane. */
   private JScrollPane scrollPane;
+  
+  /** The column names. */
   private final String[] columnNames = { "Name", "Location", "Specialties", "Size", "Rate",
       "Customer ID" };
+  
+  /** The name label. */
   private final JLabel nameLabel = new JLabel(NAME_LABEL_TEXT);
+  
+  /** The location label. */
   private final JLabel locationLabel = new JLabel(LOCATION_LABEL_TEXT);
+  
+  /** The name field. */
   private final JTextField nameField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
+  
+  /** The location field. */
   private final JTextField locationField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
+  
+  /** The book button. */
   private final JButton bookButton = new JButton(BOOK_BUTTON_TEXT);
+  
+  /** The search button. */
   private final JButton searchButton = new JButton(SEARCH_BUTTON_TEXT);
+  
+  /** The clear button. */
   private final JButton clearButton = new JButton(CLEAR_BUTTON_TEXT);
+  
+  /** The content panel. */
   private JPanel contentPanel;
 
+  /**
+   * Instantiates a new client window.
+   *
+   * @param service the service
+   */
   public ClientWindow(final ContractorService service) {
     super(SYSTEM_NAME);
     this.service = service;
@@ -89,6 +122,9 @@ public final class ClientWindow extends AbstractWindow {
     pack();
   }
 
+  /* (non-Javadoc)
+   * @see suncertify.ui.WindowManager#createContentPanel()
+   */
   @Override
   public JPanel createContentPanel() {
     final JPanel panel = new JPanel(new BorderLayout());
@@ -98,10 +134,18 @@ public final class ClientWindow extends AbstractWindow {
     return panel;
   }
 
+  /**
+   * Enable or disable book button.
+   *
+   * @param rowIndex the row index
+   */
   public void enableOrDisableBookButton(final int rowIndex) {
     bookButton.setEnabled(shouldBookButtonBeEnabled(rowIndex));
   }
 
+  /* (non-Javadoc)
+   * @see suncertify.ui.WindowManager#initializeComponents()
+   */
   @Override
   public void initializeComponents() {
     model = new ContractorTableModel(columnNames, getAllRecords());
@@ -125,6 +169,9 @@ public final class ClientWindow extends AbstractWindow {
     contentPanel = createContentPanel();
   }
 
+  /**
+   * Book selected contractor.
+   */
   private void bookSelectedContractor() {
     final int rowIndex = table.getSelectedRow();
     final String[] fieldValues = model.getRowFields(rowIndex);
@@ -155,6 +202,11 @@ public final class ClientWindow extends AbstractWindow {
     }
   }
 
+  /**
+   * Creates the actions panel.
+   *
+   * @return the j panel
+   */
   private JPanel createActionsPanel() {
     final JPanel actionPanel = new JPanel();
     actionPanel.setBorder(BorderFactory.createTitledBorder(ACTIONS_BORDER_TITLE));
@@ -162,6 +214,11 @@ public final class ClientWindow extends AbstractWindow {
     return actionPanel;
   }
 
+  /**
+   * Creates the results panel.
+   *
+   * @return the j panel
+   */
   private JPanel createResultsPanel() {
     final JPanel resultsPanel = new JPanel(new BorderLayout());
     resultsPanel.setBorder(BorderFactory.createTitledBorder(Messages.RESULTS_BORDER_TITLE));
@@ -169,6 +226,11 @@ public final class ClientWindow extends AbstractWindow {
     return resultsPanel;
   }
 
+  /**
+   * Creates the search panel.
+   *
+   * @return the j panel
+   */
   private JPanel createSearchPanel() {
     final GridBagConstraints constraints = new GridBagConstraints();
     final JPanel searchPanel = new JPanel(new GridBagLayout());
@@ -204,6 +266,9 @@ public final class ClientWindow extends AbstractWindow {
     return searchPanel;
   }
 
+  /**
+   * Filter table on search values.
+   */
   private void filterTableOnSearchValues() {
     final String name = getNameSearchValue();
     final String location = getLocationSearchValue();
@@ -222,6 +287,11 @@ public final class ClientWindow extends AbstractWindow {
     }
   }
 
+  /**
+   * Gets the all records.
+   *
+   * @return the all records
+   */
   private Map<Integer, Contractor> getAllRecords() {
     final Map<Integer, Contractor> allRecords = new HashMap<>();
     try {
@@ -236,20 +306,39 @@ public final class ClientWindow extends AbstractWindow {
     return allRecords;
   }
 
+  /**
+   * Gets the location search value.
+   *
+   * @return the location search value
+   */
   private String getLocationSearchValue() {
     return locationField.getText().trim();
   }
 
+  /**
+   * Gets the name search value.
+   *
+   * @return the name search value
+   */
   private String getNameSearchValue() {
     return nameField.getText().trim();
   }
 
+  /**
+   * Refresh table.
+   */
   private void refreshTable() {
     model.updateData(getAllRecords());
     bookButton.setEnabled(false);
     filterTableOnSearchValues();
   }
 
+  /**
+   * Should book button be enabled.
+   *
+   * @param rowIndex the row index
+   * @return true, if successful
+   */
   private boolean shouldBookButtonBeEnabled(final int rowIndex) {
     boolean shouldEnable = false;
     if (rowIndex == -1) {

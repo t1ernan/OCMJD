@@ -44,8 +44,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- * The class StandaloneConfigWindow is responsible for configuring and launching the RMI server, when
- * the system is run in Networked Mode. It acts as a configuration JFrame where the server's
+ * The class StandaloneConfigWindow is responsible for configuring and launching the RMI server,
+ * when the system is run in Networked Mode. It acts as a configuration JFrame where the server's
  * configuration values, port number and database file location, are entered and verified before
  * attempting to launch the RMI server. It extends {@link AbstractWindow} and implements
  * {@link LaunchManager}.

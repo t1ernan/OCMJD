@@ -60,7 +60,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 /**
- * The Class ClientWindow.
+ * The class ClientWindow is direct subclass of {@link AbstractWindow} and acts as the main UI
+ * window for the application. It allows the user to book contractors and search for contractors
+ * which satisfy certain criteria specified by the user; currently only searches based on
+ * contractor's names and/or locations are implemented. It can be launched in networked or
+ * non-networked mode.
  */
 public final class ClientWindow extends AbstractWindow {
 
@@ -69,48 +73,49 @@ public final class ClientWindow extends AbstractWindow {
 
   /** The service. */
   private final ContractorService service;
-  
+
   /** The model. */
   private ContractorModel model;
-  
+
   /** The table. */
   private JTable table;
-  
+
   /** The scroll pane. */
   private JScrollPane scrollPane;
-  
+
   /** The column names. */
   private final String[] columnNames = { "Name", "Location", "Specialties", "Size", "Rate",
       "Customer ID" };
-  
+
   /** The name label. */
   private final JLabel nameLabel = new JLabel(NAME_LABEL_TEXT);
-  
+
   /** The location label. */
   private final JLabel locationLabel = new JLabel(LOCATION_LABEL_TEXT);
-  
+
   /** The name field. */
   private final JTextField nameField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
-  
+
   /** The location field. */
   private final JTextField locationField = new JTextField(DEFAULT_TEXTFIELD_SIZE);
-  
+
   /** The book button. */
   private final JButton bookButton = new JButton(BOOK_BUTTON_TEXT);
-  
+
   /** The search button. */
   private final JButton searchButton = new JButton(SEARCH_BUTTON_TEXT);
-  
+
   /** The clear button. */
   private final JButton clearButton = new JButton(CLEAR_BUTTON_TEXT);
-  
+
   /** The content panel. */
   private JPanel contentPanel;
 
   /**
    * Instantiates a new client window.
    *
-   * @param service the service
+   * @param service
+   *          the service
    */
   public ClientWindow(final ContractorService service) {
     super(SYSTEM_NAME);
@@ -122,8 +127,8 @@ public final class ClientWindow extends AbstractWindow {
     pack();
   }
 
-  /* (non-Javadoc)
-   * @see suncertify.ui.WindowManager#createContentPanel()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public JPanel createContentPanel() {
@@ -137,14 +142,15 @@ public final class ClientWindow extends AbstractWindow {
   /**
    * Enable or disable book button.
    *
-   * @param rowIndex the row index
+   * @param rowIndex
+   *          the row index
    */
   public void enableOrDisableBookButton(final int rowIndex) {
     bookButton.setEnabled(shouldBookButtonBeEnabled(rowIndex));
   }
 
-  /* (non-Javadoc)
-   * @see suncertify.ui.WindowManager#initializeComponents()
+  /**
+   * {@inheritDoc}
    */
   @Override
   public void initializeComponents() {
@@ -288,9 +294,9 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Gets the all records.
+   * Gets all the contractor records in the database.
    *
-   * @return the all records
+   * @return a {@link HashMap} with Integeras the key and Contractor as the value
    */
   private Map<Integer, Contractor> getAllRecords() {
     final Map<Integer, Contractor> allRecords = new HashMap<>();
@@ -325,7 +331,8 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Refresh table.
+   * Refreshes the records in the table by getting the latest records stored in the database and
+   * reapplying the current view.
    */
   private void refreshTable() {
     model.updateData(getAllRecords());
@@ -334,10 +341,12 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Should book button be enabled.
+   * Checks if the 'Book' button should be enabled or disabled for the specified {@code rowIndex}.
+   * Returns true if the row with the specified row index has no customer id value.
    *
-   * @param rowIndex the row index
-   * @return true, if successful
+   * @param rowIndex
+   *          the row index.
+   * @return true, if the row with the specified row index has no customer id value.
    */
   private boolean shouldBookButtonBeEnabled(final int rowIndex) {
     boolean shouldEnable = false;

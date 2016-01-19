@@ -17,12 +17,6 @@ package suncertify.ui;
  */
 public final class Messages {
 
-  /**
-   * Private constructor to prevent instantiation by other classes.
-   */
-  private Messages() {
-  }
-
   /** The title displayed in the border of the Actions JPanel. */
   public static final String ACTIONS_BORDER_TITLE = "Actions";
 
@@ -152,4 +146,10 @@ public final class Messages {
   /** The name of the system displayed in the title of the Client window. */
   public static final String SYSTEM_NAME = "Bodgitt & Scarper Booking System";
 
+
+  /**
+   * Private constructor to prevent instantiation by other classes.
+   */
+  private Messages() {
+  }
 }

@@ -46,7 +46,9 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -179,15 +181,15 @@ public final class ClientWindow extends AbstractWindow {
    * Book selected contractor.
    */
   private void bookSelectedContractor() {
-    final int rowIndex = table.getSelectedRow();
-    final String[] fieldValues = model.getRowFields(rowIndex);
-    final Optional<String> customerId = Optional
+    final Optional<String> optionalCustomerId = Optional
         .ofNullable(JOptionPane.showInputDialog(CUSTOMER_ID_PROMPT_TEXT));
-    if (customerId.isPresent()) {
-      if (isEightDigits(customerId.get())) {
+    if (optionalCustomerId.isPresent()) {
+      if (isEightDigits(optionalCustomerId.get())) {
         try {
+          final int rowIndex = table.getSelectedRow();
+          final String[] fieldValues = model.getRowFields(rowIndex);
           final Contractor contractor = ContractorBuilder.build(fieldValues);
-          contractor.setCustomerId(customerId.get());
+          contractor.setCustomerId(optionalCustomerId.get());
           service.book(contractor);
           refreshTable();
           displayMessage(CONTRACTOR_BOOKED_MESSAGE_TEXT, CONTRACTOR_BOOKED_MESSAGE_TITLE);
@@ -209,9 +211,10 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Creates the actions panel.
+   * Creates the 'Actions' JPanel. Contains all the window components which provide the booking
+   * functionality.
    *
-   * @return the j panel
+   * @return the 'Actions' JPanel.
    */
   private JPanel createActionsPanel() {
     final JPanel actionPanel = new JPanel();
@@ -221,9 +224,10 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Creates the results panel.
+   * Creates the 'Results' JPanel. Contains the {@link JScrollPane} and {@link JTable} which display
+   * the contractor records.
    *
-   * @return the j panel
+   * @return the 'Results' JPanel.
    */
   private JPanel createResultsPanel() {
     final JPanel resultsPanel = new JPanel(new BorderLayout());
@@ -233,9 +237,10 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Creates the search panel.
+   * Creates the 'Search' JPanel. Contains all the window components which provide the searching
+   * functionality.
    *
-   * @return the j panel
+   * @return the 'Search' JPanel.
    */
   private JPanel createSearchPanel() {
     final GridBagConstraints constraints = new GridBagConstraints();
@@ -273,14 +278,19 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Filter table on search values.
+   * Filters table based on search values. If a value is present in one or more search fields, it
+   * updates the ContractorTable to show only records with those <i>exact</i> values, filtering out
+   * non-matching records. If a field is empty then it will ignore it during the filtering
+   * operation. If all search fields are empty, it will not perform any filtering operation and
+   * update the ContractorTable will all available contractor records.
    */
   private void filterTableOnSearchValues() {
     final String name = getNameSearchValue();
     final String location = getLocationSearchValue();
     try {
       final ContractorPk primaryKey = new ContractorPk(name, location);
-      final Map<Integer, Contractor> records = service.find(primaryKey);
+      final Map<Integer, Contractor> contractorMap = service.find(primaryKey);
+      final List<Contractor> records = new ArrayList<>(contractorMap.values());
       model.updateData(records);
       bookButton.setEnabled(false);
       scrollPane.setVisible(true);
@@ -294,11 +304,11 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Gets all the contractor records in the database.
+   * Gets all the contractor records in the database and returns them in an ArrayList.
    *
-   * @return a {@link HashMap} with Integeras the key and Contractor as the value
+   * @return an ArrayList of contractors.
    */
-  private Map<Integer, Contractor> getAllRecords() {
+  private List<Contractor> getAllRecords() {
     final Map<Integer, Contractor> allRecords = new HashMap<>();
     try {
       allRecords.putAll(service.find(new ContractorPk()));
@@ -309,7 +319,7 @@ public final class ClientWindow extends AbstractWindow {
       handleException(exception.getMessage(), CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE_TITLE,
           exception);
     }
-    return allRecords;
+    return new ArrayList<Contractor>(allRecords.values());
   }
 
   /**

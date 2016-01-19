@@ -12,6 +12,7 @@ package suncertify.ui;
 
 import suncertify.domain.Contractor;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.table.TableModel;
@@ -38,5 +39,5 @@ public interface ContractorModel extends TableModel {
    * @param data
    *          the current state of the data model.
    */
-  void updateData(Map<Integer, Contractor> data);
+  void updateData(List<Contractor> data);
 }

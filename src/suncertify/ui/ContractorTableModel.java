@@ -13,14 +13,14 @@ package suncertify.ui;
 import suncertify.domain.Contractor;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
 /**
  * The class ContractorTableModel is subclass of {@link AbstractTableModel} responsible for
  * providing the {@link ContractorTable} with the method implementations necessary to interrogate
- * the tabular data model provided, in this case, a map of {@link Contractor} records. It also
+ * the tabular data model provided, in this case, a List of {@link Contractor} objects. It also
  * implements the {@link ContractorModel}, which provides extra method definitions for updating the
  * data model with new records and retrieving contractor values given a row number.
  */
@@ -32,23 +32,22 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
   /** The column names. */
   private final String[] columnNames;
 
-  /** The map containing the contractor records. */
-  private Map<Integer, Contractor> recordMap;
+  /** The list containing the contractor records. */
+  private List<Contractor> recordList;
 
   /**
    * Instantiates a new contractor table model with the specified {@code columnNames} and
-   * {@code recordMap}.
+   * {@code recordList}.
    *
    * @param columnNames
-   *          the columns
-   * @param recordMap
-   *          the values
+   *          an array of column names.
+   * @param recordList
+   *          a list of Contractors.
    */
-  public ContractorTableModel(final String[] columnNames,
-      final Map<Integer, Contractor> recordMap) {
+  public ContractorTableModel(final String[] columnNames, final List<Contractor> recordList) {
     super();
     this.columnNames = Arrays.copyOf(columnNames, columnNames.length);
-    this.recordMap = recordMap;
+    this.recordList = recordList;
   }
 
   /**
@@ -72,7 +71,7 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    */
   @Override
   public int getRowCount() {
-    return recordMap.size();
+    return recordList.size();
   }
 
   /**
@@ -80,7 +79,7 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    */
   @Override
   public String[] getRowFields(final int rowIndex) {
-    return getContractor(rowIndex).toStringArray();
+    return recordList.get(rowIndex).toStringArray();
   }
 
   /**
@@ -103,21 +102,10 @@ public class ContractorTableModel extends AbstractTableModel implements Contract
    * {@inheritDoc}.
    */
   @Override
-  public void updateData(final Map<Integer, Contractor> data) {
-    recordMap = data;
+  public void updateData(final List<Contractor> data) {
+    recordList = data;
     fireTableDataChanged();
 
-  }
-
-  /**
-   * Gets the contractor for the specified {@code rowIndex}.
-   *
-   * @param rowIndex
-   *          the row index of the contractor.
-   * @return the contractor represented by the given row index.
-   */
-  private Contractor getContractor(final int rowIndex) {
-    return (Contractor) recordMap.values().toArray()[rowIndex];
   }
 
 }

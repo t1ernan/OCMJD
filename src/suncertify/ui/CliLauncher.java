@@ -10,7 +10,7 @@
 
 package suncertify.ui;
 
-import static suncertify.util.Utils.intializeLogger;
+import static suncertify.util.Utils.initializeLogger;
 
 import java.util.logging.Level;
 
@@ -55,7 +55,7 @@ public final class CliLauncher {
    *           "alone" or "server".
    */
   public static void main(final String[] args) throws IllegalArgumentException {
-    intializeLogger(Level.ALL);
+    initializeLogger(Level.ALL);
 
     final int numberOfArgs = args.length;
 

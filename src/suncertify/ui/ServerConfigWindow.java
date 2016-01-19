@@ -26,7 +26,7 @@ import static suncertify.ui.Messages.REMOTE_EXCEPTION_MESSAGE_TEXT;
 import static suncertify.ui.Messages.SERVER_CONFIG_FRAME_TITLE_TEXT;
 import static suncertify.ui.Messages.START_FAILURE_MESSAGE;
 import static suncertify.util.Constants.DEFAULT_TEXTFIELD_SIZE;
-import static suncertify.util.Utils.isInvalidPortNumber;
+import static suncertify.util.Utils.isNonNumeric;
 
 import suncertify.business.rmi.RmiServer;
 import suncertify.db.DBMainExtended;
@@ -172,7 +172,7 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
     if (getDbFilePath().isEmpty()) {
       displayMessage(INVALID_DATABASE_LOCATION_MESSAGE_TEXT, INVALID_INPUT_MESSAGE_TITLE);
       isConfigValid = false;
-    } else if (isInvalidPortNumber(getPortNumber())) {
+    } else if (isNonNumeric(getPortNumber())) {
       displayMessage(INVALID_PORT_NUMBER_MESSAGE_TEXT, INVALID_INPUT_MESSAGE_TITLE);
       isConfigValid = false;
     }

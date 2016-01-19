@@ -17,25 +17,25 @@ import java.util.Arrays;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Utils.
+ * Utils contains a collection of useful helper methods that are common to different parts of the
+ * application or have very reusable logic, such as methods for converting data types to another
+ * type.
  */
 public final class Utils {
 
-  /** The Global logger. */
+  /** The global logger. */
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-  /** The Constant CHARACTER_ENCODING. */
+  /** The charset encoding used in the application. */
   private static final String ENCODING = "US-ASCII";
 
-  /** The Constant BLANK_SPACE_HEX. */
+  /** The blank space ASCII character represented as hexadecimal. */
   private static final int BLANK_SPACE_HEX = 0x20;
 
   /**
-   * Instantiates a new utils.
+   * Private constructor to prevent instantiation by other classes.
    */
   private Utils() {
 
@@ -43,7 +43,7 @@ public final class Utils {
 
   /**
    * Copies the specified {@code unpaddedBytes} into a new byte[] of length equal to the specified
-   * {@code size} filled with blank space ASCII characters. Returns the new byte[].
+   * {@code size} filled with blank space ASCII characters. Returns the new padded byte[].
    *
    * @param unpaddedBytes
    *          the bytes to copy into the byte[] filled with blank space ASCII characters.
@@ -58,118 +58,127 @@ public final class Utils {
     return paddedBytes;
   }
 
-
   /**
-   * Convert bytes to string.
+   * Converts the specified {@code value} byte array into a string using {@value #ENCODING}
+   * encoding.
    *
-   * @param valueBytes the value bytes
+   * @param value
+   *          the bytes to be converted into a string.
    * @return the string
-   * @throws IOException Signals that an I/O exception has occurred.
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
    */
-  public static String convertBytesToString(final byte[] valueBytes) throws IOException {
-    return new String(valueBytes, Charset.forName(ENCODING));
+  public static String convertBytesToString(final byte[] value) throws IOException {
+    return new String(value, Charset.forName(ENCODING));
   }
 
   /**
-   * Convert string to bytes.
+   * Converts the specified {@code message} string to a byte array using {@value #ENCODING}
+   * encoding.
    *
-   * @param message the message
-   * @return the byte[]
+   * @param message
+   *          the message to be converted to bytes.
+   * @return the byte[] containing the message in byte form.
    */
   public static byte[] convertStringToBytes(final String message) {
     return message.getBytes(Charset.forName(ENCODING));
   }
 
   /**
-   * Intialize logger.
+   * Initializes the global logger to the specified {@code level}. Also configures the logger to
+   * output logs to System.err which is displayed in the console.
    *
-   * @param level the level
+   * @param level
+   *          the level of the messages that will be logged.
    */
-  public static void intializeLogger(final Level level) {
+  public static void initializeLogger(final Level level) {
     LOGGER.setLevel(level);
     LOGGER.setUseParentHandlers(false);
     final ConsoleHandler handler = new ConsoleHandler();
     handler.setLevel(level);
-    handler.setFormatter(new SimpleFormatter());
     LOGGER.addHandler(handler);
   }
 
   /**
-   * Checks if is eight digits.
+   * Checks if the specified {@code number} is exactly eight digits. Returns true if the specified
+   * {@code number} is exactly eight digits
    *
-   * @param number the number
-   * @return true, if is eight digits
+   * @param number
+   *          the number to check.
+   * @return true, if {@code number} is exactly eight digits.
    */
   public static boolean isEightDigits(final String number) {
     return number.matches("[0-9]{8}");
   }
 
   /**
-   * Checks if is invalid port number.
+   * Checks if the specified {@code number} contains non-numeric characters. Returns true if the
+   * specified {@code number} is empty or contains any non-numeric characters.
    *
-   * @param serverPortNumber the server port number
-   * @return true, if is invalid port number
+   * @param number
+   *          the number to check.
+   * @return true, if the specified {@code number} is empty or contains any non-numeric characters.
    */
-  public static boolean isInvalidPortNumber(final String serverPortNumber) {
-    return !serverPortNumber.matches("[0-9]+");
+  public static boolean isNonNumeric(final String number) {
+    return !number.matches("[0-9]+");
   }
 
   /**
-   * Reads the specified number of bytes from the specified {@code dbFile} and returns them as a
+   * Reads the specified number of bytes from the specified {@code raf} and returns them as a
    * byte[].
    *
-   * @param dbFile
-   *          a {@link RandomAccessFile} file for reading and writing to the database file.
+   * @param raf
+   *          a {@link RandomAccessFile} object for reading and writing to a file.
    * @param numberOfBytes
    *          the number of bytes which will be read from the file.
-   * @return the byte[]
+   * @return a byte[] containing the bytes read.
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public static byte[] readBytes(final RandomAccessFile dbFile, final int numberOfBytes)
+  public static byte[] readBytes(final RandomAccessFile raf, final int numberOfBytes)
       throws IOException {
     final byte[] valueBytes = new byte[numberOfBytes];
-    dbFile.read(valueBytes);
+    raf.read(valueBytes);
     return valueBytes;
   }
 
   /**
-   * Reads the specified number of bytes from the specified {@code dbFile}, converts them into a
+   * Reads the specified number of bytes from the specified {@code raf}, converts them into a
    * String.
    *
-   * @param dbFile
-   *          a {@link RandomAccessFile} file for reading and writing to the database file.
+   * @param raf
+   *          a {@link RandomAccessFile} object for reading and writing to a file.
    * @param numberOfBytes
-   *          the number of bytes which will be read from the file and converted into a String
-   * @return the string representation of the bytes read
+   *          the number of bytes which will be read from the file and converted into a String.
+   * @return the string representation of the bytes read.
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public static String readString(final RandomAccessFile dbFile, final int numberOfBytes)
+  public static String readString(final RandomAccessFile raf, final int numberOfBytes)
       throws IOException {
-    final byte[] valueBytes = readBytes(dbFile, numberOfBytes);
+    final byte[] valueBytes = readBytes(raf, numberOfBytes);
     final String paddedFieldValue = convertBytesToString(valueBytes);
     return paddedFieldValue.trim();
   }
 
   /**
-   * Converts the specified {@code fieldValue} String into a byte[] and writes it to the specified
-   * {@code dbFile}. If the length of the byte[] is less than maximum number of bytes the field
-   * should take up in the database, the remaining bytes are filled with blank spaces.
+   * Converts the specified {@code fieldValue} String into a byte[] and uses the specified
+   * {@code raf} to write the value to its file. If the length of the byte[] is less than the
+   * specified {@code fieldSize}, the remaining bytes are filled with blank spaces.
    *
-   * @param dbFile
-   *          a {@link RandomAccessFile} file for reading and writing to the database file.
+   * @param raf
+   *          a {@link RandomAccessFile} object for reading and writing to a file.
    * @param fieldValue
    *          the field value
    * @param fieldSize
-   *          the maximum number of bytes the field should take up in the database
+   *          the maximum number of bytes the field should take up in the database.
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  public static void writeString(final RandomAccessFile dbFile, final String fieldValue,
+  public static void writeString(final RandomAccessFile raf, final String fieldValue,
       final int fieldSize) throws IOException {
     final byte[] unpaddedBytes = convertStringToBytes(fieldValue);
     final byte[] paddedBytes = addPadding(unpaddedBytes, fieldSize);
-    dbFile.write(paddedBytes);
+    raf.write(paddedBytes);
   }
 }

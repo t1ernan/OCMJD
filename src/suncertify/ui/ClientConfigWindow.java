@@ -24,7 +24,7 @@ import static suncertify.ui.Messages.PORT_NUMBER_TOOLTIP_TEXT;
 import static suncertify.ui.Messages.REMOTE_EXCEPTION_MESSAGE_TEXT;
 import static suncertify.ui.Messages.START_FAILURE_MESSAGE;
 import static suncertify.util.Constants.DEFAULT_TEXTFIELD_SIZE;
-import static suncertify.util.Utils.isInvalidPortNumber;
+import static suncertify.util.Utils.isNonNumeric;
 
 import suncertify.business.ContractorService;
 import suncertify.business.rmi.RmiClient;
@@ -148,7 +148,7 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
     if (getIpAddress().isEmpty()) {
       displayMessage(INVALID_IP_MESSAGE_TEXT, INVALID_INPUT_MESSAGE_TITLE);
       isConfigValid = false;
-    } else if (isInvalidPortNumber(getPortNumber())) {
+    } else if (isNonNumeric(getPortNumber())) {
       displayMessage(INVALID_PORT_NUMBER_MESSAGE_TEXT, INVALID_INPUT_MESSAGE_TITLE);
       isConfigValid = false;
     }

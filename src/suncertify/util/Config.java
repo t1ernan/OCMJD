@@ -11,7 +11,7 @@
 package suncertify.util;
 
 import static suncertify.util.Constants.EMPTY_STRING;
-import static suncertify.util.Utils.isInvalidPortNumber;
+import static suncertify.util.Utils.isNonNumeric;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -144,7 +144,7 @@ public final class Config {
    *           if the port number contains any non-numeric characters or is left blank.
    */
   public static void setClientPortNumber(final String portNumber) throws IllegalArgumentException {
-    if (isInvalidPortNumber(portNumber)) {
+    if (isNonNumeric(portNumber)) {
       throw new IllegalArgumentException(
           "Port number cannot contain any non-numeric characters or be left blank.");
     }
@@ -197,7 +197,7 @@ public final class Config {
    *           if the port number contains any non-numeric characters or is left blank.
    */
   public static void setServerPortNumber(final String portNumber) throws IllegalArgumentException {
-    if (isInvalidPortNumber(portNumber)) {
+    if (isNonNumeric(portNumber)) {
       throw new IllegalArgumentException(
           "Port number cannot contain any non-numeric characters or be left blank.");
     }

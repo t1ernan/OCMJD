@@ -18,7 +18,7 @@ public final class Constants {
   /** The constant representing an empty string. */
   public static final String EMPTY_STRING = "";
 
-  /** The default registry identifying name. */
+  /** The default registry identifying name used when setting up an RMI server-client connection. */
   public static final String RMI_ID = "Remote Server";
 
   /** The constant RECORD_FIELDS specifies the number of fields in the database schema. */

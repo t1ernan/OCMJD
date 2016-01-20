@@ -50,7 +50,7 @@ public class DatabaseAccessException extends Exception {
    *          <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or
    *          unknown.)
    */
-  public DatabaseAccessException(final String message, final Throwable throwable) {
-    super(message, throwable);
+  public DatabaseAccessException(final String message, final Throwable cause) {
+    super(message, cause);
   }
 }

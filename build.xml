@@ -9,9 +9,9 @@
     <!-- build settings -->
     <property name="dir.output" value="output"
         description="the directory containing all generated files" />
-    <property name="dir.source" value="src"
+    <property name="dir.source" value="src/main/java"
         description="the source directory" />
-    <property name="dir.test" value=""
+    <property name="dir.test" value="src/main/test"
         description="the source directory of the test files" />
     <property name="dir.temp" value="${dir.output}/temp"
         description="the directory containing temporary files" />
@@ -34,7 +34,7 @@
  
     <property name="file.choices" value="choices.txt"
         description="the required file choices.txt" />
-    <property name="file.db" value="${dir.temp.assignment}/db-1x1.db"
+    <property name="file.db" value="${dir.temp.assignment}/db-2x2.db"
         description="the required original, unchanged database file" />
     <property name="file.instructions" value="${dir.temp.assignment}/instructions.html"
         description="the required file instructions.html" />
@@ -43,16 +43,16 @@
     <property name="file.version" value="version.txt"
         description="the required file version.txt" />
  
-    <property name="jar.assignment" value="ASSIGNMENT.jar"
+    <property name="jar.assignment" value="instructions-232.jar"
         description="the assignment jar file (used to copy instructions and database file)" />
     <property name="jar.executable" value="${dir.submission}/runme.jar"
         description="the executable jar file" />
-    <property name="jar.executable.main.class" value=""
+    <property name="jar.executable.main.class" value="suncertify.ui.CliLauncher"
         description="the full qualified name of the main class" />
-    <property name="jar.submission" value=""
+    <property name="jar.submission" value="submissionJar"
         description="the submission jar file" />
  
-    <property name="javadoc.title" value=""
+    <property name="javadoc.title" value="Bodgitt And Scarper Booking System"
         description="the title of the generated overview page" />
  
     <target name="clean"
@@ -91,16 +91,13 @@
                  version="true">
             <arg value="-J-Dhttp.proxyHost=${proxy.host}" />
             <arg value="-J-Dhttp.proxyPort=${proxy.port}" />
-            <link href="http://java.sun.com/javase/6/docs/api/" />
+            <link href="https://docs.oracle.com/javase/8/docs/api/" />
         </javadoc>
     </target>
  
     <target name="create-executable-jar" depends="prepare"
             description="create the executable jar">
         <!-- compile the source files -->
-        <javac srcdir="${dir.source}" destdir="${dir.temp.classes}" listfiles="true" failonerror="true" />
-        <!-- compile stubs and skeletons (using rmic) -->
-        <rmic base="${dir.temp.classes}" verify="true" debug="true" />
         <!-- jar all classes -->
         <jar destfile="${jar.executable}" basedir="${dir.temp.classes}">
             <manifest>

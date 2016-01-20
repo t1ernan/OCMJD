@@ -336,6 +336,7 @@ public final class Data implements DBMainExtended {
    *           Signals that an I/O exception has occurred.
    */
   private void loadCache() throws IOException {
+    recordCache.clear();
     try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
       int recordNumber = 0;
       raf.seek(RECORD_OFFSET);
@@ -406,5 +407,9 @@ public final class Data implements DBMainExtended {
         writeString(raf, fieldValues[index], MAX_FIELD_SIZES[index]);
       }
     }
+  }
+  //TODO: REMOVE AFTER REMOVING TESTS
+  public Map<Integer, String[]> getCache(){
+    return recordCache;
   }
 }

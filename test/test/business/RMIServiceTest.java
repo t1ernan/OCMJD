@@ -7,6 +7,7 @@ import static test.util.Constants.DEFAULT_PORT_NUMBER;
 import static test.util.Constants.DEFAULT_SERVER_IPADDRESS;
 
 import suncertify.business.AlreadyBookedException;
+import suncertify.business.BasicContractorService;
 import suncertify.business.ContractorNotFoundException;
 import suncertify.business.ContractorService;
 import suncertify.business.rmi.RmiClient;
@@ -26,12 +27,14 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class RMIServiceTest {
 
-  private static DBMainExtended data;
+  private static Data data = Data.getInstance();
   private static RmiService server;
   private static ContractorService service;
 
@@ -53,18 +56,25 @@ public class RMIServiceTest {
       "Gotham");
 
   @BeforeClass
-  public static void setup()
-      throws DatabaseAccessException, RemoteException{
-    data = DatabaseFactory.getDatabase(DB_FILE_NAME);
+  public static void steartUpServer() throws IllegalArgumentException, DatabaseAccessException, RemoteException{
+    data.initialize(DB_FILE_NAME);
     server = new RmiServer(data);
     server.startServer(DEFAULT_PORT_NUMBER);
+  }
+  
+  @Before
+  public void setup() throws DatabaseAccessException, RemoteException {
+    data.initialize(DB_FILE_NAME);
     service = new RmiClient(DEFAULT_SERVER_IPADDRESS, DEFAULT_PORT_NUMBER);
   }
-
+  
   @After
-  public void teardown() throws IOException {
-    ((Data) data).clear();
-    ((Data) data).loadCache();
+  public void teardown() throws IOException, IllegalArgumentException, DatabaseAccessException {
+    data.initialize(DB_FILE_NAME);
+  }
+
+  private long getValidRecordCount() {
+    return data.getCache().values().stream().filter(x -> x != null).count();
   }
 
   @Test
@@ -72,71 +82,75 @@ public class RMIServiceTest {
       throws DatabaseAccessException, RemoteException, IllegalArgumentException,
       ContractorNotFoundException, AlreadyBookedException, RecordNotFoundException {
     service.book(firstContractor_Booked);
-    assertEquals(28, ((Data) data).getValidEntryStream().count());
+    assertEquals(28, getValidRecordCount());
     assertEquals(0, data.find(firstContractorSearchCriteria)[0]);
     assertArrayEquals(firstContractorValues_Booked, data.read(0));
   }
 
   @Test(expected = AlreadyBookedException.class)
-  public void testBook_bookedContractor()
-      throws  DatabaseAccessException, RemoteException, IllegalArgumentException, ContractorNotFoundException, AlreadyBookedException {
+  public void testBook_bookedContractor() throws DatabaseAccessException, RemoteException,
+      IllegalArgumentException, ContractorNotFoundException, AlreadyBookedException {
     service.book(firstContractor_Booked);
     service.book(firstContractor_Booked);
   }
 
   @Test(expected = ContractorNotFoundException.class)
-  public void testBook_DeletedContractor()
-      throws  DatabaseAccessException, RemoteException, IllegalArgumentException, ContractorNotFoundException, AlreadyBookedException {
+  public void testBook_DeletedContractor() throws DatabaseAccessException, RemoteException,
+      IllegalArgumentException, ContractorNotFoundException, AlreadyBookedException {
     data.delete(0);
-    assertEquals(27, ((Data) data).getValidEntryStream().count());
+    assertEquals(27, getValidRecordCount());
     service.book(firstContractor_Booked);
   }
 
   @Test
-  public void testFind_AllContractors() throws  RemoteException, IllegalArgumentException, ContractorNotFoundException {
+  public void testFind_AllContractors()
+      throws RemoteException, IllegalArgumentException, ContractorNotFoundException {
     final Map<Integer, Contractor> results = service.find(NO_SEARCH_CRITERIA);
     assertEquals(28, results.size());
   }
 
   @Test
-  public void testFind_AllContractors_WithDeletedRecords()
-      throws  DatabaseAccessException, RemoteException, IllegalArgumentException, ContractorNotFoundException {
+  public void testFind_AllContractors_WithDeletedRecords() throws DatabaseAccessException,
+      RemoteException, IllegalArgumentException, ContractorNotFoundException {
     data.delete(0);
     data.delete(12);
     data.delete(21);
     final Map<Integer, Contractor> results = service.find(NO_SEARCH_CRITERIA);
-    assertEquals(25, ((Data) data).getValidEntryStream().count());
+    assertEquals(25, getValidRecordCount());
     assertEquals(25, results.size());
   }
 
   @Test
   public void testFind_MultipleContractors_LocationSearch()
-      throws  RemoteException, IllegalArgumentException, ContractorNotFoundException {
+      throws RemoteException, IllegalArgumentException, ContractorNotFoundException {
     final Map<Integer, Contractor> results = service.find(LOCATION_SEARCH_CRITERIA);
     assertEquals(2, results.size());
   }
 
   @Test
-  public void testFind_MultipleContractors_NameSearch() throws  RemoteException, IllegalArgumentException, ContractorNotFoundException {
+  public void testFind_MultipleContractors_NameSearch()
+      throws RemoteException, IllegalArgumentException, ContractorNotFoundException {
     final Map<Integer, Contractor> results = service.find(NAME_SEARCH_CRITERIA);
     assertEquals(6, results.size());
   }
 
   @Test
-  public void testFind_SingleContractor() throws  RemoteException, IllegalArgumentException, ContractorNotFoundException {
+  public void testFind_SingleContractor()
+      throws RemoteException, IllegalArgumentException, ContractorNotFoundException {
     final Map<Integer, Contractor> results = service.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
     assertEquals(1, results.size());
   }
 
   @Test(expected = ContractorNotFoundException.class)
-  public void testFind_SingleContractor_WithDeletedRecords()
-      throws DatabaseAccessException,  RemoteException, IllegalArgumentException, ContractorNotFoundException {
+  public void testFind_SingleContractor_WithDeletedRecords() throws DatabaseAccessException,
+      RemoteException, IllegalArgumentException, ContractorNotFoundException {
     data.delete(0);
     service.find(FIRST_CONTRACTOR_SEARCH_CRITERIA);
   }
 
   @Test(expected = ContractorNotFoundException.class)
-  public void testFind_UnknownContractor() throws  RemoteException, IllegalArgumentException, ContractorNotFoundException {
+  public void testFind_UnknownContractor()
+      throws RemoteException, IllegalArgumentException, ContractorNotFoundException {
     service.find(NEW_CONTRACTOR_SEARCH_CRITERIA);
   }
 

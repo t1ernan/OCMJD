@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class BasicServiceTest {
 
-  private DBMainExtended data;
+  private Data data =  Data.getInstance();
   private ContractorService services;
 
   private final String[] firstContractorValues_Booked = new String[] { "Dogs With Tools",
@@ -49,21 +49,24 @@ public class BasicServiceTest {
 
   @Before
   public void setup() throws DatabaseAccessException {
-    data = DatabaseFactory.getDatabase(DB_FILE_NAME);
+    data.initialize(DB_FILE_NAME);
     services = new BasicContractorService(data);
   }
 
   @After
-  public void teardown() throws IOException {
-    ((Data) data).clear();
-    ((Data) data).loadCache();
+  public void teardown() throws IOException, IllegalArgumentException, DatabaseAccessException {
+    data.initialize(DB_FILE_NAME);
+  }
+  
+  private long getValidRecordCount() {
+    return data.getCache().values().stream().filter(x -> x != null).count();
   }
 
   @Test
   public void testBook_availableContractor() throws ContractorNotFoundException, RemoteException,
       IllegalArgumentException, AlreadyBookedException, RecordNotFoundException {
     services.book(firstContractor_Booked);
-    assertEquals(28, ((Data) data).getValidEntryStream().count());
+    assertEquals(28, getValidRecordCount());
     assertEquals(0, data.find(firstContractorSearchCriteria)[0]);
     final String[] actual = data.read(0);
     assertArrayEquals(firstContractorValues_Booked, actual);
@@ -80,7 +83,7 @@ public class BasicServiceTest {
   public void testBook_DeletedContractor() throws ContractorNotFoundException,
       DatabaseAccessException, RemoteException, IllegalArgumentException, AlreadyBookedException {
     data.delete(0);
-    assertEquals(27, ((Data) data).getValidEntryStream().count());
+    assertEquals(27, getValidRecordCount());
     services.book(firstContractor_Booked);
   }
 
@@ -97,7 +100,7 @@ public class BasicServiceTest {
     data.delete(12);
     data.delete(21);
     final Map<Integer, Contractor> results = services.find(NO_SEARCH_CRITERIA);
-    assertEquals(25, ((Data) data).getValidEntryStream().count());
+    assertEquals(25, getValidRecordCount());
     assertEquals(25, results.size());
   }
 

@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public class DataTest {
 
-  private DBMainExtended data;
+  private Data data = Data.getInstance();
 
   private final String[] oldValues = new String[] { "Dogs With Tools", "Smallville", "Roofing", "7",
       "$35.00", "" };
@@ -43,28 +43,29 @@ public class DataTest {
       "Smack my Itch up", "Gotham" };
   private final String[] searchCriteria_InvalidName_NoLocation = new String[] { "Smack my Itch up",
       "" };
-  private final String[] searchCriteria_TooManyFields = new String[] { "Smack my Itch up", "", "", "", "", "", "" };
+  private final String[] searchCriteria_TooManyFields = new String[] { "Smack my Itch up", "", "",
+      "", "", "", "" };
 
   private final int VALID_RECORD_NUMBER = 0;
   private final int INVALID_RECORD_NUMBER = 50;
 
   @Before
   public void setup() throws DatabaseAccessException {
-    data = DatabaseFactory.getDatabase(DB_FILE_NAME);
+    data.initialize(DB_FILE_NAME);
   }
 
   @After
-  public void teardown() throws IOException {
-    ((Data) data).clear();
-    ((Data) data).loadCache();
+  public void teardown() throws IOException, IllegalArgumentException, DatabaseAccessException {
+    data.initialize(DB_FILE_NAME);
   }
 
   @Test
-  public void testCreate_DeletedKey_DeletedRecordsInCache() throws DuplicateKeyException, RecordNotFoundException {
+  public void testCreate_DeletedKey_DeletedRecordsInCache()
+      throws DuplicateKeyException, RecordNotFoundException {
     data.delete(VALID_RECORD_NUMBER);
-    assertEquals(27, ((Data) data).getValidEntryStream().count());
+    assertEquals(27, getValidRecordCount());
     assertEquals(VALID_RECORD_NUMBER, data.create(oldValues));
-    assertEquals(28, ((Data) data).getValidEntryStream().count());
+    assertEquals(28, getValidRecordCount());
     assertArrayEquals(oldValues, data.read(VALID_RECORD_NUMBER));
   }
 
@@ -80,28 +81,30 @@ public class DataTest {
   }
 
   @Test
-  public void testCreate_NewKey_DeletedRecordsInCache() throws DuplicateKeyException, RecordNotFoundException {
+  public void testCreate_NewKey_DeletedRecordsInCache()
+      throws DuplicateKeyException, RecordNotFoundException {
     data.delete(4);
-    assertEquals(27, ((Data) data).getValidEntryStream().count());
+    assertEquals(27, getValidRecordCount());
     assertEquals(4, data.create(newValues));
-    assertEquals(28, ((Data) data).getValidEntryStream().count());
+    assertEquals(28, getValidRecordCount());
     assertArrayEquals(newValues, data.read(4));
   }
 
   @Test
-  public void testCreate_NewKey_NoDeletedRecordsInCache() throws DuplicateKeyException, RecordNotFoundException {
-    final int newRecordNumber = (int) ((Data) data).getValidEntryStream().count();
+  public void testCreate_NewKey_NoDeletedRecordsInCache()
+      throws DuplicateKeyException, RecordNotFoundException {
+    final int newRecordNumber = (int) getValidRecordCount();
     assertEquals(28, newRecordNumber);
     assertEquals(28, data.create(newValues));
-    assertEquals(29, ((Data) data).getValidEntryStream().count());
+    assertEquals(29, getValidRecordCount());
     assertArrayEquals(newValues, data.read(newRecordNumber));
   }
 
   @Test
   public void testDelete_ValidRecord() throws DatabaseAccessException {
     data.delete(VALID_RECORD_NUMBER);
-    assertEquals(27, ((Data) data).getValidEntryStream().count());
-    assertTrue(((Data) data).isInvalidRecord(VALID_RECORD_NUMBER));
+    assertEquals(27, getValidRecordCount());
+    assertTrue(isInvalidRecord(VALID_RECORD_NUMBER));
   }
 
   @Test(expected = RecordNotFoundException.class)
@@ -234,7 +237,7 @@ public class DataTest {
 
   @Test
   public void testLoadCache() {
-    assertEquals(28, ((Data) data).getValidEntryStream().count());
+    assertEquals(28, getValidRecordCount());
   }
 
   @Test(expected = RecordNotFoundException.class)
@@ -257,7 +260,7 @@ public class DataTest {
   @Test
   public void testSaveData() throws IOException {
     ((Data) data).saveRecords();
-    assertEquals(28, ((Data) data).getValidEntryStream().count());
+    assertEquals(28, getValidRecordCount());
   }
 
   @Test
@@ -277,7 +280,18 @@ public class DataTest {
     data.update(VALID_RECORD_NUMBER, newValues);
     final String[] fieldValues = data.read(VALID_RECORD_NUMBER);
     assertArrayEquals(newValues, fieldValues);
-    assertEquals(28, ((Data) data).getValidEntryStream().count());
+    assertEquals(28, getValidRecordCount());
+  }
+
+  private long getValidRecordCount() {
+    return data.getCache().values().stream().filter(x -> x != null).count();
+  }
+
+  private boolean isInvalidRecord(int recordNumber) {
+    return data.getCache().entrySet().stream()
+        .filter(x -> x.getValue() != null)
+        .mapToInt(x -> x.getKey())
+        .noneMatch(x -> x == recordNumber);
   }
 
 }

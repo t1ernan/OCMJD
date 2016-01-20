@@ -42,11 +42,11 @@ public final class CliLauncher {
 
   /**
    * The application's only main method. It takes either one argument, the mode flag, or no
-   * arguments.
+   * arguments.<ul>
    * <li>If no argument is specified, the network client and GUI will run.</li>
    * <li>If the argument "server" is specified, the server program will run.</li>
    * <li>If the argument "alone" is specified, the client and GUI will run in
-   * standalone/non-networked mode.</li>
+   * standalone/non-networked mode.</li></ul>
    *
    * @param args
    *          the arguments

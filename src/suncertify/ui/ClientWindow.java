@@ -144,9 +144,8 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Enable or disable 'Book' button, depending on the specified {@code rowIndex}. Enables the
-   * 'Book' button if {@link #shouldBookButtonBeEnabled(rowIndex)} returns true; otherwise disables
-   * the button.
+   * Enables the 'Book' JButton if the row at the specified row index has no customer id value.
+   * Otherwise, disables it.
    *
    * @param rowIndex
    *          the row index of the currently selected row in the JTable.
@@ -355,7 +354,7 @@ public final class ClientWindow extends AbstractWindow {
   }
 
   /**
-   * Checks if the 'Book' button should be enabled or disabled for the specified {@code rowIndex}.
+   * Checks if the 'Book' JButton should be enabled or disabled for the specified {@code rowIndex}.
    * Returns true if the row with the specified row index has no customer id value.
    *
    * @param rowIndex

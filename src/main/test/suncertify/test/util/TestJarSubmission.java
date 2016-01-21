@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class TestJarSubmission {
   
-  private static final String DIR_SUBMISSION_JAR = ""; // path to the directory where you unjarred the submission jar
+  private static final String DIR_SUBMISSION_JAR = "/OCMP/output/submission"; // path to the directory where you unjarred the submission jar
 
   /**
    * A directory called code, containing all the source code and related parts
@@ -38,7 +38,7 @@ public class TestJarSubmission {
    * this must be the file you submit. The marking process will expect the
    * exact same data without any changes.
    */
-  private static final String FILE_DB = "db-1x1.db";
+  private static final String FILE_DB = "db-2x2.db";
 
   /**
    * A file called choices.txt that containing pure ASCII (not a word

@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class TestJarSubmission {
   
-  private static final String DIR_SUBMISSION_JAR = "/OCMP/output/submission"; // path to the directory where you unjarred the submission jar
+  private static final String DIR_SUBMISSION_JAR = "./output/submission"; // path to the directory where you unjarred the submission jar
 
   /**
    * A directory called code, containing all the source code and related parts

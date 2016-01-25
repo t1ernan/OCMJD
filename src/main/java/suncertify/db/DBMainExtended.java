@@ -69,13 +69,15 @@ public interface DBMainExtended extends DBMain {
    * This method is responsible for initializing field variables, loading the contents of the
    * database file specified into the in-memory cache and adding the shutdown hook to ensure that
    * the contents of the cache is written back to the database file when the application is shut
-   * down.
+   * down. It also checks that the file specified contains the correct magic cookie value, to ensure
+   * the file is the same database file provided.
    *
    * @param dbFilePath
    *          the filePath of the database file.
    * @throws DatabaseAccessException
-   *           If the specified database file does not contain the expected magic cookie value or
-   *           some I/O related exception occurred when attempting to read the file.
+   *           If the specified database file does not exist, does not have the same magic cookie
+   *           value as the expected database file or some I/O related exception occurred when
+   *           attempting to read the file.
    * @throws IllegalArgumentException
    *           If {@code dbFilePath} is {@code null}
    */

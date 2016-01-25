@@ -17,6 +17,8 @@ import static suncertify.util.Utils.writeString;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +42,9 @@ public final class Data implements DBMainExtended {
 
   /** The size of the record fields in bytes, specified in schema information. */
   private static final int[] MAX_FIELD_SIZES = { 32, 64, 64, 6, 8, 8 };
+
+  /** The magic cookie value, specified in schema information. */
+  private static final int MAGIC_COOKIE = 514;
 
   /** The 2 byte value which denotes a valid record, specified in schema information. */
   private static final int VALID_FLAG = 00;
@@ -148,8 +153,16 @@ public final class Data implements DBMainExtended {
     if (dbFilePath == null) {
       throw new IllegalArgumentException("File path of database file cannot be null.");
     }
-    this.dbFilePath = dbFilePath;
+    if (!Files.exists(Paths.get(dbFilePath))) {
+      throw new DatabaseAccessException(
+          "The specified database file does not exist: " + dbFilePath + ".");
+    }
     try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
+      if (raf.readInt() != MAGIC_COOKIE) {
+        throw new DatabaseAccessException("Could not read data from the specified file: "
+            + dbFilePath + ". Invalid magic cookie value");
+      }
+      this.dbFilePath = dbFilePath;
       loadCache();
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {
         try {
@@ -384,7 +397,8 @@ public final class Data implements DBMainExtended {
    * of the specified {@code fieldValues} is a record value. If the specified {@code fieldValues}
    * argument is {@code null}, the record will be filled with blank space ASCII characters.
    *
-   * <p>If any value of a field is less that the size specified for that field in the schema
+   * <p>
+   * If any value of a field is less that the size specified for that field in the schema
    * information, the remaining bytes of the field will be padded with blank space ASCII characters.
    *
    * @param raf
@@ -408,8 +422,9 @@ public final class Data implements DBMainExtended {
       }
     }
   }
-  //TODO: REMOVE AFTER REMOVING TESTS
-  public Map<Integer, String[]> getCache(){
+
+  // TODO: REMOVE AFTER REMOVING TESTS
+  public Map<Integer, String[]> getCache() {
     return recordCache;
   }
 }

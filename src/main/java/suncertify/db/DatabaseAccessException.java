@@ -12,7 +12,8 @@ package suncertify.db;
 
 /**
  * The class DatabaseAccessException is thrown when the database file that is selected does not
- * exist or the database file could not be read for some IO related reason.
+ * exist, does not have the same magic cookie value as the expected database file or the database
+ * file could not be read for some IO related reason.
  */
 public class DatabaseAccessException extends Exception {
 

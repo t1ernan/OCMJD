@@ -12,7 +12,7 @@ package suncertify.business;
 
 /**
  * The class AlreadyBookedException is thrown when attempting to book a contractor which has been
- * marked as booked in the database, i.e. the contractor's customer ID field is not empty.
+ * marked as booked in the database. A contractor is marked as booked if the contractor's customer ID field is not empty.
  */
 public class AlreadyBookedException extends Exception {
 

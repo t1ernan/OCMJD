@@ -29,7 +29,7 @@
 	<property name="jar.executable.main.class" value="suncertify.ui.CliLauncher" description="the full qualified name of the main class" />
 	<property name="jar.submission" value="submission.jar" description="the submission jar file" />
 
-	<property name="javadoc.title" value="Short overview of the API" description="the title of the generated overview page" />
+	<property name="javadoc.title" value="Bodgitt And Scarper, LLC. Booking System 1.0 API Specification" description="the title of the generated overview page" />
 
 	<target name="clean" description="delete all generated files">
 		<delete dir="${dir.output}" failonerror="true" />

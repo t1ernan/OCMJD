@@ -17,7 +17,7 @@ import suncertify.domain.ContractorPk;
 
 /**
  * The class ContractorConverter has a single purpose: to convert string arrays into
- * {@link Contractor} objects if possible. It's single method {@link #toContractor(String[])} takes
+ * {@link Contractor} objects. It's single method {@link #toContractor(String[])} takes
  * a string array argument and returns a Contractor object if it meets the necessary criteria.
  */
 public final class ContractorConverter {

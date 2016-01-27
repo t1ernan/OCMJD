@@ -159,8 +159,8 @@ public final class Data implements DBMainExtended {
     }
     try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
       if (raf.readInt() != MAGIC_COOKIE) {
-        throw new DatabaseAccessException("Could not read data from the specified file: "
-            + dbFilePath + ". Invalid magic cookie value");
+        throw new DatabaseAccessException("The specified database file: " + dbFilePath
+            + " has the wrong magic cookie value.");
       }
       this.dbFilePath = dbFilePath;
       loadCache();
@@ -292,8 +292,10 @@ public final class Data implements DBMainExtended {
    *           if the primary key of the specified {@code data} already exists in the database.
    */
   private void checkForDuplicateKey(final String[] data) throws DuplicateKeyException {
-    final boolean isDuplicate = recordCache.entrySet().stream().map(entry -> entry.getValue())
-        .filter(values -> values != null).anyMatch(values -> comparePrimaryKeys(values, data));
+    final boolean isDuplicate = recordCache.entrySet().stream()
+                                .map(entry -> entry.getValue())
+                                .filter(values -> values != null)
+                                .anyMatch(values -> comparePrimaryKeys(values, data));
     if (isDuplicate) {
       throw new DuplicateKeyException("Record with: [" + FIELD_NAMES[0] + "=" + data[0] + ","
           + FIELD_NAMES[1] + "=" + data[1] + "] already exists.");

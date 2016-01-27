@@ -1,0 +1,9 @@
+JDK used: Java™ SE Development Kit 8, Update 60 (JDK 8u60), 1.8.0_60-b27.
+
+Host Platform used: 
+OS: Windows 7 Enterprise, SP1
+Manufacturer: Hewlett-Packard
+Model: HP EliteBook Folio 9470m
+Processor: Intel(R) Core(TM) i5-3427U CPU @1.80GHz 2.30GHz
+RAM: 8.00GB
+System type: 64-bit Operating System

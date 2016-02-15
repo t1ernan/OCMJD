@@ -285,15 +285,14 @@ public final class ClientWindow extends AbstractWindow {
    * updates the ContractorTable to show only records with those <i>exact</i> values, filtering out
    * non-matching records. If a field is empty then it will ignore it during the filtering
    * operation. If all search fields are empty, it will not perform any filtering operation and
-   * update the ContractorTable will all available contractor records.
+   * update the ContractorTable with all available contractor records.
    */
   private void filterTableOnSearchValues() {
     final String name = getNameSearchValue();
     final String location = getLocationSearchValue();
     try {
       final ContractorPk primaryKey = new ContractorPk(name, location);
-      final Map<Integer, Contractor> contractorMap = service.find(primaryKey);
-      final List<Contractor> records = new ArrayList<>(contractorMap.values());
+      final List<Contractor> records = new ArrayList<>(service.find(primaryKey).values());
       model.updateData(records);
       bookButton.setEnabled(false);
       scrollPane.setVisible(true);
@@ -363,9 +362,7 @@ public final class ClientWindow extends AbstractWindow {
    */
   private boolean shouldBookButtonBeEnabled(final int rowIndex) {
     boolean shouldEnable = false;
-    if (rowIndex == -1) {
-      shouldEnable = false;
-    } else {
+    if (rowIndex != -1) {
       final String[] fieldValues = model.getRowFields(rowIndex);
       final Contractor contractor = ContractorConverter.toContractor(fieldValues);
       shouldEnable = !contractor.isBooked();

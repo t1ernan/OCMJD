@@ -52,7 +52,8 @@ where the mode flag argument determines what mode the application will run in.
 -----------------------------------------
 3.1 Running the Server in Networked Mode
 -----------------------------------------
-* Using a CLI terminal, execute the following command from the same directory where the jar file "runme.jar" is located to start the server: java -jar runme.jar server
+* Using a CLI terminal, execute the following command from the same directory where the jar file "runme.jar" is located to start the server: 
+java -jar runme.jar server
 
 * Once the application starts, a configuration window will be displayed to the user, prompting the user for the location of the database file on the file system and the port number on which the server will receive RMI requests from clients on. Note: If this is the first time starting the database location field will be blank and the default RMI port number will be displayed in the port number field. Otherwise, the configuration details from the previous time the server was run will be presented to the user.
 
@@ -68,10 +69,11 @@ where the mode flag argument determines what mode the application will run in.
 3.2 Starting the Client in Networked Mode
 -----------------------------------------
 
-To allow the application to run in "networked client" mode, where the application communicates to the server on a specified
-host over a designated port, the application must be started as follows:
-
+* Using a CLI terminal, execute the following command from the same directory where the jar file "runme.jar" is located to start the client GUI in networked mode: 
 java -jar runme.jar
+
+* Once the application starts, a configuration window will be displayed to the user, prompting the user for the location of the database file on the file system and the port number on which the server will receive RMI requests from clients on. Note: If this is the first time starting the database location field will be blank and the default RMI port number will be displayed in the port number field. Otherwise, the configuration details from the previous time the server was run will be presented to the user.
+
 
 After running this command a configuration dialog will be displayed to the user allowing the user to specify the server host ip or 
 fully qualified domain name of the server host and the port that the server is listening on. Once these have been entered, click OK

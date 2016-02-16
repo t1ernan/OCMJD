@@ -4,8 +4,8 @@
 
 * The provided data file contains valid data, therefore no validation of the existing data file records is required. Only new/modified data will be validated before being written to the database.
 * The string encoding format,8 bit US ASCII, will not change in the future and therefore will not need to be configurable. It will be hard-coded into the application as a constant value.
-* The application does not need to support localization, as there has been no mention of Bodgitt & Scarper, LLC. being an international company. The only locale supported shall be en_US.
-* It is unlikely that the format of the supplied database file will change in the future; i.e. the schema information will not change.
+* The application does not need to support internationalization, as there has been no mention of Bodgitt & Scarper, LLC. being an international company. The only locale supported shall be en_US.
+* It is unlikely that the format of the supplied database file will change in the future since it's tightly coupled to other existing applications; i.e. the schema information will not change.
 * Database size is small and will remain small in the future.
 * Multiple contractors cannot share the same name and location, i.e. a combination of the "name" and "location" fields for a contractor will be considered a primary key.
 
@@ -15,17 +15,17 @@
 -----------------------
  General
 -----------------------
-* Usage of Jdk8 stream API to increase code readability wherever possible.
+* Usage of JDK8 stream API to increase code readability wherever possible.
 * Logging added in places and directed to console.
 
 -----------------------
- DBMain class
+ DBMain.java
 -----------------------
 
 * Didn't edit comments or add javadocs so that I wouldn't violate any requirement on not editing the supplied interface; extended the interface and added javadocs there instead.
 
 -----------------------
- DBMainExtended class
+ DBMainExtended.java
 -----------------------
 
 * Extended the supplied interface DBMain in order to override certain methods and add extra method signatures for intializing and saving the state of the database object.
@@ -33,7 +33,7 @@
 * The methods update, delete and unlock were overridden to remove the RecordNotFoundException declared in the throws clause; it makes no logical sense for this to be there since in order to perform any of these operations the record should be locked first and only a valid record can be locked. 
 
 -----------------------
- Data class
+ Data.java
 -----------------------
 
 * Implemented Singleton pattern, preventing more than one instance of the database being created per jvm.
@@ -57,19 +57,19 @@
 * If a record is not preceeded by the valid flag value, it will be considered invalid. I do not check that an invalid record is preceeded by the invalid flag value. This will ensure that in the event a record is preceeded by a value which is neither valid or invalid, it will be treated as invalid and removed from the database.
 
 -----------------------
- DatabaseFactory class
+ DatabaseFactory.java
 -----------------------
 
 * Implements factory pattern to retrieve and instantiate a database instance. Enables easy extension of application if the database ever changes. Simply create a new type of database instance, e.g. nonRelationalData class, and modify Factory to return it when required.
 
 -----------------------
- Contractor class
+ Contractor.java
 -----------------------
 
 * A domain object model representing the contractor record fields. No validation of these fields is done in this object, e.g. it does not enforce that the customer_id field must be 8 digits long. Instead, data will be validated when entered by the user in presentation layer depending on the current business rules.
 
 -----------------------
- Config class
+ Config.java
 -----------------------
 
 * The default property values are left blank initially, except for the port number fields. I decided to use the default RMI port number, 1099, as the default port number for the first run of the application.
@@ -92,7 +92,7 @@
  GUI
 -----------------------
 
-* Minimal UI as possible. I only implemetented the features required, book and search. There is no unbooking functionality as it was not specified in the requirements.
+* Minimal UI as possible. I only implemented the features required, book and search. There is no unbooking functionality as it was not specified in the requirements.
 
 * Separate JFrame for each configuration window and the main client application window. They all extend a common abstract class, AbstractWindow.java, which ensures that the style of the windows remains consistent throughout the application. If a new UI window is needed in the future, there is a common framework in place to make it easier.
 
@@ -100,7 +100,7 @@
 
 * Configuration input is validated after it has been entered; a dialogue box will be displayed to the user displaying why the input for a particular field is invalid.
 
-* If the currently selected contractor in the table is booked, the book button will be disabled and renabled when an available contractor in the table is selected.
+* If the currently selected contractor in the table is booked, the book button will be disabled and re-enabled when an available contractor in the table is selected.
 
 * The observer pattern was not implemented as it was not required. Instead, the table will be refreshed everytime an search or booking action is performed. In the event a contractor tries to book a record that has been booked by another client but hasn't been updated in the table to reflect such, an AlreadyBookedException will the thrown and a dialogue box will be displayed to the user explaining that the records has already been booked.
 
@@ -127,7 +127,7 @@ This means the search is case sensitive and that it must match the record exactl
 
 * Singleton, used to ensure only a single data access object, Data.java, is created per jvm.
 
-* Factory, used to retrieve and instantiate the dao
+* Factory, used to retrieve and instantiate the dao.
 
 * Builder, used to create the Contractor object and avoid passing a lot of arguments into a constructor.
 

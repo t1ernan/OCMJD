@@ -62,7 +62,7 @@ where the mode flag argument determines what mode the application will run in.
 
 * Click the "Confirm" to start the server. 
 
-* To stop the server, enter CTRL+C in the CLI terminal window.
+* To stop the server, press CTRL+C in the CLI terminal window.
 
 -----------------------------------------
 3.2 Starting the Client in Networked Mode

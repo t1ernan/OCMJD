@@ -12,12 +12,12 @@ Bodgitt And Scarper, LLC. Booking System 1.0 User Guide
 *   3.2) Running the Client in Networked Mode      *
 *   3.3) Running the Client in Non-networked Mode  *
 *                                                  *
-* 4) Using the Client GUI                          *
+* 4) How to use Client GUI                         *
 *                                                  *
 ****************************************************
 
 ---------------------------
-1. Application Overview
+1) Application Overview
 ---------------------------
 
 The Bodgitt And Scarper, LLC. Booking System enables any Customer Service Representative (CSR) to easily navigate our database and book contractors on behalf of our clients through an easy-to-use and intuitive Java Swing GUI.
@@ -26,20 +26,20 @@ A CSR can also use the GUI to book a particular record on behalf of a customer, 
 This system supports both networked and non-networked use.
 
 ---------------------------
-2. Application Requirements
+2) Application Requirements
 ---------------------------
 * a platform with Java JRE version 1.8.60 installed. 
 * the supplied database file, db-2x2.db. Must be present on server's file system when run in networked mode or on client's file system when run in non-networked mode.
 * a basic familiarity with using CLI
 
 ---------------------------
-3. Running the Application
+3) Running the Application
 ---------------------------
 
 * The Bodgitt And Scarper, LLC. Booking System supports 3 different modes of running the application:
-  1) Server (Networked)
-  2) Client (Networked)
-  3) Client (Non-networked)
+  1. Server (Networked)
+  2. Client (Networked)
+  3. Client (Non-networked)
 
 * The application can be run in one of the three modes using the command "java -jar <path_and_filename> [<mode>]",
 where the mode flag argument determines what mode the application will run in.
@@ -51,7 +51,7 @@ where the mode flag argument determines what mode the application will run in.
 * when no mode flag is specified, the application will run the GUI client in networked mode. In this mode the client will make requests to a remote server across the network and make requests to it.
 
 -----------------------------------------
-3.1 Running the Server in Networked Mode
+3.1) Running the Server in Networked Mode
 -----------------------------------------
 * Using a CLI terminal, execute the following command from the same directory where the jar file "runme.jar" is located to start the server: 
 java -jar runme.jar server
@@ -67,7 +67,7 @@ java -jar runme.jar server
 * To stop the server, press CTRL+C in the CLI terminal window.
 
 -----------------------------------------
-3.2 Running the Client in Networked Mode
+3.2) Running the Client in Networked Mode
 -----------------------------------------
 
 * Using a CLI terminal, execute the following command from the same directory where the jar file "runme.jar" is located to start the client GUI in networked mode: 
@@ -83,9 +83,9 @@ java -jar runme.jar
 
 * Note: The server must be up and running before the client is started.
 
---------------------------------------------
-3.3 Running the Client in Non-networked Mode
---------------------------------------------
+---------------------------------------------
+3.3) Running the Client in Non-networked Mode
+---------------------------------------------
 
 * Using a CLI terminal, execute the following command from the same directory where the jar file "runme.jar" is located to start the client GUI in non-networked mode: 
 java -jar runme.jar alone
@@ -96,9 +96,9 @@ java -jar runme.jar alone
 
 * Click the "Confirm" to start the client. 
 
------------------------
-4. Using the Client GUI
------------------------
+----------------------------
+4) How to use the Client GUI
+----------------------------
 
 The client GUI is used the same regardless of whether is is networked or standalone. When the GUI is started, all data is displayed to the user. 
 The GUI is split into two main sections, the Table and the Interactive (Search & Book Panels).

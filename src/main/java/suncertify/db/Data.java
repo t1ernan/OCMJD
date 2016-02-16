@@ -424,9 +424,4 @@ public final class Data implements DBMainExtended {
       }
     }
   }
-
-  // TODO: REMOVE AFTER REMOVING TESTS
-  public Map<Integer, String[]> getCache() {
-    return recordCache;
-  }
 }

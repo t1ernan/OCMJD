@@ -1,0 +1,127 @@
+Bodgitt And Scarper, LLC. Booking System 1.0 User Guide
+
+****************************************************
+*           Table of Contents                      *
+****************************************************
+* 1) Application Overview                          *
+*                                                  *
+* 2) Application Requirements                      *
+*                                                  *
+* 3) Running the Application                       *
+*   3.1) Running the Server in Networked Mode      *
+*   3.2) Running the Client in Networked Mode      *
+*   3.3) Running the Client in Non-networked Mode  *
+*                                                  *
+* 4) Using the Client GUI                          *
+*                                                  *
+****************************************************
+
+---------------------------
+1. Application Overview
+---------------------------
+
+The Bodgitt And Scarper, LLC. Booking System enables any Customer Service Representative (CSR) to easily navigate our database and book contractors on behalf of our clients through an easy-to-use and intuitive Java Swing GUI.
+A CSR can use the GUI to search for contractors using certain criteria, currently contractor name or location, allowing for easy retrieval of contractor details
+A CSR can also use the GUI to book a particular record on behalf of a customer, updating that contractor record with the customer's unique ID number.
+This system supports both networked and non-networked use.
+
+---------------------------
+2. Application Requirements
+---------------------------
+* a platform with Java JRE version 1.8.60 installed. 
+* the supplied database file, db-2x2.db. Must be present on server's file system when run in networked mode or on client's file system when run in non-networked mode.
+* a basic familiarity with using CLI
+
+---------------------------
+3. Running the Application
+---------------------------
+
+The Bodgitt And Scarper, LLC. Booking System supports 3 different modes of running the application:
+
+ 1) Server (Networked)
+ 2) Client (Networked)
+ 3) Client (Non-networked)
+
+The application can be run in one of the three modes using the command "java -jar <path_and_filename> [<mode>]",
+where the mode flag argument determines what mode the application will run in.
+
+* when the mode flag "server" is specified, the application will run the server in networked mode.
+* when the mode flag "alone" is specified, the application will run the GUI client in non-networked mode.
+* when no mode flag is specified, the application will run the GUI client in networked mode.
+
+-----------------------------------------
+3.1 Running the Server in Networked Mode
+-----------------------------------------
+* Using a CLI terminal, execute the following command from the same directory where the jar file "runme.jar" is located to start the server: java -jar runme.jar server
+
+* Once the application starts, a configuration window will be displayed to the user, prompting the user for the location of the database file on the file system and the port number on which the server will receive RMI requests from clients on. Note: If this is the first time starting the database location field will be blank and the default RMI port number will be displayed in the port number field. Otherwise, the configuration details from the previous time the server was run will be presented to the user.
+
+* Click the "browse" button and choose the database file, db-2x2.db, to automatically populate the database location field.
+
+* Enter the port number.
+
+* Click the "Confirm" to start the server. 
+
+* To stop the server, enter CTRL+C in the CLI terminal window.
+
+-----------------------------------------
+3.2 Starting the Client in Networked Mode
+-----------------------------------------
+
+To allow the application to run in "networked client" mode, where the application communicates to the server on a specified
+host over a designated port, the application must be started as follows:
+
+java -jar runme.jar
+
+After running this command a configuration dialog will be displayed to the user allowing the user to specify the server host ip or 
+fully qualified domain name of the server host and the port that the server is listening on. Once these have been entered, click OK
+and the networked client GUI will be launched.
+
+Note: the server application must be started before the client application.
+
+------------------------------------------
+3.3 Starting the Client in Standalone Mode
+------------------------------------------
+
+To allow the application to run in "standalone" mode, where the application runs in a non-networked mode and connects to a database
+file in isolation, the application must be started as follows:
+
+java -jar runme.jar alone
+
+After running this command a configuration dialog will be displayed to the user allowing the user to specify the location of the database file.
+To select the database file, click on the "browse" button and navigate to the db-2x1.db that was supplied with this assignment.
+Once all values are entered, press OK and the non-networked client GUI will be launched.
+
+-----------------------
+4. Using the Client GUI
+-----------------------
+
+The client GUI is used the same regardless of whether is is networked or standalone. When the GUI is started, all data is displayed to the user. 
+The GUI is split into two main sections, the Table and the Interactive (Search & Book Panels).
+Searching for a record
+
+To search for all records available, simply hit the "Search" button without providing any name or location search parameters
+To search by NAME, enter in a name int the name text arera and press search. (Will return all records that contain that name. See note below).
+To search by LOCATION, enter in a location int the location text area and press search. (Will return all records that contain that name. 
+See note below).
+
+Note: 
+
+The Bodgitt & Scarper application implements an OR search condition of either field i.e. it will return all records that 
+match on Name OR Location.
+
+The application also returns all records that contain a substring of the provided search criteria. i.e. a 
+recored with name "Bodgitt", will be returned with a name search critera "Bod". 
+
+All searches are case sensitive.
+
+Booking a record
+
+To book a record, select the required record in the table so that it becomes highlighted and click the "Book" button. Once selected a dialog will be
+presented to the user prompting the user to enter an 8 digit customer ID.
+Enter an 8 digit customer ID and click "OK". The Table will then be updated with the provided customer ID value. 
+5. Exiting the Client Application
+
+To exit the Client GUI Application, just close its window or select "Exit" from the "File" dropdown menu bar.
+
+To exit the Server GUI Application, please see above.

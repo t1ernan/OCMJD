@@ -1,17 +1,134 @@
- Choices.txt
- 
- Tables of Contents:
- * General Considerations/Assumptions
- * Documentation
- * 
- 
- Patterns Used: Domain Object Model, Singleton, Factory, Builder.
- 
- General Considerations/Assumptions: 
- * The provided data file contains valid data, therefore no validation of the existing data file records is required. Only new/modified data will be validated before being written to the database.
- * The string encoding format,8 bit US ASCII, will not change in the future and therefore will not need to be configurable. It will be hard-coded into the application as a constant value.
- * The application does not need to support localization, as there has been no mention of Bodgitt & Scarper, LLC. being an international company. The only locale supported shall be en_US.
- * 
- 
+=====================================
+ General Assumptions
+=====================================
 
- 
+* The provided data file contains valid data, therefore no validation of the existing data file records is required. Only new/modified data will be validated before being written to the database.
+* The string encoding format,8 bit US ASCII, will not change in the future and therefore will not need to be configurable. It will be hard-coded into the application as a constant value.
+* The application does not need to support localization, as there has been no mention of Bodgitt & Scarper, LLC. being an international company. The only locale supported shall be en_US.
+* It is unlikely that the format of the supplied database file will change in the future; i.e. the schema information will not change.
+* Database size is small and will remain small in the future.
+* Multiple contractors cannot share the same name and location, i.e. a combination of the "name" and "location" fields for a contractor will be considered a primary key.
+
+====================================
+ General Considerations
+====================================
+-----------------------
+ General
+-----------------------
+* Usage of Jdk8 stream API to increase code readability wherever possible.
+* Logging added in places and directed to console.
+
+-----------------------
+ DBMain class
+-----------------------
+
+* Didn't edit comments or add javadocs so that I wouldn't violate any requirement on not editing the supplied interface; extended the interface and added javadocs there instead.
+
+-----------------------
+ DBMainExtended class
+-----------------------
+
+* Extended the supplied interface DBMain in order to override certain methods and add extra method signatures for intializing and saving the state of the database object.
+
+* The methods update, delete and unlock were overridden to remove the RecordNotFoundException declared in the throws clause; it makes no logical sense for this to be there since in order to perform any of these operations the record should be locked first and only a valid record can be locked. 
+
+-----------------------
+ Data class
+-----------------------
+
+* Implemented Singleton pattern, preventing more than one instance of the database being created per jvm.
+
+* Kept record locking and database read/write logic in same class, i.e. did not implement Facade pattern. The main reason I did this was because the logic for locking was minimal and it did not require extraction to a separate class to be implemented. It also eliminated the need to synchronize access of the delegate class which made managing thread safety easier. Another reason I implemented it all in one class is so that in the future if the the database changes completely, e.g. migration to nosql database, the only class which would need to be updated in the data class. The rest of the application should be largely isolated from these changes.
+
+* Read records into a hashmap from database file on startup of application. This was done under the assumption that the number of records contained in the database will remain a small number in the future and that the cpu cost of keeping these records in memory will not be an issue due to the relatively few amount of records.
+
+* Any database operations during runtime are performed on the hashmap's contents instead of directly on the database file and the records stored in the hashmap were then written back to the database file when the application was terminated. I chose this approach since it reduced the complexity of implementing the database operations. Instead or writing bytes to a file for every operation, which is costly in terms of performance and complexity, all that was required was updating a hashmap entry which is much more straightforward through the Map API. A shutdown hook was added in the data class to ensure records were persisted to disk when the application is terminated.
+
+* Schema information is static; I chose to hardcode the schema values such as field sizes and the record offset value into the data class as constants. This was done under the assumption that the database schema is unlikely to change in the future. This reduced the code complexity since the data class is no longer required to dynamically read all the schema info from the database file before it can process the records.
+
+* The magic cookie value specified in the schema info will be used to validate any file the application attempts to read. This check was put in place to ensure that the correct database file is provided; the application will shutdown if an file with a different magic cookie value is specified. I believe this check is important for data validation purposes, especially considering the schema information is hardcode in the application. If this check is failed a DatabaseAccessException is thrown.
+
+* Any new data is validated against the the schema information, so that only field values which have the same number or less characters than the database size for that field are permitted. This is important to ensure the database will not be corrupted by user input.
+
+* Thread safety is handled by declaring all public methods in the class as synchronized. While this isn't the most performant solution it does keep things simple. It prevents more than one thread performing any distinct operation at any one time, thereby eliminating any threading issues by effectivey making sure no threads perform database operations concurrently. I used synchronized methods instead of smaller scoped synchronized blocks to reduce the messiness of the code.
+
+* DuplicateKeyException: Keys are only considered duplicate is they are exact matches, i.e. case sensitive.
+
+* If a record is not preceeded by the valid flag value, it will be considered invalid. I do not check that an invalid record is preceeded by the invalid flag value. This will ensure that in the event a record is preceeded by a value which is neither valid or invalid, it will be treated as invalid and removed from the database.
+
+-----------------------
+ DatabaseFactory class
+-----------------------
+
+* Implements factory pattern to retrieve and instantiate a database instance. Enables easy extension of application if the database ever changes. Simply create a new type of database instance, e.g. nonRelationalData class, and modify Factory to return it when required.
+
+-----------------------
+ Contractor class
+-----------------------
+
+* A domain object model representing the contractor record fields. No validation of these fields is done in this object, e.g. it does not enforce that the customer_id field must be 8 digits long. Instead, data will be validated when entered by the user in presentation layer depending on the current business rules.
+
+-----------------------
+ Config class
+-----------------------
+
+* The default property values are left blank initially, except for the port number fields. I decided to use the default RMI port number, 1099, as the default port number for the first run of the application.
+
+-----------------------
+ Networking
+-----------------------
+
+* An RMI networking approach was favoured over Sockets as it was simpler to implement.
+* A 'thin' client approach was used. This was the preferred option as it allowed greater atomicity of database operations in the event of a client disconnection. E.g. once the client sends a request to the server it will be processed entirely,as long as the server remains up. This also ensures that records don't remain locked in the event of a client disconnection; all locking, processing and unlocking takes place on the server. It also had the advantage of exposing only the necessary business methods to the client, which made implementing it very simple.
+
+-----------------------
+ Locking Mechanism
+-----------------------
+
+* No strict enforcement of the proper use of the locking mechanism in place in the Data class. It relies on the class calling these methods, Contractor Service, to call lock and unlock after each update or delete operation.
+* The unlock method is always called in a finally block in the services layer to ensure the record is always unlocked after the necessary operation is performed.
+
+-----------------------
+ GUI
+-----------------------
+
+* Minimal UI as possible. I only implemetented the features required, book and search. There is no unbooking functionality as it was not specified in the requirements.
+
+* Separate JFrame for each configuration window and the main client application window. They all extend a common abstract class, AbstractWindow.java, which ensures that the style of the windows remains consistent throughout the application. If a new UI window is needed in the future, there is a common framework in place to make it easier.
+
+* An 'Actions' JPanel was created in the main client window. New buttons can be easily added in the future for any additional operations that are required, deletion/creation/etc.
+
+* Configuration input is validated after it has been entered; a dialogue box will be displayed to the user displaying why the input for a particular field is invalid.
+
+* If the currently selected contractor in the table is booked, the book button will be disabled and renabled when an available contractor in the table is selected.
+
+* The observer pattern was not implemented as it was not required. Instead, the table will be refreshed everytime an search or booking action is performed. In the event a contractor tries to book a record that has been booked by another client but hasn't been updated in the table to reflect such, an AlreadyBookedException will the thrown and a dialogue box will be displayed to the user explaining that the records has already been booked.
+
+* The search function will display any records which match the EXACT values the user enters in the search boxes.
+This means the search is case sensitive and that it must match the record exactly, i.e. if 'Ja' is entered in the name field search box it will only return contractors with the name 'Ja', contractors with names beginnning with 'Ja' like 'Jack' or 'James' will not be returned. This is my interpretation of the must requirement "It must allow the user to search the data for all records, or for records where the name and/or location fields exactly match values specified by the user." See the api for the ContractorServices.java for more info.
+
+* No JFrame window is created for running the application in Server mode. The server will be started in a terminal through cli and should be shutdown via CTRL+C in that terminal. This was done to reduce clutter.
+
+* If connection issue occurs between client and server, there will be no retry mechanism in place to reconnect. The client will be made aware of the issue and the session will be terminated. This is limitation of the system but since there is no specific requirement related to reconnection, I decided on terminating the session to ensure data atomicity is preserved.
+
+* MVC pattern was not implemented as I felt the clear separation between the view and controller was unnecssary. Instead the class, ClientWindow.java, handles both displaying the view and executing the functions.
+
+-----------------------
+ Documentation
+-----------------------
+
+* All members, private/default/protected/public, have javadoc style comments to help explain complex code but no javadocs are created for private members. This is to avoid generating cluttered javadocs.
+
+-----------------------
+ Design Patterns Used
+-----------------------
+
+* Domain Object Model, used to model the contractor fields and transfer data between layers.
+
+* Singleton, used to ensure only a single data access object, Data.java, is created per jvm.
+
+* Factory, used to retrieve and instantiate the dao
+
+* Builder, used to create the Contractor object and avoid passing a lot of arguments into a constructor.
+
+=====================================

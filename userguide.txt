@@ -1,4 +1,6 @@
+=======================================================
 Bodgitt And Scarper, LLC. Booking System 1.0 User Guide
+=======================================================
 
 ****************************************************
 *           Table of Contents                      *
@@ -12,7 +14,9 @@ Bodgitt And Scarper, LLC. Booking System 1.0 User Guide
 *   3.2) Running the Client in Networked Mode      *
 *   3.3) Running the Client in Non-networked Mode  *
 *                                                  *
-* 4) How to use Client GUI                         *
+* 4) Using the Client GUI                          *
+*   4.1) Searching for Contractor(s) by Criteria   *
+*   4.2) Booking a Contractor                      *
 *                                                  *
 ****************************************************
 
@@ -20,17 +24,17 @@ Bodgitt And Scarper, LLC. Booking System 1.0 User Guide
 1) Application Overview
 ---------------------------
 
-The Bodgitt And Scarper, LLC. Booking System enables any Customer Service Representative (CSR) to easily navigate our database and book contractors on behalf of our clients through an easy-to-use and intuitive Java Swing GUI.
-A CSR can use the GUI to search for contractors using certain criteria, currently contractor name or location, allowing for easy retrieval of contractor details
+The Bodgitt And Scarper, LLC. Booking System enables any Customer Service Representative (CSR) to easily navigate the B&S database and book contractors on behalf of B&S clients through an easy-to-use and intuitive Java Swing GUI.
+A CSR can use the GUI to search for contractors using certain criteria, currently contractor name or location, allowing for easy retrieval of contractor details.
 A CSR can also use the GUI to book a particular record on behalf of a customer, updating that contractor record with the customer's unique ID number.
-This system supports both networked and non-networked use.
+This system supports both networked and non-networked use, allowing for multiple clients to use the system simultaneously in networked mode without fear of data loss.
 
 ---------------------------
 2) Application Requirements
 ---------------------------
 * a platform with Java JRE version 1.8.60 installed. 
-* the supplied database file, db-2x2.db. Must be present on server's file system when run in networked mode or on client's file system when run in non-networked mode.
-* a basic familiarity with using CLI
+* db-2x2.db, the supplied database file. Must be present on server's file system when run in networked mode or on the client's file system when run in non-networked mode.
+* a basic familiarity with CLI
 
 ---------------------------
 3) Running the Application
@@ -46,7 +50,7 @@ where the mode flag argument determines what mode the application will run in.
 
 * when the mode flag "server" is specified, the application will run the server in networked mode. In this mode the server will interact with the database and the client will make requests to the server. This requires that the server has access to the specified database file. A server can have multiple clients at any one time.
 
-* when the mode flag "alone" is specified, the application will run the GUI client in non-networked mode. In this mode the client will interact with the database directly. This requires that the client has access to the specified database file. This mode should run in complete isolation, i.e. you should not have multiple clients accessing a database file locally as concurrenct access isn't supported.
+* when the mode flag "alone" is specified, the application will run the GUI client in non-networked mode. In this mode the client will interact with the database directly. This requires that the client has direct access to the specified database file. This mode should run in complete isolation, i.e. you should not have multiple clients accessing a database file locally as concurrent access without data loss isn't supported.
 
 * when no mode flag is specified, the application will run the GUI client in networked mode. In this mode the client will make requests to a remote server across the network and make requests to it.
 
@@ -62,7 +66,9 @@ java -jar runme.jar server
 
 * Enter the port number.
 
-* Click the "Confirm" to start the server. 
+* Click the "Confirm" button to start the server. 
+
+* Note: If the server cannot be started for some reason, a dialogue box will be displayed to the user detailing the nature of the issue and the configuration window will be closed. Any exceptions containing more detailed information about the issue will be logged to the console for troubleshooting purposes.
 
 * To stop the server, press CTRL+C in the CLI terminal window.
 
@@ -79,9 +85,11 @@ java -jar runme.jar
 
 * Enter the port number the server is listening on.
 
-* Click the "Confirm" to start the client. 
+* Click the "Confirm" button to start the client. 
 
-* Note: The server must be up and running before the client is started.
+* Note: If the server cannot be started for some reason, a dialogue box will be displayed to the user detailing the nature of the issue and the configuration window will be closed. Any exceptions containing more detailed information about the issue will be logged to the console for troubleshooting purposes.
+
+* Note: The specified server must be up and running before the client is started.
 
 ---------------------------------------------
 3.3) Running the Client in Non-networked Mode
@@ -94,38 +102,60 @@ java -jar runme.jar alone
 
 * Click the "Browse" button and choose the database file, db-2x2.db, to automatically populate the database location field.
 
-* Click the "Confirm" to start the client. 
+* Click the "Confirm" button to start the client. 
 
-----------------------------
-4) How to use the Client GUI
-----------------------------
+* Note: If the server cannot be started for some reason, a dialogue box will be displayed to the user detailing the nature of the issue and the configuration window will be closed. Any exceptions containing more detailed information about the issue will be logged to the console for troubleshooting purposes.
 
-The client GUI is used the same regardless of whether is is networked or standalone. When the GUI is started, all data is displayed to the user. 
-The GUI is split into two main sections, the Table and the Interactive (Search & Book Panels).
-Searching for a record
+-----------------------
+4) Using the Client GUI
+-----------------------
 
-To search for all records available, simply hit the "Search" button without providing any name or location search parameters
-To search by NAME, enter in a name int the name text arera and press search. (Will return all records that contain that name. See note below).
-To search by LOCATION, enter in a location int the location text area and press search. (Will return all records that contain that name. 
-See note below).
+* The client GUI is split into three separate sections:
+  1. Search
+  2. Results
+  3. Actions
 
-Note: 
+* The Search section displays text fields for entering search criteria, a "Search" button for retrieving records that fit the specified criteria and displaying them in the Results section, and a "Clear" button for clearing the textfields. Currently, the only search criteria implemented is "name" and "location".
 
-The Bodgitt & Scarper application implements an OR search condition of either field i.e. it will return all records that 
-match on Name OR Location.
+* The Results section displays all contractors that meet the search criteria specified in the search section inside a table with scrolling capabilities.
 
-The application also returns all records that contain a substring of the provided search criteria. i.e. a 
-recored with name "Bodgitt", will be returned with a name search critera "Bod". 
+* The Actions section displays the "Book" button for booking a record. Currently, the only action implemented is the "Book" functionality, but any future actions, like deleting records, can be easily added to this section.
 
-All searches are case sensitive.
+* The GUI can be exited at any time by either closing the window or clicking the "Options" menubar and then clicking the "Exit" menu item from the subsequent dropdown menu.
 
-Booking a record
+* Note: The same GUI is used for both the networked and non-networked clients.
 
-To book a record, select the required record in the table so that it becomes highlighted and click the "Book" button. Once selected a dialog will be
-presented to the user prompting the user to enter an 8 digit customer ID.
-Enter an 8 digit customer ID and click "OK". The Table will then be updated with the provided customer ID value. 
-5. Exiting the Client Application
+--------------------------------------------
+4.1) Searching for Contractor(s) by Criteria
+--------------------------------------------
 
-To exit the Client GUI Application, just close its window or select "Exit" from the "File" dropdown menu bar.
+* Currently, the only search criteria implemented is "name" and "location", which refers to the name and location of the contractor respectively. The system can search contractors by name, location or both.
 
-To exit the Server GUI Application, please see above.
+* Any search results, contractors that match the criteria specified, will be displayed as table rows in the Results section.
+
+* To display all records available, simply click the "Search" button without providing any criteria, i.e. name or location search fields are blank. Alternatively, a user can press enter instead of clicking the "Search" button or click the "Clear" button which will clear the search criteria fields and display all available records.
+
+* To search for a contractor with a specific name, simply enter the contractor's name into the name text field and click the "Search" button. Alternatively, a user can press enter instead of clicking the "Search" button. This will return all contractors with that exact specified name, provided the location search field is blank.
+
+* To search for a contractor with a specific location, simply enter the contractor's location into the location text field and click the "Search" button in the Search section. Alternatively, a user can press enter instead of clicking the "Search" button. This will return all contractors with that exact specified location, provided the name search field is blank.
+
+* To search for a contractor with a specific name AND location, simply enter the contractor's name and location into the name and location text fields respectively and click the "Search" button. Alternatively, a user can press enter instead of clicking the "Search" button. This will return all contractors with that exact specified name and location.
+
+* If no contractor exists in the database for the specified search criteria, the table will be hidden from the user and a dialogue box will inform the user that no records exist for that particular search criteria. The user can then amend his search or clear it to return all results if desired.
+
+* Note: The search only returns records which match the specified search values EXACTLY! This means that searches are case sensitive and the full name/location must be specified in order to return the desired record. E.g. Searching for contractor with "Ja" as the name search value will only return contractors with the name "Ja", it will not return any contractors with the name "James" or "Jack" since the full name of the contractor wasn't specified. Also, because the search is case sensitive, the same search will not return any contractors with the name "JA", "ja" or "jA".
+
+-------------------------
+4.2) Booking a Contractor
+-------------------------
+
+* Select the contractor to book from the table in the Results section by clicking on it. This will highlight the contractor record.
+
+* If the selected contractor has already been booked, i.e. the "Customer ID" field for that contractor record already contains an 8 digit number, the "Book" button will be disabled and greyed out. This prevents the user from booking a contractor which is currently booked.
+
+* If the selected contractor is available, i.e. the "Customer ID" field for that contractor record is blank, the "Book" button will be enabled. Click the "Book" button to open a dialog box where the user is prompted for a new 8 digit customer ID number. To abort the booking process at this stage, simply click the "Cancel" button. Otherwise, enter the appropriate 8 digit customer ID number and click the "OK" button. The table will then be updated with the new booking and a dialogue box will be displayed to the user confirming that the contractor has been successfully booked. 
+
+* Note: Due to the possibility of multiple clients using the same database when running in networked mode, it is possible that a contractor which a user is in the process of booking can be booked by another user before the first user completes the booking process. In this case instead of a confirmation message being displayed to the user, a dialogue box will be displayed to the user informing the user that the selected contractor has been booked by another user and the table will be updated to reflect that. 
+E.g. User A selects an available contractor and clicks the "Book" button. While User A is entering the customer ID number, User B has started the booking process for that particular contractor and completed it before User A finishes entering the customer ID number. Now, when User A tries to book the contractor by clicking the "OK" button, dialogue box will be displayed to the user informing the user that the selected contractor has been booked by another user. The booking process for User A will then be aborted and the table will be updated to show that the contractor has been booked.
+
+=======================================================

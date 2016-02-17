@@ -3,11 +3,11 @@
 =====================================
 
 * The provided data file contains valid data, therefore no validation of the existing data file records is required. Only new/modified data will be validated before being written to the database.
-* The string encoding format,8 bit US ASCII, will not change in the future and therefore will not need to be configurable. It will be hard-coded into the application as a constant value.
-* The application does not need to support internationalization, as there has been no mention of Bodgitt & Scarper, LLC. being an international company. The only locale supported shall be en_US.
+* The string encoding format, 8 bit US ASCII, will not change in the future and therefore will not need to be configurable. It will be hard-coded into the application as a constant value.
+* The application does not need to support internationalization, as there has been no mention of Bodgitt & Scarper, LLC. being an international company or any explicit requirement concerning it.
 * It is unlikely that the format of the supplied database file will change in the future since it's tightly coupled to other existing applications; i.e. the schema information will not change.
 * Database size is small and will remain small in the future.
-* Multiple contractors cannot share the same name and location, i.e. a combination of the "name" and "location" fields for a contractor will be considered a primary key.
+* Multiple contractors cannot share the same name and location, i.e. a combination of the "name" and "location" fields for a contractor will be considered as a primary key.
 
 ====================================
  General Considerations
@@ -15,8 +15,8 @@
 -----------------------
  General
 -----------------------
-* Usage of JDK8 stream API to increase code readability wherever possible.
-* Logging added in places and directed to console.
+* Usage of JDK8 stream API to increase code readability wherever possible. More compact, readable and less messy code.
+* All exception stack traces are logged to the console since I don't feel comfortable 'hiding' exceptions by not logging them somewhere. Logging is left on by default.
 
 -----------------------
  DBMain.java
@@ -30,7 +30,7 @@
 
 * Extended the supplied interface DBMain in order to override certain methods and add extra method signatures for intializing and saving the state of the database object.
 
-* The methods update, delete and unlock were overridden to remove the RecordNotFoundException declared in the throws clause; it makes no logical sense for this to be there since in order to perform any of these operations the record should be locked first and only a valid record can be locked. 
+* The methods update, delete and unlock were overridden to remove the RecordNotFoundException declared in the throws clause; it makes no logical sense for this to be there since in order to perform any of these operations the record should be locked first and only a valid record can be locked. Also, unlocking a record after a deletion action would always throw a RecordNotFoundException which I believe makes no logical sense.
 
 -----------------------
  Data.java
@@ -38,23 +38,23 @@
 
 * Implemented Singleton pattern, preventing more than one instance of the database being created per jvm.
 
-* Kept record locking and database read/write logic in same class, i.e. did not implement Facade pattern. The main reason I did this was because the logic for locking was minimal and it did not require extraction to a separate class to be implemented. It also eliminated the need to synchronize access of the delegate class which made managing thread safety easier. Another reason I implemented it all in one class is so that in the future if the the database changes completely, e.g. migration to nosql database, the only class which would need to be updated in the data class. The rest of the application should be largely isolated from these changes.
+* Kept record locking and database read/write logic in same class, i.e. did not implement Facade pattern. The main reason I did this was because the logic for locking was minimal and it did not require extraction to a separate class to be implemented. It also eliminated the need to synchronize access of the delegate class which made managing thread safety easier. Another reason I implemented it all in one class is so that in the future if the the database changes completely, e.g. migration to nosql database, the only class which would need to be updated is the Data.java. The rest of the application should be largely isolated from these changes.
 
 * Read records into a hashmap from database file on startup of application. This was done under the assumption that the number of records contained in the database will remain a small number in the future and that the cpu cost of keeping these records in memory will not be an issue due to the relatively few amount of records.
 
-* Any database operations during runtime are performed on the hashmap's contents instead of directly on the database file and the records stored in the hashmap were then written back to the database file when the application was terminated. I chose this approach since it reduced the complexity of implementing the database operations. Instead or writing bytes to a file for every operation, which is costly in terms of performance and complexity, all that was required was updating a hashmap entry which is much more straightforward through the Map API. A shutdown hook was added in the data class to ensure records were persisted to disk when the application is terminated.
+* Any database operations during runtime are performed on the hashmap's contents instead of directly on the database file and the records stored in the hashmap were then written back to the database file when the application was terminated. I chose this approach since it reduced the complexity of implementing the database operations. Instead oF writing bytes to a file for every operation, which is costly in terms of performance, all that was required was updating a hashmap entry which is a much more simple operation due to the Map API. A shutdown hook was added to ensure records were persisted to disk when the application is terminated.
 
 * Schema information is static; I chose to hardcode the schema values such as field sizes and the record offset value into the data class as constants. This was done under the assumption that the database schema is unlikely to change in the future. This reduced the code complexity since the data class is no longer required to dynamically read all the schema info from the database file before it can process the records.
 
-* The magic cookie value specified in the schema info will be used to validate any file the application attempts to read. This check was put in place to ensure that the correct database file is provided; the application will shutdown if an file with a different magic cookie value is specified. I believe this check is important for data validation purposes, especially considering the schema information is hardcode in the application. If this check is failed a DatabaseAccessException is thrown.
+* The magic cookie value specified in the schema info will be used to validate any file the application attempts to read. This check was put in place to ensure that the correct database file is provided; the application will not start if a file with a different magic cookie value is specified. I believe this check is important for data validation purposes, especially considering the schema information is hardcoded in the application. If this check is failed, a DatabaseAccessException is thrown.
 
 * Any new data is validated against the the schema information, so that only field values which have the same number or less characters than the database size for that field are permitted. This is important to ensure the database will not be corrupted by user input.
 
-* Thread safety is handled by declaring all public methods in the class as synchronized. While this isn't the most performant solution it does keep things simple. It prevents more than one thread performing any distinct operation at any one time, thereby eliminating any threading issues by effectivey making sure no threads perform database operations concurrently. I used synchronized methods instead of smaller scoped synchronized blocks to reduce the messiness of the code.
+* Thread safety is handled by making all public methods in the class synchronized. While this isn't the most performant solution it does keep things simple. It prevents more than one thread performing any distinct operation at any one time, thereby eliminating any threading issues by effectively making sure threads cannot perform database operations concurrently. I used synchronized methods instead of smaller scoped synchronized blocks to reduce the messiness of the code. Again performance suffered but readability improved.
 
 * DuplicateKeyException: Keys are only considered duplicate is they are exact matches, i.e. case sensitive.
 
-* If a record is not preceeded by the valid flag value, it will be considered invalid. I do not check that an invalid record is preceeded by the invalid flag value. This will ensure that in the event a record is preceeded by a value which is neither valid or invalid, it will be treated as invalid and removed from the database.
+* If a record is not preceeded by the valid flag value, it will be considered invalid. I do not check that an invalid record is preceeded by the invalid flag value. This will ensure that in the event a record is preceeded by a value which is neither valid or invalid, i.e. a corrupt flag value, the record will be treated as invalid and removed from the database.
 
 -----------------------
  DatabaseFactory.java
@@ -72,7 +72,7 @@
  Config.java
 -----------------------
 
-* The default property values are left blank initially, except for the port number fields. I decided to use the default RMI port number, 1099, as the default port number for the first run of the application.
+* The default property values are left blank when the application is run the first time, except for the port number fields. I decided to use the default RMI port number, 1099, as the default port number for the first run of the application.
 
 -----------------------
  Networking
@@ -85,33 +85,37 @@
  Locking Mechanism
 -----------------------
 
-* No strict enforcement of the proper use of the locking mechanism in place in the Data class. It relies on the class calling these methods, Contractor Service, to call lock and unlock after each update or delete operation.
-* The unlock method is always called in a finally block in the services layer to ensure the record is always unlocked after the necessary operation is performed.
+* No enforcement of the proper use of the locking mechanism in Data.java. It relies on the developers to use the API properly and call lock and unlock after each update or delete operation, like it was done in BasicContractorService.java.
+* The unlock method is always called in a finally block in the services layer to ensure the record is unlocked after the necessary operation is performed.
 
 -----------------------
  GUI
 -----------------------
 
+* The search function will display any records which match the EXACT values the user enters in the search boxes.
+This means the search is case sensitive and that it must match the record exactly, i.e. if 'Ja' is entered in the name field search box it will only return contractors with the name 'Ja', contractors with names beginnning with 'Ja' like 'Jack' or 'James' will not be returned. This is my interpretation of the must requirement "It must allow the user to search the data for all records, or for records where the name and/or location fields exactly match values specified by the user." Although a search mechanism which is case insensitive which retrieves any records which being with the specified search values may have meant a greater user experience, the "must" user requirement was clear on that the records retrieved must match the search values exactly.
+
 * Minimal UI as possible. I only implemented the features required, book and search. There is no unbooking functionality as it was not specified in the requirements.
 
-* Separate JFrame for each configuration window and the main client application window. They all extend a common abstract class, AbstractWindow.java, which ensures that the style of the windows remains consistent throughout the application. If a new UI window is needed in the future, there is a common framework in place to make it easier.
+* Table is initially populated with all records when UI client is started (eager loading) so all records can be perused on startup. I did this under the assumption that the total number of records will always remain small and the cpu cost of retrieving all of the records at once will be minimal.
 
-* An 'Actions' JPanel was created in the main client window. New buttons can be easily added in the future for any additional operations that are required, deletion/creation/etc.
+* Table is displayed inside a scrollpane, no pagination was used due to the assumption that the total number of records will remain small.
 
-* Configuration input is validated after it has been entered; a dialogue box will be displayed to the user displaying why the input for a particular field is invalid.
+* Separate JFrame for each configuration window and the main client application window. They all extend a common abstract class, AbstractWindow.java, which ensures that the style of the windows remains consistent throughout the application. If a new UI window is needed in the future, there is a common framework in place to make it easier, just extend AbstractWindow.java and implement the required abstract methods.
 
-* If the currently selected contractor in the table is booked, the book button will be disabled and re-enabled when an available contractor in the table is selected.
+* An 'Actions' JPanel was created in the main client window. New buttons can be easily added to this panel in the future for any additional operations that are required, deletion/creation/etc.
 
-* The observer pattern was not implemented as it was not required. Instead, the table will be refreshed everytime an search or booking action is performed. In the event a contractor tries to book a record that has been booked by another client but hasn't been updated in the table to reflect such, an AlreadyBookedException will the thrown and a dialogue box will be displayed to the user explaining that the records has already been booked.
+* Configuration input is validated after it has been entered; a dialogue box will be displayed to the user displaying why the input for a particular field is invalid. Configuration data is saved to suncertify.properties only after valid configuration input is entered.
 
-* The search function will display any records which match the EXACT values the user enters in the search boxes.
-This means the search is case sensitive and that it must match the record exactly, i.e. if 'Ja' is entered in the name field search box it will only return contractors with the name 'Ja', contractors with names beginnning with 'Ja' like 'Jack' or 'James' will not be returned. This is my interpretation of the must requirement "It must allow the user to search the data for all records, or for records where the name and/or location fields exactly match values specified by the user." See the api for the ContractorServices.java for more info.
+* If the currently selected contractor in the table is booked, the book button will be disabled. The button will be re-enabled when an available contractor in the table is selected.
 
-* No JFrame window is created for running the application in Server mode. The server will be started in a terminal through cli and should be shutdown via CTRL+C in that terminal. This was done to reduce clutter.
+* The observer pattern was not implemented as it was not required. Instead, the table will be refreshed everytime an search or booking action is performed. In the event a contractor tries to book a record that has been booked by another client but hasn't been updated in the table to reflect such, an AlreadyBookedException will the thrown and a dialogue box will be displayed to the user explaining that the records has already been booked. The table will then be updated with the new booking.
 
-* If connection issue occurs between client and server, there will be no retry mechanism in place to reconnect. The client will be made aware of the issue and the session will be terminated. This is limitation of the system but since there is no specific requirement related to reconnection, I decided on terminating the session to ensure data atomicity is preserved.
+* No JFrame window is created for running the application in Server mode. The server will be started in a terminal through cli and should be shutdown via CTRL+C in that terminal. I thought making a JFrame just to turn on and off a server was unneccesary for such a simple process.
 
-* MVC pattern was not implemented as I felt the clear separation between the view and controller was unnecssary. Instead the class, ClientWindow.java, handles both displaying the view and executing the functions.
+* If a connection issue occurs between client and server, there will be no retry mechanism in place to reconnect. Instead, the client will be made aware of the issue via a dialogue box message and the session will be terminated. This is limitation of the system but since there is no specific requirement related to reconnection, I decided on terminating the session to ensure data atomicity is preserved.
+
+* MVC pattern was not implemented as I feel that the clear separation between the view and controller is unnecssary. Instead the class, ClientWindow.java, handles both displaying the view and executing the functions.
 
 -----------------------
  Documentation
@@ -129,6 +133,6 @@ This means the search is case sensitive and that it must match the record exactl
 
 * Factory, used to retrieve and instantiate the dao.
 
-* Builder, used to create the Contractor object and avoid passing a lot of arguments into a constructor.
+* Builder, used to create the Contractor object to avoid passing a lot of arguments into a constructor.
 
 =====================================

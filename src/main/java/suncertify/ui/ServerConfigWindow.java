@@ -188,6 +188,7 @@ public final class ServerConfigWindow extends AbstractWindow implements LaunchMa
       final DBMainExtended data = DatabaseFactory.getDatabase(Config.getServerDbLocation());
       final int portNumber = Integer.parseInt(Config.getServerPortNumber());
       LOGGER.info("Starting server...");
+      LOGGER.info("Press CTRL+C to shutdown.");
       new RmiServer(data).startServer(portNumber);
       dispose();
     } catch (final RemoteException exception) {

@@ -110,7 +110,7 @@ public final class CliLauncher {
    * Launches the application configuration window for the client in Networked Mode.
    */
   private static void runClient() {
-    final AbstractWindow clientConfig = new ClientConfigWindow();
+    final AbstractWindow clientConfig = new NetworkedClientConfigWindow();
     clientConfig.setVisible(true);
   }
 
@@ -126,7 +126,7 @@ public final class CliLauncher {
    * Launches the application configuration window for the client in non-Networked Mode.
    */
   private static void runStandalone() {
-    final AbstractWindow standaloneConfig = new StandaloneConfigWindow();
+    final AbstractWindow standaloneConfig = new StandaloneClientConfigWindow();
     standaloneConfig.setVisible(true);
   }
 }

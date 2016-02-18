@@ -1,5 +1,5 @@
 /*
- * StandaloneConfigWindow.java  1.0  18-Jan-2016
+ * StandaloneClientConfigWindow.java  1.0  18-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -10,17 +10,7 @@
 
 package suncertify.ui;
 
-import static suncertify.ui.Messages.BROWSE_BUTTON_TEXT;
-import static suncertify.ui.Messages.BROWSE_BUTTON_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.CONFIG_PANEL_BORDER_TITLE;
-import static suncertify.ui.Messages.CONFIRM_BUTTON_TEXT;
-import static suncertify.ui.Messages.CONFIRM_BUTTON_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.DATABASE_FILE_LOCATION_LABEL_TEXT;
-import static suncertify.ui.Messages.DATABASE_FILE_LOCATION_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.INVALID_DATABASE_LOCATION_MESSAGE_TEXT;
-import static suncertify.ui.Messages.INVALID_INPUT_MESSAGE_TITLE;
-import static suncertify.ui.Messages.STANDALONE_CONFIG_FRAME_TITLE_TEXT;
-import static suncertify.ui.Messages.START_FAILURE_MESSAGE;
+import static suncertify.ui.Messages.*;
 import static suncertify.util.Constants.DEFAULT_TEXTFIELD_SIZE;
 
 import suncertify.business.BasicContractorService;
@@ -44,13 +34,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- * The class StandaloneConfigWindow is responsible for configuring and launching the RMI server,
- * when the system is run in Networked Mode. It acts as a configuration JFrame where the server's
+ * The class StandaloneClientConfigWindow is responsible for configuring and launching the RMI server,
+ * when the system is run in non-networked mode. It acts as a configuration JFrame where the server's
  * configuration values, port number and database file location, are entered and verified before
  * attempting to launch the RMI server. It extends {@link AbstractWindow} and implements
  * {@link LaunchManager}.
  */
-public final class StandaloneConfigWindow extends AbstractWindow implements LaunchManager {
+public final class StandaloneClientConfigWindow extends AbstractWindow implements LaunchManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
@@ -79,7 +69,7 @@ public final class StandaloneConfigWindow extends AbstractWindow implements Laun
   /**
    * Constructs a new standalone configuration window.
    */
-  public StandaloneConfigWindow() {
+  public StandaloneClientConfigWindow() {
     super(STANDALONE_CONFIG_FRAME_TITLE_TEXT);
     setSize(new Dimension(460, 175));
     setMinimumSize(new Dimension(460, 175));

@@ -32,6 +32,7 @@
 
 * The methods update, delete and unlock were overridden to remove the RecordNotFoundException declared in the throws clause; it makes no logical sense for this to be there since in order to perform any of these operations the record should be locked first and only a valid record can be locked. Also, unlocking a record after a deletion action would always throw a RecordNotFoundException which I believe makes no logical sense.
 
+* The saveRecords method was added to the interface to facilitate periodic persistence of records to the database, i.e. write records to database from cache every 10 minutes, if it's required in the future. Currently, records are only written to disk on shutdown. 
 -----------------------
  Data.java
 -----------------------
@@ -44,6 +45,8 @@
 
 * Any database operations during runtime are performed on the hashmap's contents instead of directly on the database file and the records stored in the hashmap were then written back to the database file when the application was terminated. I chose this approach since it reduced the complexity of implementing the database operations. Instead oF writing bytes to a file for every operation, which is costly in terms of performance, all that was required was updating a hashmap entry which is a much more simple operation due to the Map API. A shutdown hook was added to ensure records were persisted to disk when the application is terminated.
 
+* All records are written to disk on shutdown. I decided to write the entire block of records to disk on shutdown, instead of just the records which were added/modified since the number of records and record size is small and it will not be a heavy I/O operation. Writing the entire contents of the hashmap to disk eliminates the need of navigating where in the database individual file should be written and tracking which exact records needed to be written to disk.
+
 * Schema information is static; I chose to hardcode the schema values such as field sizes and the record offset value into the data class as constants. This was done under the assumption that the database schema is unlikely to change in the future. This reduced the code complexity since the data class is no longer required to dynamically read all the schema info from the database file before it can process the records.
 
 * The magic cookie value specified in the schema info will be used to validate any file the application attempts to read. This check was put in place to ensure that the correct database file is provided; the application will not start if a file with a different magic cookie value is specified. I believe this check is important for data validation purposes, especially considering the schema information is hardcoded in the application. If this check is failed, a DatabaseAccessException is thrown.
@@ -54,7 +57,7 @@
 
 * DuplicateKeyException: Keys are only considered duplicate is they are exact matches, i.e. case sensitive.
 
-* If a record is not preceded by the valid flag value, it will be considered invalid. I do not check that an invalid record is preceeded by the invalid flag value. This will ensure that in the event a record is preceded by a value which is neither valid or invalid, i.e. a corrupt flag value, the record will be treated as invalid and removed from the database.
+* If a record is not preceded by the valid flag value, it will be considered invalid. I do not check that an invalid record is preceded by the invalid flag value. This will ensure that in the event a record is preceded by a value which is neither valid or invalid, i.e. a corrupt flag value, the record will be treated as invalid and removed from the database.
 
 -----------------------
  DatabaseFactory.java
@@ -101,7 +104,7 @@ This means the search is case sensitive and that it must match the record exactl
 
 * Table is displayed inside a scrollpane, no pagination was used due to the assumption that the total number of records will remain small.
 
-* Separate JFrame for each configuration window and the main client application window. They all extend a common abstract class, AbstractWindow.java, which ensures that the style of the windows remains consistent throughout the application. If a new UI window is needed in the future, there is a common framework in place to make it easier, just extend AbstractWindow.java and implement the required abstract methods.
+* Separate JFrame for each configuration window, server window and the main client application window. They all extend a common abstract class, AbstractWindow.java, which ensures that the style of the windows remains consistent throughout the application. If a new UI window is needed in the future, there is a common framework in place to make it easier, just extend AbstractWindow.java and implement the required abstract methods.
 
 * An 'Actions' JPanel was created in the main client window. New buttons can be easily added to this panel in the future for any additional operations that are required, deletion/creation/etc.
 
@@ -110,8 +113,6 @@ This means the search is case sensitive and that it must match the record exactl
 * If the currently selected contractor in the table is booked, the book button will be disabled. The button will be re-enabled when an available contractor in the table is selected.
 
 * The observer pattern was not implemented as it was not required. Instead, the table will be refreshed every time a search or booking action is performed. In the event a contractor tries to book a record that has been booked by another client but hasn't been updated in the table to reflect such, an AlreadyBookedException will the thrown and a dialogue box will be displayed to the user explaining that the records has already been booked. The table will then be updated with the new booking.
-
-* No JFrame window is created for running the application in Server mode. The server will be started in a terminal through cli and should be shutdown via CTRL+C in that terminal. I thought making a JFrame just to turn on and off a server was unnecessary for such a simple process.
 
 * If a connection issue occurs between client and server, there will be no retry mechanism in place to reconnect. Instead, the client will be made aware of the issue via a dialogue box message and the session will be terminated. This is limitation of the system but since there is no specific requirement related to reconnection, I decided on terminating the session to ensure data atomicity is preserved.
 

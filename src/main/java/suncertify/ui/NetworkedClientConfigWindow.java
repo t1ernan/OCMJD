@@ -1,5 +1,5 @@
 /*
- * ClientConfigWindow.java  1.0  18-Jan-2016
+ * NetworkedClientConfigWindow.java  1.0  18-Jan-2016
  *
  * Candidate: Tiernan Scully
  * Oracle Testing ID: OC1539331
@@ -10,19 +10,7 @@
 
 package suncertify.ui;
 
-import static suncertify.ui.Messages.CLIENT_CONFIG_FRAME_TITLE_TEXT;
-import static suncertify.ui.Messages.CONFIG_PANEL_BORDER_TITLE;
-import static suncertify.ui.Messages.CONFIRM_BUTTON_TEXT;
-import static suncertify.ui.Messages.CONFIRM_BUTTON_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.INVALID_INPUT_MESSAGE_TITLE;
-import static suncertify.ui.Messages.INVALID_IP_MESSAGE_TEXT;
-import static suncertify.ui.Messages.INVALID_PORT_NUMBER_MESSAGE_TEXT;
-import static suncertify.ui.Messages.IP_ADDRESS_LABEL_TEXT;
-import static suncertify.ui.Messages.IP_ADDRESS_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.PORT_NUMBER_LABEL_TEXT;
-import static suncertify.ui.Messages.PORT_NUMBER_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.REMOTE_EXCEPTION_MESSAGE_TEXT;
-import static suncertify.ui.Messages.START_FAILURE_MESSAGE;
+import static suncertify.ui.Messages.*;
 import static suncertify.util.Constants.DEFAULT_TEXTFIELD_SIZE;
 import static suncertify.util.Utils.isNonNumeric;
 
@@ -44,13 +32,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- * The class ClientConfigWindow is responsible for configuring and launching the main application
+ * The class NetworkedClientConfigWindow is responsible for configuring and launching the main application
  * window, the {@link ClientWindow}, when the system is run in Networked Mode. It acts as a
  * configuration JFrame where the client's configuration values, details of the RMI server it wishes
  * to connect to, are entered and verified before attempting to launch the main application. It
  * extends {@link AbstractWindow} and implements {@link LaunchManager}.
  */
-public final class ClientConfigWindow extends AbstractWindow implements LaunchManager {
+public final class NetworkedClientConfigWindow extends AbstractWindow implements LaunchManager {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 17011991;
@@ -79,7 +67,7 @@ public final class ClientConfigWindow extends AbstractWindow implements LaunchMa
   /**
    * Constructs a new client configuration window.
    */
-  public ClientConfigWindow() {
+  public NetworkedClientConfigWindow() {
     super(CLIENT_CONFIG_FRAME_TITLE_TEXT);
     setSize(new Dimension(437, 175));
     setMinimumSize(new Dimension(437, 175));

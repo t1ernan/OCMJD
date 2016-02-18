@@ -10,26 +10,7 @@
 
 package suncertify.ui;
 
-import static suncertify.ui.Messages.ACTIONS_BORDER_TITLE;
-import static suncertify.ui.Messages.BOOK_BUTTON_TEXT;
-import static suncertify.ui.Messages.BOOK_BUTTON_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.CLEAR_BUTTON_TEXT;
-import static suncertify.ui.Messages.CLEAR_BUTTON_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.CONTRACTOR_ALREADY_BOOKED_EXCEPTION_MESSAGE_TITLE;
-import static suncertify.ui.Messages.CONTRACTOR_BOOKED_MESSAGE_TEXT;
-import static suncertify.ui.Messages.CONTRACTOR_BOOKED_MESSAGE_TITLE;
-import static suncertify.ui.Messages.CONTRACTOR_NOT_FOUND_EXCEPTION_MESSAGE_TITLE;
-import static suncertify.ui.Messages.CUSTOMER_ID_PROMPT_TEXT;
-import static suncertify.ui.Messages.INVALID_CUSTOMER_ID_MESSAGE_TEXT;
-import static suncertify.ui.Messages.INVALID_INPUT_MESSAGE_TITLE;
-import static suncertify.ui.Messages.LOCATION_LABEL_TEXT;
-import static suncertify.ui.Messages.LOCATION_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.NAME_LABEL_TEXT;
-import static suncertify.ui.Messages.NAME_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.REMOTE_EXCEPTION_MESSAGE_TEXT;
-import static suncertify.ui.Messages.SEARCH_BUTTON_TEXT;
-import static suncertify.ui.Messages.SEARCH_BUTTON_TOOLTIP_TEXT;
-import static suncertify.ui.Messages.SYSTEM_NAME;
+import static suncertify.ui.Messages.*;
 import static suncertify.util.Constants.DEFAULT_TEXTFIELD_SIZE;
 import static suncertify.util.Constants.EMPTY_STRING;
 import static suncertify.util.Utils.isEightDigits;
@@ -62,7 +43,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 /**
- * The class ClientWindow is direct subclass of {@link AbstractWindow} and acts as the main UI
+ * The class ClientWindow is direct subclass of {@link AbstractWindow} and acts as the main GUI
  * window for the application. It allows the user to book contractors and search for contractors
  * which satisfy certain criteria specified by the user; currently only searches based on
  * contractor's names and/or locations are implemented. It can be launched in networked or
@@ -122,7 +103,7 @@ public final class ClientWindow extends AbstractWindow {
    *          the ContractorService object used to interact with the services layer.
    */
   public ClientWindow(final ContractorService service) {
-    super(SYSTEM_NAME);
+    super(CLIENT_WINDOW_TITLE);
     this.service = service;
     initializeComponents();
     setPreferredSize(new Dimension(775, 650));

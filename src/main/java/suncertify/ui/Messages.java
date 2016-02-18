@@ -40,6 +40,9 @@ public final class Messages {
 
   /** The title of the client configuration frame. */
   public static final String CLIENT_CONFIG_FRAME_TITLE_TEXT = "Client Configuration Settings";
+  
+  /** The title of the client window. */
+  public static final String CLIENT_WINDOW_TITLE = "Bodgitt & Scarper Booking System Client";
 
   /** The message displayed to the user to notify them the system is shutting down. */
   public static final String CLOSING_APPLICATION_MESSAGE = " Closing application.";
@@ -136,16 +139,27 @@ public final class Messages {
 
   /** The title of the server configuration frame. */
   public static final String SERVER_CONFIG_FRAME_TITLE_TEXT = "Server Configuration Settings";
+  
+  /** The title of the server panel in the Server window. */
+  public static final String SERVER_PANEL_TITLE = "Server status";
+  
+  /** The formatted message displaying the server status to the user in the Server window. */
+  public static final String SERVER_STATUS_MESSAGE_FORMAT = "Server is currently up and running on port ";
 
+  /** The title of the server window. */
+  public static final String SERVER_WINDOW_TITLE = "Bodgitt & Scarper Booking System Server";
+  
   /** The title of the standalone configuration frame. */
   public static final String STANDALONE_CONFIG_FRAME_TITLE_TEXT = "Standalone Configuration Settings";
 
   /** The message displayed to the user when a the main application cannot be launched. */
   public static final String START_FAILURE_MESSAGE = "Failed to launch application: ";
 
-  /** The name of the system displayed in the title of the Client window. */
-  public static final String SYSTEM_NAME = "Bodgitt & Scarper Booking System";
-
+  /** The text displayed in the 'Stop' button. */
+  public static final String STOP_BUTTON_TEXT = "Stop";
+  
+  /** The text displayed in the tooltip for the 'Stop' button. */
+  public static final String STOP_BUTTON_TOOLTIP_TEXT = "Click to stop the server and exit the application";
 
   /**
    * Private constructor to prevent instantiation by other classes.

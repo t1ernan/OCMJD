@@ -70,7 +70,7 @@ java -jar runme.jar server
 
 * Note: If the server cannot be started for some reason, a dialogue box will be displayed to the user detailing the nature of the issue and the configuration window will be closed. Any exceptions containing more detailed information about the issue will be logged to the console for troubleshooting purposes.
 
-* To stop the server, press CTRL+C in the CLI terminal window.
+* The server can be stopped by clicking the "Stop" button at any time. Alternatively, the server can also be stopped by closing the window or clicking the "Options" menu bar and then clicking the "Exit" menu item from the subsequent drop-down menu.
 
 -----------------------------------------
 3.2) Running the Client in Networked Mode

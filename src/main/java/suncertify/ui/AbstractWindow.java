@@ -47,7 +47,7 @@ public abstract class AbstractWindow extends JFrame implements WindowManager {
   private final JMenu menu = new JMenu(OPTIONS_MENU_TEXT);
 
   /** The exit menu item. */
-  private final JMenuItem exitMenuItem = new JMenuItem(EXIT_MENU_ITEM_TEXT);
+  protected final JMenuItem exitMenuItem = new JMenuItem(EXIT_MENU_ITEM_TEXT);
 
   /**
    * Sole constructor(For invocation by subclass constructors) with specified the {@code title}.

@@ -159,8 +159,8 @@ public final class Data implements DBMainExtended {
     }
     try (RandomAccessFile raf = new RandomAccessFile(dbFilePath, "rwd")) {
       if (raf.readInt() != MAGIC_COOKIE) {
-        throw new DatabaseAccessException("The specified database file: " + dbFilePath
-            + " has the wrong magic cookie value.");
+        throw new DatabaseAccessException("Invalid database file, " + dbFilePath + ", was specified. "
+            + "Magic cookie value didn't match value of expected database file: db-2x2.db");
       }
       this.dbFilePath = dbFilePath;
       loadCache();

@@ -125,8 +125,7 @@ public class BasicContractorService implements ContractorService {
     final Contractor contractor = ContractorConverter.toContractor(fieldValues);
     if (contractor.isBooked()) {
       throw new AlreadyBookedException(
-          "Contractor with name: " + contractor.getPrimaryKey().getName() + " and location: "
-              + contractor.getPrimaryKey().getLocation() + " already has an existing booking.");
+          "Contractor with " + contractor.getPrimaryKey() + " already has an existing booking.");
     }
   }
 

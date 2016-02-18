@@ -30,7 +30,7 @@ public class BasicContractorService implements ContractorService {
   /**
    * The default message prefix for {@link ContractorNotFoundException} messages.
    */
-  private static final String MESSAGE_PREFIX = "Could not find any contractors with: ";
+  private static final String MESSAGE_PREFIX = "Could not find any contractors with ";
 
   /** The data access object used to interact with the database. */
   private final DBMainExtended data;
@@ -125,7 +125,8 @@ public class BasicContractorService implements ContractorService {
     final Contractor contractor = ContractorConverter.toContractor(fieldValues);
     if (contractor.isBooked()) {
       throw new AlreadyBookedException(
-          "Contractor with :" + contractor.getPrimaryKey() + " has already been booked.");
+          "Contractor with name: " + contractor.getPrimaryKey().getName() + " and location: "
+              + contractor.getPrimaryKey().getLocation() + " already has an existing booking.");
     }
   }
 

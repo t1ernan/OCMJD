@@ -297,8 +297,8 @@ public final class Data implements DBMainExtended {
                                 .filter(values -> values != null)
                                 .anyMatch(values -> comparePrimaryKeys(values, data));
     if (isDuplicate) {
-      throw new DuplicateKeyException("Record with: [" + FIELD_NAMES[0] + "=" + data[0] + ","
-          + FIELD_NAMES[1] + "=" + data[1] + "] already exists.");
+      throw new DuplicateKeyException("Record with " + FIELD_NAMES[0] + "=" + data[0] + ","
+          + FIELD_NAMES[1] + "=" + data[1] + " already exists.");
     }
   }
 

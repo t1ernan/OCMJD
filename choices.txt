@@ -7,7 +7,7 @@
 * The application does not need to support internationalization, as there has been no mention of Bodgitt & Scarper, LLC. being an international company or any explicit requirement concerning it.
 * It is unlikely that the format of the supplied database file will change in the future since it's tightly coupled to other existing applications; i.e. the schema information will not change.
 * Database size is small and will remain small in the future.
-* Multiple contractors cannot share the same name and location, i.e. a combination of the "name" and "location" fields for a contractor will be considered as a primary key.
+* Contractors cannot share the same name and location, i.e. a combination of the "name" and "location" fields for a contractor will be considered unique for each contractor since no unique individual key, like telephone number or email address, was provided.
 
 ====================================
  General Considerations
@@ -28,7 +28,7 @@
  DBMainExtended.java
 -----------------------
 
-* Extended the supplied interface DBMain in order to override certain methods and add extra method signatures for intializing and saving the state of the database object.
+* Extended the supplied interface DBMain in order to override certain methods and add extra method signatures for initializing and saving the state of the database object.
 
 * The methods update, delete and unlock were overridden to remove the RecordNotFoundException declared in the throws clause; it makes no logical sense for this to be there since in order to perform any of these operations the record should be locked first and only a valid record can be locked. Also, unlocking a record after a deletion action would always throw a RecordNotFoundException which I believe makes no logical sense.
 
@@ -54,7 +54,7 @@
 
 * DuplicateKeyException: Keys are only considered duplicate is they are exact matches, i.e. case sensitive.
 
-* If a record is not preceeded by the valid flag value, it will be considered invalid. I do not check that an invalid record is preceeded by the invalid flag value. This will ensure that in the event a record is preceeded by a value which is neither valid or invalid, i.e. a corrupt flag value, the record will be treated as invalid and removed from the database.
+* If a record is not preceded by the valid flag value, it will be considered invalid. I do not check that an invalid record is preceeded by the invalid flag value. This will ensure that in the event a record is preceded by a value which is neither valid or invalid, i.e. a corrupt flag value, the record will be treated as invalid and removed from the database.
 
 -----------------------
  DatabaseFactory.java
@@ -79,13 +79,13 @@
 -----------------------
 
 * An RMI networking approach was favoured over Sockets as it was simpler to implement.
-* A 'thin' client approach was used. This was the preferred option as it allowed greater atomicity of database operations in the event of a client disconnection. E.g. once the client sends a request to the server it will be processed entirely,as long as the server remains up. This also ensures that records don't remain locked in the event of a client disconnection; all locking, processing and unlocking takes place on the server. It also had the advantage of exposing only the necessary business methods to the client, which made implementing it very simple.
+* A 'thin' client approach was used. This was my preferred option as it allowed greater atomicity of database operations in the event of a client disconnection. E.g. once the client sends a request to the server it will be processed entirely,as long as the server remains up. This also ensures that records don't remain locked in the event of a client disconnection; all locking, processing and unlocking takes place on the server. It also had the advantage of exposing only the necessary business methods to the client, which made implementing it very simple.
 
 -----------------------
  Locking Mechanism
 -----------------------
 
-* No enforcement of the proper use of the locking mechanism in Data.java. It relies on the developers to use the API properly and call lock and unlock after each update or delete operation, like it was done in BasicContractorService.java.
+* No enforcement of the proper use of the locking mechanism in Data.java. It relies on the developers to use the API properly and call lock and unlock before and after each update or delete operation respectively, like it was implemented in BasicContractorService.java.
 * The unlock method is always called in a finally block in the services layer to ensure the record is unlocked after the necessary operation is performed.
 
 -----------------------
@@ -109,13 +109,15 @@ This means the search is case sensitive and that it must match the record exactl
 
 * If the currently selected contractor in the table is booked, the book button will be disabled. The button will be re-enabled when an available contractor in the table is selected.
 
-* The observer pattern was not implemented as it was not required. Instead, the table will be refreshed everytime an search or booking action is performed. In the event a contractor tries to book a record that has been booked by another client but hasn't been updated in the table to reflect such, an AlreadyBookedException will the thrown and a dialogue box will be displayed to the user explaining that the records has already been booked. The table will then be updated with the new booking.
+* The observer pattern was not implemented as it was not required. Instead, the table will be refreshed every time a search or booking action is performed. In the event a contractor tries to book a record that has been booked by another client but hasn't been updated in the table to reflect such, an AlreadyBookedException will the thrown and a dialogue box will be displayed to the user explaining that the records has already been booked. The table will then be updated with the new booking.
 
-* No JFrame window is created for running the application in Server mode. The server will be started in a terminal through cli and should be shutdown via CTRL+C in that terminal. I thought making a JFrame just to turn on and off a server was unneccesary for such a simple process.
+* No JFrame window is created for running the application in Server mode. The server will be started in a terminal through cli and should be shutdown via CTRL+C in that terminal. I thought making a JFrame just to turn on and off a server was unnecessary for such a simple process.
 
 * If a connection issue occurs between client and server, there will be no retry mechanism in place to reconnect. Instead, the client will be made aware of the issue via a dialogue box message and the session will be terminated. This is limitation of the system but since there is no specific requirement related to reconnection, I decided on terminating the session to ensure data atomicity is preserved.
 
-* MVC pattern was not implemented as I feel that the clear separation between the view and controller is unnecssary. Instead the class, ClientWindow.java, handles both displaying the view and executing the functions.
+* All messages displayed to the user are hardcoded in the application as constants and extracted to Messages.java in the UI package. I did this under the assumption internationalization was no a requirement so ResourceBundles would be unnecessary as localization was not being supported. This way, if the UI messages require editing in the future, only one class needs to be edited instead of multiple classes.
+
+* MVC pattern was not implemented as I feel that the clear separation between the view and controller is unnecessary. Instead the class, ClientWindow.java, handles both displaying the view and executing the functions.
 
 -----------------------
  Documentation

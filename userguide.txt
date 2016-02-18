@@ -121,7 +121,7 @@ java -jar runme.jar alone
 
 * The Actions section displays the "Book" button for booking a record. Currently, the only action implemented is the "Book" functionality, but any future actions, like deleting records, can be easily added to this section.
 
-* The GUI can be exited at any time by either closing the window or clicking the "Options" menubar and then clicking the "Exit" menu item from the subsequent dropdown menu.
+* The GUI can be exited at any time by either closing the window or clicking the "Options" menu bar and then clicking the "Exit" menu item from the subsequent drop-down menu.
 
 * Note: The same GUI is used for both the networked and non-networked clients.
 
@@ -151,11 +151,11 @@ java -jar runme.jar alone
 
 * Select the contractor to book from the table in the Results section by clicking on it. This will highlight the contractor record.
 
-* If the selected contractor has already been booked, i.e. the "Customer ID" field for that contractor record already contains an 8 digit number, the "Book" button will be disabled and greyed out. This prevents the user from booking a contractor which is currently booked.
+* If the selected contractor has already been booked, i.e. the "Customer ID" field for that contractor record already contains an 8 digit number, the "Book" button will be disabled. This prevents the user from booking a contractor which is currently booked.
 
 * If the selected contractor is available, i.e. the "Customer ID" field for that contractor record is blank, the "Book" button will be enabled. Click the "Book" button to open a dialog box where the user is prompted for a new 8 digit customer ID number. To abort the booking process at this stage, simply click the "Cancel" button. Otherwise, enter the appropriate 8 digit customer ID number and click the "OK" button. The table will then be updated with the new booking and a dialogue box will be displayed to the user confirming that the contractor has been successfully booked. 
 
-* Note: Due to the possibility of multiple clients using the same database when running in networked mode, it is possible that a contractor which a user is in the process of booking can be booked by another user before the first user completes the booking process. In this case instead of a confirmation message being displayed to the user, a dialogue box will be displayed to the user informing the user that the selected contractor has been booked by another user and the table will be updated to reflect that. 
-E.g. User A selects an available contractor and clicks the "Book" button. While User A is entering the customer ID number, User B has started the booking process for that particular contractor and completed it before User A finishes entering the customer ID number. Now, when User A tries to book the contractor by clicking the "OK" button, dialogue box will be displayed to the user informing the user that the selected contractor has been booked by another user. The booking process for User A will then be aborted and the table will be updated to show that the contractor has been booked.
+* Note: Due to the possibility of multiple clients using the same database when running in networked mode, it is possible that a contractor which a user is in the process of booking can be booked by another user before the first user completes the booking process. In this case instead of a confirmation message being displayed to the user, a dialogue box will be displayed to the user informing them that the selected contractor has been booked by another user and the table will be updated to reflect that. 
+E.g. User A selects an available contractor and clicks the "Book" button. While User A is entering the customer ID number, User B has started the booking process for the same contractor and completed it before User A finishes entering the customer ID number. Now, when User A tries to book the contractor by clicking the "OK" button, a dialogue box will be displayed to the user informing the user that the selected contractor has been booked by another user. The booking process for User A will then be aborted and the table will be updated to show that the contractor is no longer available.
 
 =======================================================
